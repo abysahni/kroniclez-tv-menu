@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: kroniclez-tv-menu
+    env: python
+    buildCommand: "echo 'Ready to launch'"
+    startCommand: "python3 server.py"
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: TENDY_BASE_URL
+        value: https://admin.tendypos.com
+      - key: TENDY_USERNAME
+        value: seabrook@kroniclez.com
+      - key: TENDY_PASSWORD
+        value: Se@brook0107
+      - key: STORE_NAME
+        value: Kroniclez - Kitchener

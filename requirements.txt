@@ -1,0 +1,1 @@
+# Zero external dependencies required - runs natively on standard Python 3.9+
