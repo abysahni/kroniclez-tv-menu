@@ -6,17 +6,14 @@ import time
 import threading
 import urllib.parse
 import urllib.request
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
 import config
 from tendy_inventory import inventory_service
 
-class KroniclezTVMenuHandler(SimpleHTTPRequestHandler):
+class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
     """Production HTTP Handler for Kroniclez Digital TV Menu Board."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=str(config.STATIC_DIR), **kwargs)
 
     def _compress_if_supported(self, data: bytes):
         """Compress response using gzip if client supports it."""
@@ -86,6 +83,9 @@ class KroniclezTVMenuHandler(SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
 
+    def do_HEAD(self):
+        self.do_GET()
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
@@ -95,9 +95,7 @@ class KroniclezTVMenuHandler(SimpleHTTPRequestHandler):
         if path == "/api/tv-menu" or path == "/api/tv_menu_feed.php":
             screen_id = int(query.get("screen", [1])[0])
             store_id = query.get("store", ["1"])[0]
-            force = bool(query.get("force", [False])[0])
 
-            # Location routing: store 1 = Kitchener, store 2 = Waterloo
             loc_id = config.TENDY_LOCATION_ID
 
             if screen_id == 1:
@@ -190,7 +188,6 @@ def main():
     print(f"📺 Kroniclez Digital TV Menu Board running at http://{config.HOST}:{config.PORT}")
     print(f"🌿 Connected Store: {config.STORE_NAME}")
 
-    # Start keep-alive
     t = threading.Thread(target=background_keepalive_worker, daemon=True)
     t.start()
 
