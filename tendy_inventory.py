@@ -6,10 +6,19 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Any, Optional
+try:
+    from zoneinfo import ZoneInfo
+    TORONTO_TZ = ZoneInfo("America/Toronto")
+except ImportError:
+    TORONTO_TZ = timezone(timedelta(hours=-4))
 
 import config
+
+def get_toronto_now() -> datetime:
+    """Return current timestamp strictly in America/Toronto timezone."""
+    return datetime.now(TORONTO_TZ)
 
 def is_accessory(it: Dict[str, Any]) -> bool:
     """Filter out non-cannabis accessories (batteries, papers, lighters, grinders)."""
@@ -80,7 +89,7 @@ class TendyInventoryService:
         }
 
         payload = {
-            "date": datetime.now().strftime("%Y-%m-%d"),
+            "date": get_toronto_now().strftime("%Y-%m-%d"),
             "locationIds": [loc_id],
             "productIds": [],
             "categoryIds": [],
@@ -153,7 +162,7 @@ class TendyInventoryService:
                 "title": "Pre-Rolls & Infused Menu",
                 "store": config.STORE_NAME,
                 "total_in_stock": len(ind_items) + len(hyb_items) + len(sat_items) + len(inf_items),
-                "updated_at": datetime.now().strftime("%I:%M:%S %p EST"),
+                "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
                 "structured": {
                     "indica": {
                         "title": "INDICA",
@@ -253,7 +262,7 @@ class TendyInventoryService:
                 "title": "Flower & Vapes Menu",
                 "store": config.STORE_NAME,
                 "total_in_stock": total_items,
-                "updated_at": datetime.now().strftime("%I:%M:%S %p EST"),
+                "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
                 "structured": {
                     "flower": {
                         "indica_dried": {"items": ind_dr},
@@ -355,7 +364,7 @@ class TendyInventoryService:
                 "title": "Edibles, Drinks & Concentrates Menu",
                 "store": config.STORE_NAME,
                 "total_in_stock": total_items,
-                "updated_at": datetime.now().strftime("%I:%M:%S %p EST"),
+                "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
                 "structured": {
                     "concentrates": {"title": "Concentrates & Extracts", "subtitle": "LIVE RESIN • DIAMONDS • HASH", "color": "gold", "items": concentrates},
                     "beverages": {"title": "Infused Beverages", "subtitle": "SPARKLING • SODAS • TEAS", "color": "cyan", "items": beverages},
