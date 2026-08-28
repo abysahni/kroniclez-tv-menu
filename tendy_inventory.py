@@ -11,6 +11,27 @@ from typing import Dict, List, Any, Optional
 
 import config
 
+def is_accessory(it: Dict[str, Any]) -> bool:
+    """Filter out non-cannabis accessories (batteries, papers, lighters, grinders)."""
+    cat = (it.get("category") or it.get("category_name") or it.get("categoryName") or "").lower()
+    name = (it.get("product_name") or it.get("name") or "").lower()
+    
+    if any(k in cat for k in [
+        "accessory", "accessories", "paper", "lighter", "battery", "batteries",
+        "grinder", "device", "glass", "pipe", "tray", "cleaning", "merchandise",
+        "apparel", "gear", "vape battery"
+    ]):
+        return True
+        
+    if any(k in name for k in [
+        "raw classic", "raw organic", "rolling paper", "filter tips", "cone 6 pack",
+        "cone 3 pack", "bic lighter", "clipper", "510 battery", "uni pro",
+        "grinder", "rolling tray", "bong", "pipe", "cleaning swab", "iso-shine"
+    ]):
+        return True
+        
+    return False
+
 class TendyInventoryService:
     """Production inventory service fetching, caching, and categorizing live items from Tendy POS & Kroniclez."""
 
@@ -78,7 +99,7 @@ class TendyInventoryService:
                 for item in records:
                     pricing = item.get("productPricing") or {}
                     stock = pricing.get("stock", 0)
-                    if stock and float(stock) > 0:
+                    if stock and float(stock) > 0 and not is_accessory(item):
                         in_stock_items.append(item)
                 return in_stock_items
         except Exception as e:
@@ -100,17 +121,17 @@ class TendyInventoryService:
         if feed and feed.get("structured"):
             d = feed["structured"]
             
-            # Normalize species: user directive "hybrid and blend are hybrid only"
-            ind_items = d.get("indica", {}).get("items", [])
+            # Normalize species & filter accessories: user directive "hybrid and blend are hybrid only, no accessories"
+            ind_items = [it for it in d.get("indica", {}).get("items", []) if not is_accessory(it)]
             for it in ind_items: it["species"] = "INDICA"
 
-            hyb_items = d.get("hybrid", {}).get("items", [])
+            hyb_items = [it for it in d.get("hybrid", {}).get("items", []) if not is_accessory(it)]
             for it in hyb_items: it["species"] = "HYBRID"
 
-            sat_items = d.get("sativa", {}).get("items", [])
+            sat_items = [it for it in d.get("sativa", {}).get("items", []) if not is_accessory(it)]
             for it in sat_items: it["species"] = "SATIVA"
 
-            inf_items = d.get("infused", {}).get("items", [])
+            inf_items = [it for it in d.get("infused", {}).get("items", []) if not is_accessory(it)]
             inf_ind = []
             inf_hyb = []
             inf_sat = []
@@ -140,7 +161,7 @@ class TendyInventoryService:
                         "items": ind_items
                     },
                     "hybrid": {
-                        "title": "HYBRID",
+                        "title": "HYBRID & BLENDS",
                         "color": "hybrid",
                         "items": hyb_items
                     },
@@ -169,6 +190,12 @@ class TendyInventoryService:
 
         return {"screen": 1, "title": "Pre-Rolls & Infused Menu", "total_in_stock": 0, "structured": {"indica": {"items": []}, "hybrid": {"items": []}, "sativa": {"items": []}, "infused": {"items": []}}}
 
+        # Fallback to local cache if network drop
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+
+        return {"screen": 1, "title": "Pre-Rolls & Infused Menu", "total_in_stock": 0, "structured": {"indica": {"items": []}, "hybrid": {"items": []}, "sativa": {"items": []}, "infused": {"items": []}}}
+
     # =========================================================================
     # SCREEN 2: FLOWER & VAPES MENU (4 BALANCED COLUMNS)
     # =========================================================================
@@ -186,35 +213,39 @@ class TendyInventoryService:
             f = d.get("flower", {})
             v = d.get("vapes", {})
 
-            # Clean and normalize species
-            for it in f.get("indica_dried", {}).get("items", []): it["species"] = "INDICA"
-            for it in f.get("indica_milled", {}).get("items", []): it["species"] = "INDICA"
-            for it in f.get("hybrid_dried", {}).get("items", []): it["species"] = "HYBRID"
-            for it in f.get("hybrid_milled", {}).get("items", []): it["species"] = "HYBRID"
-            for it in f.get("sativa_dried", {}).get("items", []): it["species"] = "SATIVA"
-            for it in f.get("sativa_milled", {}).get("items", []): it["species"] = "SATIVA"
+            # Filter accessories and normalize species
+            ind_dr = [it for it in f.get("indica_dried", {}).get("items", []) if not is_accessory(it)]
+            for it in ind_dr: it["species"] = "INDICA"
+            ind_mil = [it for it in f.get("indica_milled", {}).get("items", []) if not is_accessory(it)]
+            for it in ind_mil: it["species"] = "INDICA"
 
-            for it in v.get("vapes_510_indica", {}).get("items", []): it["species"] = "INDICA"
-            for it in v.get("vapes_510_hybrid", {}).get("items", []): it["species"] = "HYBRID"
-            for it in v.get("vapes_510_sativa", {}).get("items", []): it["species"] = "SATIVA"
+            hyb_dr = [it for it in f.get("hybrid_dried", {}).get("items", []) if not is_accessory(it)]
+            for it in hyb_dr: it["species"] = "HYBRID"
+            hyb_mil = [it for it in f.get("hybrid_milled", {}).get("items", []) if not is_accessory(it)]
+            for it in hyb_mil: it["species"] = "HYBRID"
 
-            for it in v.get("disp_indica", {}).get("items", []): it["species"] = "INDICA"
-            for it in v.get("disp_hybrid", {}).get("items", []): it["species"] = "HYBRID"
-            for it in v.get("disp_sativa", {}).get("items", []): it["species"] = "SATIVA"
+            sat_dr = [it for it in f.get("sativa_dried", {}).get("items", []) if not is_accessory(it)]
+            for it in sat_dr: it["species"] = "SATIVA"
+            sat_mil = [it for it in f.get("sativa_milled", {}).get("items", []) if not is_accessory(it)]
+            for it in sat_mil: it["species"] = "SATIVA"
+
+            v510_ind = [it for it in v.get("vapes_510_indica", {}).get("items", []) if not is_accessory(it)]
+            for it in v510_ind: it["species"] = "INDICA"
+            v510_hyb = [it for it in v.get("vapes_510_hybrid", {}).get("items", []) if not is_accessory(it)]
+            for it in v510_hyb: it["species"] = "HYBRID"
+            v510_sat = [it for it in v.get("vapes_510_sativa", {}).get("items", []) if not is_accessory(it)]
+            for it in v510_sat: it["species"] = "SATIVA"
+
+            disp_ind = [it for it in v.get("disp_indica", {}).get("items", []) if not is_accessory(it)]
+            for it in disp_ind: it["species"] = "INDICA"
+            disp_hyb = [it for it in v.get("disp_hybrid", {}).get("items", []) if not is_accessory(it)]
+            for it in disp_hyb: it["species"] = "HYBRID"
+            disp_sat = [it for it in v.get("disp_sativa", {}).get("items", []) if not is_accessory(it)]
+            for it in disp_sat: it["species"] = "SATIVA"
 
             total_items = (
-                len(f.get("indica_dried", {}).get("items", [])) +
-                len(f.get("indica_milled", {}).get("items", [])) +
-                len(f.get("hybrid_dried", {}).get("items", [])) +
-                len(f.get("hybrid_milled", {}).get("items", [])) +
-                len(f.get("sativa_dried", {}).get("items", [])) +
-                len(f.get("sativa_milled", {}).get("items", [])) +
-                len(v.get("vapes_510_indica", {}).get("items", [])) +
-                len(v.get("vapes_510_hybrid", {}).get("items", [])) +
-                len(v.get("vapes_510_sativa", {}).get("items", [])) +
-                len(v.get("disp_indica", {}).get("items", [])) +
-                len(v.get("disp_hybrid", {}).get("items", [])) +
-                len(v.get("disp_sativa", {}).get("items", []))
+                len(ind_dr) + len(ind_mil) + len(hyb_dr) + len(hyb_mil) + len(sat_dr) + len(sat_mil) +
+                len(v510_ind) + len(v510_hyb) + len(v510_sat) + len(disp_ind) + len(disp_hyb) + len(disp_sat)
             )
 
             result = {
@@ -224,8 +255,22 @@ class TendyInventoryService:
                 "total_in_stock": total_items,
                 "updated_at": datetime.now().strftime("%I:%M:%S %p EST"),
                 "structured": {
-                    "flower": f,
-                    "vapes": v
+                    "flower": {
+                        "indica_dried": {"items": ind_dr},
+                        "indica_milled": {"items": ind_mil},
+                        "hybrid_dried": {"items": hyb_dr},
+                        "hybrid_milled": {"items": hyb_mil},
+                        "sativa_dried": {"items": sat_dr},
+                        "sativa_milled": {"items": sat_mil}
+                    },
+                    "vapes": {
+                        "vapes_510_indica": {"items": v510_ind},
+                        "vapes_510_hybrid": {"items": v510_hyb},
+                        "vapes_510_sativa": {"items": v510_sat},
+                        "disp_indica": {"items": disp_ind},
+                        "disp_hybrid": {"items": disp_hyb},
+                        "disp_sativa": {"items": disp_sat}
+                    }
                 }
             }
             self._cache[cache_key] = result
@@ -238,10 +283,10 @@ class TendyInventoryService:
         return {"screen": 2, "title": "Flower & Vapes Menu", "total_in_stock": 0, "structured": {"flower": {}, "vapes": {}}}
 
     # =========================================================================
-    # SCREEN 3: SOFT CHEWS, DRINKS, CONCENTRATES & WELLNESS (3 COLUMN DECKS)
+    # SCREEN 3: SOFT CHEWS, DRINKS, CONCENTRATES & OILS/WELLNESS
     # =========================================================================
     def get_screen_3_edibles_drinks(self, store_id: int = 1, location_id: Optional[str] = None) -> Dict[str, Any]:
-        """Screen 3: Concentrates, Beverages, Soft Chews / Gummies, Chocolates, and Wellness."""
+        """Screen 3: Concentrates, Beverages, Soft Chews / Gummies, Chocolates, and Oils/Drops."""
         cache_key = f"screen_3_store_{store_id}"
         now = time.time()
         
@@ -252,8 +297,8 @@ class TendyInventoryService:
         if feed and feed.get("structured"):
             d = feed["structured"]
             
-            # Split gummies into Indica/Hybrid (Col 2) & Sativa (Col 3)
-            all_gummies = d.get("gummies", {}).get("items", [])
+            # Split gummies into Indica/Hybrid (Col 2) & Sativa (Col 3) and filter accessories
+            all_gummies = [it for it in d.get("gummies", {}).get("items", []) if not is_accessory(it)]
             g_ind_hyb = []
             g_sat = []
 
@@ -269,19 +314,23 @@ class TendyInventoryService:
                     it["species"] = "HYBRID"
                     g_ind_hyb.append(it)
 
-            for it in d.get("concentrates", {}).get("items", []):
+            concentrates = [it for it in d.get("concentrates", {}).get("items", []) if not is_accessory(it)]
+            for it in concentrates:
                 spec = (it.get("species") or "HYBRID").upper()
                 it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
 
-            for it in d.get("beverages", {}).get("items", []):
+            beverages = [it for it in d.get("beverages", {}).get("items", []) if not is_accessory(it)]
+            for it in beverages:
                 spec = (it.get("species") or "HYBRID").upper()
                 it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
 
-            for it in d.get("chocolates", {}).get("items", []):
+            chocolates = [it for it in d.get("chocolates", {}).get("items", []) if not is_accessory(it)]
+            for it in chocolates:
                 spec = (it.get("species") or "HYBRID").upper()
                 it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
 
-            for it in d.get("wellness", {}).get("items", []):
+            wellness = [it for it in d.get("wellness", {}).get("items", []) if not is_accessory(it)]
+            for it in wellness:
                 spec = (it.get("species") or "HYBRID").upper()
                 it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
 
@@ -299,27 +348,21 @@ class TendyInventoryService:
                 "items": g_sat
             }
 
-            total_items = (
-                len(d.get("concentrates", {}).get("items", [])) +
-                len(d.get("beverages", {}).get("items", [])) +
-                len(all_gummies) +
-                len(d.get("chocolates", {}).get("items", [])) +
-                len(d.get("wellness", {}).get("items", []))
-            )
+            total_items = len(concentrates) + len(beverages) + len(all_gummies) + len(chocolates) + len(wellness)
 
             result = {
                 "screen": 3,
-                "title": "Soft Chews & Edibles Menu",
+                "title": "Edibles, Drinks & Concentrates Menu",
                 "store": config.STORE_NAME,
                 "total_in_stock": total_items,
                 "updated_at": datetime.now().strftime("%I:%M:%S %p EST"),
                 "structured": {
-                    "concentrates": d.get("concentrates", {"title": "Concentrates", "subtitle": "PREMIUM EXTRACTS", "color": "gold", "items": []}),
-                    "beverages": d.get("beverages", {"title": "Beverages", "subtitle": "REFRESH • RELAX • ENJOY", "color": "cyan", "items": []}),
+                    "concentrates": {"title": "Concentrates & Extracts", "subtitle": "LIVE RESIN • DIAMONDS • HASH", "color": "gold", "items": concentrates},
+                    "beverages": {"title": "Infused Beverages", "subtitle": "SPARKLING • SODAS • TEAS", "color": "cyan", "items": beverages},
                     "gummies_ind_hyb": g_ind_hyb_card,
-                    "chocolates": d.get("chocolates", {"title": "Chocolates", "subtitle": "ARTISAN SWEETS", "color": "orange", "items": []}),
+                    "chocolates": {"title": "Chocolates", "subtitle": "ARTISAN CHOCOLATES", "color": "orange", "items": chocolates},
                     "gummies_sativa": g_sat_card,
-                    "wellness": d.get("wellness", {"title": "Wellness & Topicals", "subtitle": "HEALTH & BALANCE", "color": "purple", "items": []})
+                    "wellness": {"title": "Oils, Drops & Wellness", "subtitle": "TINCTURES • TOPICALS • 1:1 DROPS", "color": "purple", "items": wellness}
                 }
             }
             self._cache[cache_key] = result
@@ -329,7 +372,7 @@ class TendyInventoryService:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        return {"screen": 3, "title": "Soft Chews & Edibles Menu", "total_in_stock": 0, "structured": {}}
+        return {"screen": 3, "title": "Edibles, Drinks & Concentrates Menu", "total_in_stock": 0, "structured": {}}
 
 # Global singleton service
 inventory_service = TendyInventoryService()

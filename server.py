@@ -6,7 +6,7 @@ import time
 import threading
 import urllib.parse
 import urllib.request
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
 import config
@@ -117,8 +117,17 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 "tax_rate_hst": config.TAX_RATE_HST
             })
 
-        # 2. Main TV Menu Frontend Page
-        elif path == "/" or path == "/index.html" or path == "/tv_menu.php":
+        # 2. Main TV Menu Frontend Pages (Dedicated TV endpoints)
+        elif path in ["/", "/index.html", "/tv_menu.php"]:
+            self._send_injected_index(query)
+        elif path in ["/tv1", "/screen1"]:
+            query["screen"] = ["1"]
+            self._send_injected_index(query)
+        elif path in ["/tv2", "/screen2"]:
+            query["screen"] = ["2"]
+            self._send_injected_index(query)
+        elif path in ["/tv3", "/screen3"]:
+            query["screen"] = ["3"]
             self._send_injected_index(query)
 
         elif path.startswith("/static/"):
@@ -184,7 +193,7 @@ def background_keepalive_worker():
             pass
 
 def main():
-    server = HTTPServer((config.HOST, config.PORT), KroniclezTVMenuHandler)
+    server = ThreadingHTTPServer((config.HOST, config.PORT), KroniclezTVMenuHandler)
     print(f"📺 Kroniclez Digital TV Menu Board running at http://{config.HOST}:{config.PORT}")
     print(f"🌿 Connected Store: {config.STORE_NAME}")
 
