@@ -8,12 +8,12 @@
 
 html {
     background: #000000;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 body {
     background: #000000;
-    color: #f5f5f5;
+    color: #ffffff;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     width: 100%;
     min-height: 100vh;
@@ -29,8 +29,8 @@ body {
 /* Screen 1 (Pre-Rolls & Infused): 4 Balanced Columns */
 .container-prerolls {
     display: grid;
-    grid-template-columns: 0.98fr 1.05fr 0.98fr 1.25fr;
-    gap: 6px;
+    grid-template-columns: 1fr 1fr 1fr 1.25fr;
+    gap: 8px;
     width: 100%;
     align-items: start;
 }
@@ -39,7 +39,7 @@ body {
 .container-vapes-flower {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
     align-items: start;
 }
@@ -66,41 +66,41 @@ body {
 
 /* Standard Panels (TV Screens 1 & 2) */
 .panel {
-    background: #151515;
+    background: #141414;
     border-radius: 8px;
     padding: 8px 10px;
     height: auto;
     min-height: 0;
     overflow: visible;
     align-self: start;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Soft Cards (TV Screen 3) */
 .soft-card {
-    background: #080d12;
-    border: 1px solid #141f27;
+    background: #0d1217;
+    border: 1px solid #1c2a36;
     border-radius: 8px;
     padding: 8px 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     width: 100%;
 }
 
 .card-head-title {
     text-align: center;
-    font-size: 20px;
+    font-size: 21px;
     line-height: 1.1;
     font-weight: 900;
     text-transform: uppercase;
     margin-bottom: 2px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
 }
 
 .card-head-sub {
     text-align: center;
-    color: #888888;
-    font-size: 9.5px;
+    color: #a0a0a0;
+    font-size: 10px;
     line-height: 1;
     font-weight: 800;
     letter-spacing: 0.6px;
@@ -108,41 +108,41 @@ body {
     text-transform: uppercase;
 }
 
-.card-gold .card-head-title { color: #ffcc3d; }
-.card-cyan .card-head-title { color: #2ce1e7; }
-.card-purple .card-head-title { color: #ca6cff; }
-.card-pink .card-head-title { color: #ff4ca2; }
-.card-orange .card-head-title { color: #ffad3d; }
+.card-gold .card-head-title { color: #facc15; }
+.card-cyan .card-head-title { color: #38bdf8; }
+.card-purple .card-head-title { color: #c084fc; }
+.card-pink .card-head-title { color: #f472b6; }
+.card-orange .card-head-title { color: #fb923c; }
 
 /* Category Headings for Screens 1 & 2 */
 .title {
-    font-size: 18.5px;
+    font-size: 21px;
     font-weight: 900;
     text-align: center;
     padding-bottom: 6px;
     margin-bottom: 6px;
-    border-bottom: 1px solid #2e2e2e;
-    letter-spacing: 0.5px;
+    border-bottom: 1px solid #333333;
+    letter-spacing: 0.6px;
     text-transform: uppercase;
 }
 
-.indica { color: #4CAF50; }
-.hybrid { color: #FFC107; }
-.sativa { color: #FF6666; }
-.infused { color: #53c7ff; }
+.indica { color: #4ade80; }
+.hybrid { color: #facc15; }
+.sativa { color: #f87171; }
+.infused { color: #38bdf8; }
 .vapes510 { color: #60a5fa; }
 .disposable { color: #f472b6; }
 .milled { color: #a3e635; }
 .beverages { color: #38bdf8; }
-.edibles { color: #f43f5e; }
+.edibles { color: #fb7185; }
 .concentrates { color: #fbbf24; }
 
 /* Subheadings */
 .subhead {
-    font-size: 13.5px;
+    font-size: 14.5px;
     margin: 8px 0 4px;
     padding-bottom: 3px;
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #3a3a3a;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -157,12 +157,12 @@ body {
 
 .table-header {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 58px 64px;
+    grid-template-columns: minmax(0, 1fr) 68px 74px;
     column-gap: 4px;
     margin: 3px 0;
     padding-bottom: 3px;
-    border-bottom: 1px solid #333333;
-    font-size: 10.5px;
+    border-bottom: 1px solid #383838;
+    font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -170,34 +170,34 @@ body {
 
 .table-header-soft {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 52px 38px 38px 64px;
-    column-gap: 3px;
+    grid-template-columns: minmax(0, 1fr) 58px 46px 42px 70px;
+    column-gap: 4px;
     align-items: center;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 900;
     text-transform: uppercase;
     padding-bottom: 4px;
     margin-bottom: 2px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.card-gold .table-header-soft { color: #ffcc3d; }
-.card-cyan .table-header-soft { color: #2ce1e7; }
-.card-purple .table-header-soft { color: #ca6cff; }
-.card-pink .table-header-soft { color: #ff4ca2; }
-.card-orange .table-header-soft { color: #ffad3d; }
+.card-gold .table-header-soft { color: #facc15; }
+.card-cyan .table-header-soft { color: #38bdf8; }
+.card-purple .table-header-soft { color: #c084fc; }
+.card-pink .table-header-soft { color: #f472b6; }
+.card-orange .table-header-soft { color: #fb923c; }
 
 .h-name { color: #ffffff; text-align: left; }
-.h-thc { color: #6cff58; text-align: right; }
-.h-price { color: #ffd54f; text-align: right; }
+.h-thc { color: #4ade80; text-align: right; }
+.h-price { color: #facc15; text-align: right; }
 
 /* Standard Product Row (Screens 1 & 2) */
 .p-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 58px 64px;
+    grid-template-columns: minmax(0, 1fr) 68px 74px;
     column-gap: 4px;
     align-items: center;
-    padding: 3px 0;
+    padding: 3.5px 0;
     min-height: 0;
     height: auto;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -212,17 +212,18 @@ body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 15.5px;
+    font-weight: 700;
     padding-right: 4px;
-    color: #f1f5f9;
+    color: #ffffff;
+    line-height: 1.25;
 }
 
 .p-thc {
     text-align: right;
-    color: #6cff58;
-    font-size: 13px;
-    font-weight: 700;
+    color: #4ade80;
+    font-size: 15px;
+    font-weight: 800;
     white-space: nowrap;
     font-family: 'JetBrains Mono', monospace;
 }
@@ -230,51 +231,51 @@ body {
 /* Soft Chews Product Row (Screen 3) */
 .soft-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 52px 38px 38px 64px;
-    column-gap: 3px;
+    grid-template-columns: minmax(0, 1fr) 58px 46px 42px 70px;
+    column-gap: 4px;
     align-items: center;
     padding: 4px 2px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 13.5px;
+    font-size: 14.5px;
 }
 
 .soft-row:last-child { border-bottom: none; }
-.soft-row:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+.soft-row:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
 
 .soft-name {
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    color: #f3f3f3;
+    color: #ffffff;
     font-weight: 700;
-    font-size: 13.5px;
+    font-size: 15px;
 }
 
 .soft-meta {
     text-align: center;
-    font-size: 10.5px;
+    font-size: 11.5px;
     font-weight: 800;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.meta-indica { color: #4CAF50 !important; }
-.meta-hybrid { color: #FFC107 !important; }
-.meta-sativa { color: #FF6666 !important; }
+.meta-indica { color: #4ade80 !important; }
+.meta-hybrid { color: #facc15 !important; }
+.meta-sativa { color: #f87171 !important; }
 
 .soft-thc {
     text-align: center;
-    color: #76e65c;
+    color: #4ade80;
     font-weight: 800;
-    font-size: 13px;
+    font-size: 14.5px;
     font-family: 'JetBrains Mono', monospace;
 }
 
 .soft-cbd {
     text-align: center;
-    color: #b0b0b0;
-    font-size: 11.5px;
+    color: #cbd5e1;
+    font-size: 13px;
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
 }
@@ -291,23 +292,23 @@ body {
 }
 
 .p-price .regular {
-    color: #FFD54F;
-    font-size: 14.5px;
-    font-weight: 800;
+    color: #facc15;
+    font-size: 16.5px;
+    font-weight: 900;
     font-family: 'JetBrains Mono', monospace;
 }
 
 .p-price .sale {
-    color: #ff3333;
-    font-size: 15.5px;
+    color: #ef4444;
+    font-size: 17px;
     font-weight: 900;
     font-family: 'JetBrains Mono', monospace;
     line-height: 1.1;
 }
 
 .p-price .old {
-    color: #FFD54F;
-    font-size: 10px;
+    color: #facc15;
+    font-size: 11px;
     font-weight: 700;
     text-decoration: line-through;
     margin-top: 1px;
@@ -317,7 +318,7 @@ body {
 
 /* Strain Badges */
 .badge-strain {
-    font-size: 8.5px;
+    font-size: 9px;
     font-weight: 800;
     padding: 1px 4px;
     border-radius: 4px;
@@ -325,9 +326,9 @@ body {
     text-transform: uppercase;
     display: inline-block;
 }
-.b-indica { background: rgba(76, 175, 80, 0.2); color: #4CAF50; border: 1px solid rgba(76, 175, 80, 0.4); }
-.b-hybrid { background: rgba(255, 193, 7, 0.2); color: #FFC107; border: 1px solid rgba(255, 193, 7, 0.4); }
-.b-sativa { background: rgba(255, 102, 102, 0.2); color: #ff6666; border: 1px solid rgba(255, 102, 102, 0.4); }
+.b-indica { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.5); }
+.b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
+.b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
 
 /* ========================================================================== */
 /* FLOATING CONTROLS & STATUS                                                 */
@@ -358,11 +359,11 @@ body {
 }
 
 .nav-link-btn {
-    color: #b0b0b0;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-size: 12px;
     font-weight: 700;
     text-decoration: none;
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 999px;
     background: #202020;
     border: 1px solid #383838;
@@ -374,16 +375,17 @@ body {
 }
 
 .nav-link-btn.active, .nav-link-btn:hover {
-    background: #4CAF50;
-    color: #ffffff;
-    border-color: #4CAF50;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
+    background: #4ade80;
+    color: #000000;
+    border-color: #4ade80;
+    font-weight: 900;
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
 }
 
 .nav-link-btn.auto-active {
-    background: #FFC107;
+    background: #facc15;
     color: #000000;
-    border-color: #FFC107;
+    border-color: #facc15;
     font-weight: 900;
 }
 
@@ -392,19 +394,34 @@ body {
     position: fixed;
     top: 8px;
     right: 12px;
-    font-size: 10px;
+    font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
-    color: #666;
+    color: #888;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     pointer-events: none;
     z-index: 100;
 }
 .pulse-dot {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: #4CAF50;
-    box-shadow: 0 0 6px #4CAF50;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+}
+
+@media (min-width: 1920px) {
+    html {
+        font-size: 20px;
+    }
+    .p-name {
+        font-size: 16.5px;
+    }
+    .p-thc {
+        font-size: 16px;
+    }
+    .p-price .regular {
+        font-size: 18px;
+    }
 }

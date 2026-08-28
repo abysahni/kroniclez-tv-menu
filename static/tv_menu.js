@@ -139,28 +139,28 @@ function renderMenuData(res) {
                 <!-- INDICA PRE-ROLLS -->
                 <div class="panel">
                     <div class="title indica">INDICA</div>
-                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC/CBD</div><div class="h-price">Price</div></div>
+                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
                     ${(d.indica.items || []).map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Indica Pre-Rolls</div>'}
                 </div>
 
                 <!-- HYBRID PRE-ROLLS -->
                 <div class="panel">
                     <div class="title hybrid">HYBRID</div>
-                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC/CBD</div><div class="h-price">Price</div></div>
+                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
                     ${(d.hybrid.items || []).map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Hybrid Pre-Rolls</div>'}
                 </div>
 
                 <!-- SATIVA PRE-ROLLS -->
                 <div class="panel">
                     <div class="title sativa">SATIVA</div>
-                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC/CBD</div><div class="h-price">Price</div></div>
+                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
                     ${(d.sativa.items || []).map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Sativa Pre-Rolls</div>'}
                 </div>
 
                 <!-- INFUSED PRE-ROLLS -->
                 <div class="panel">
                     <div class="title infused">INFUSED PRE-ROLLS</div>
-                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC/CBD</div><div class="h-price">Price</div></div>
+                    <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
                     ${infusedHtml || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Infused Pre-Rolls</div>'}
                 </div>
             </div>
