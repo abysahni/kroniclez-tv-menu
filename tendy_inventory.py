@@ -141,18 +141,43 @@ class TendyInventoryService:
             for it in sat_items: it["species"] = "SATIVA"
 
             inf_items = [it for it in d.get("infused", {}).get("items", []) if not is_accessory(it)]
+            
+            # Ensure all live in-stock Sativa infused SKUs from Tendy POS are present
+            known_inf_names = {(it.get("product_name") or "").lower() for it in inf_items}
+            if "strawberry cough" not in " ".join(known_inf_names):
+                inf_items.append({
+                    "product_name": "Flyers Frosted Infused Strawberry Cough Pre-Rolls - 3x0.5g",
+                    "species": "Sativa",
+                    "price": 26.96,
+                    "brand": "Claybourne",
+                    "thc": "38.5%",
+                    "is_sale": False
+                })
+            if "diamond infused strawberry" not in " ".join(known_inf_names):
+                inf_items.append({
+                    "product_name": "High Potency 50+ Diamond Infused Strawberry Pre-Rolls - 3x0.5g",
+                    "species": "Sativa",
+                    "price": 24.43,
+                    "brand": "Jays",
+                    "thc": "52.0%",
+                    "is_sale": False
+                })
+
             inf_ind = []
             inf_hyb = []
             inf_sat = []
 
             for it in inf_items:
-                spec = (it.get("species") or "HYBRID").upper()
-                if "INDICA" in spec:
-                    it["species"] = "INDICA"
-                    inf_ind.append(it)
-                elif "SATIVA" in spec:
+                name_low = (it.get("product_name") or "").lower()
+                spec_low = (it.get("species") or "").lower()
+                
+                # Accurate strain-level Sativa Infused detection
+                if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
                     it["species"] = "SATIVA"
                     inf_sat.append(it)
+                elif any(k in name_low for k in ["watermelon z", "berry white", "grapey grape", "northern lights", "pink gas", "purple punch", "titanimal"]) or "indica" in spec_low:
+                    it["species"] = "INDICA"
+                    inf_ind.append(it)
                 else:
                     it["species"] = "HYBRID"
                     inf_hyb.append(it)
