@@ -22,13 +22,19 @@ def get_toronto_now() -> datetime:
 
 def is_accessory(it: Dict[str, Any]) -> bool:
     """Filter out non-cannabis accessories (batteries, papers, lighters, grinders)."""
-    cat = (it.get("category") or it.get("category_name") or it.get("categoryName") or "").lower()
-    name = (it.get("product_name") or it.get("name") or "").lower()
+    raw_cat = it.get("category") or it.get("category_name") or it.get("categoryName") or ""
+    if isinstance(raw_cat, dict):
+        cat = str(raw_cat.get("name") or "").lower()
+    else:
+        cat = str(raw_cat).lower()
+        
+    raw_name = it.get("product_name") or it.get("name") or ""
+    name = str(raw_name).lower()
     
     if any(k in cat for k in [
-        "accessory", "accessories", "paper", "lighter", "battery", "batteries",
+        "accessory", "accessories", "paper", "lighter", "lighers", "battery", "batteries",
         "grinder", "device", "glass", "pipe", "tray", "cleaning", "merchandise",
-        "apparel", "gear", "vape battery"
+        "apparel", "gear", "vape battery", "bongs", "scale", "cone"
     ]):
         return True
         
