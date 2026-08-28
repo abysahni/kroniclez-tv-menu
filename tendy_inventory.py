@@ -45,7 +45,194 @@ def is_accessory(it: Dict[str, Any]) -> bool:
     ]):
         return True
         
-    return False
+STRAIN_DATABASE_PREROLL = {
+    # INDICA
+    "cali kush": "INDICA",
+    "pink rozay": "INDICA",
+    "blueberry": "INDICA",
+    "zombie kush": "INDICA",
+    "strawberry pie": "INDICA",
+    "permanent marker": "INDICA",
+    "sour kush": "INDICA",
+    "pineapple nuken": "INDICA",
+    "pink drip": "INDICA",
+    "kush cookies": "INDICA",
+    "frozen grapes": "INDICA",
+    "couch potato": "INDICA",
+    "triangle kush": "INDICA",
+    "pink moon": "INDICA",
+    "cherry boat": "INDICA",
+    "10th planet": "INDICA",
+    "uk cheddar cheese": "INDICA",
+    "pink kush": "INDICA",
+    "blue magic": "INDICA",
+    "wedding cake": "INDICA",
+    "indica pre-roll": "INDICA",
+    "roll up indica": "INDICA",
+    "lil buddy indica": "INDICA",
+
+    # SATIVA
+    "maui wowie": "SATIVA",
+    "lil buddy sativa": "SATIVA",
+    "panama gold": "SATIVA",
+    "tropical pocket puffs": "SATIVA",
+    "diesel pocket puffs": "SATIVA",
+    "sativa pre-roll": "SATIVA",
+    "pineapple express": "SATIVA",
+    "lavender haze": "SATIVA",
+    "peggys puff": "SATIVA",
+    "blueberry dream": "SATIVA",
+    "zsweet": "SATIVA",
+    "rooster call": "SATIVA",
+    "sgt. pineapple": "SATIVA",
+    "roll up sativa": "SATIVA",
+    "fruit loopz": "SATIVA",
+    "animal face": "SATIVA",
+    "crumbled lime": "SATIVA",
+    "lemon shocker": "SATIVA",
+    "bahama berry": "SATIVA",
+    "lemon diesel": "SATIVA",
+    "sour chem": "SATIVA",
+    "plg #7": "SATIVA",
+    "pink lemon gas": "SATIVA",
+
+    # HYBRID & BLENDS
+    "liquid imagination": "HYBRID",
+    "billy blunt": "HYBRID",
+    "juicy blunt": "HYBRID",
+    "dutchy blunt": "HYBRID",
+    "forbidden applez": "HYBRID",
+    "twofer": "HYBRID",
+    "opp sativa - indica": "HYBRID",
+    "junior j": "HYBRID",
+    "animal mintz": "HYBRID",
+    "animal rntz": "HYBRID",
+    "double dutchies": "HYBRID",
+    "grape diamonds": "HYBRID",
+    "fruit punch slims": "HYBRID",
+    "rolls pre-roll": "HYBRID"
+}
+
+def classify_preroll(name: str, brand: str = "") -> str:
+    full = f"{brand} {name}".lower()
+    for pattern, species in STRAIN_DATABASE_PREROLL.items():
+        if pattern in full:
+            return species
+    if "sativa" in full: return "SATIVA"
+    if "indica" in full: return "INDICA"
+STRAIN_DATABASE_FLOWER = {
+    # INDICA
+    "blueberry muffinz": "INDICA",
+    "couch potato": "INDICA",
+    "gmo cookies": "INDICA",
+    "kush cookies": "INDICA",
+    "purple cherry punch": "INDICA",
+    "cali kush": "INDICA",
+    "cropped blueberry": "INDICA",
+    "sapphire kush": "INDICA",
+    "strawberry pie": "INDICA",
+    "pure milled - indica": "INDICA",
+    "pure milled indica": "INDICA",
+    "pop n’ pour blue raspberry": "INDICA",
+    "pop n pour blue raspberry": "INDICA",
+
+    # SATIVA
+    "cosmic lemonade": "SATIVA",
+    "frosted lemons": "SATIVA",
+    "ripped sativa": "SATIVA",
+    "rooster call": "SATIVA",
+    "sour chem": "SATIVA",
+    "strawberry cheezequake": "SATIVA",
+    "tutti frutti crunchy puff": "SATIVA",
+    "citrus sweet": "SATIVA",
+    "lemon pave": "SATIVA",
+    "maui wowie": "SATIVA",
+    "pure milled - sativa": "SATIVA",
+    "pure milled sativa": "SATIVA",
+    "pop n’ pour strawnana": "SATIVA",
+    "pop n pour strawnana": "SATIVA",
+
+    # HYBRID
+    "chromatica": "HYBRID",
+    "chubby nuggies": "HYBRID",
+    "farmer’s market": "HYBRID",
+    "farmers market": "HYBRID",
+    "frosted cream puffs": "HYBRID",
+    "moon drifter": "HYBRID",
+    "secret formula": "HYBRID",
+    "the goods": "HYBRID",
+    "the handy harvest": "HYBRID",
+    "do-si-dos": "HYBRID",
+    "sgt. pineapple": "HYBRID",
+    "dragon cake": "HYBRID"
+}
+
+def classify_flower(name: str, brand: str = "") -> str:
+    full = f"{brand} {name}".lower()
+    for pattern, species in STRAIN_DATABASE_FLOWER.items():
+        if pattern in full:
+            return species
+    if "sativa" in full: return "SATIVA"
+    if "indica" in full: return "INDICA"
+    return "HYBRID"
+
+STRAIN_DATABASE_VAPE = {
+    # INDICA
+    "blue razz": "INDICA",
+    "blue venom": "INDICA",
+    "blueberry kush": "INDICA",
+    "cherry liquid diamond": "INDICA",
+    "blue zello": "INDICA",
+    "hawaiian za": "INDICA",
+    "jungle fruit": "INDICA",
+    "lemon freeze": "INDICA",
+    "blood orange tangie": "INDICA",
+    "tiger blood": "INDICA",
+    "watermelon splash": "INDICA",
+    "wild berry": "INDICA",
+    "fruit punch bowl": "INDICA",
+    "mango fuzz": "INDICA",
+    "watermelon ice": "INDICA",
+
+    # HYBRID
+    "banana og": "HYBRID",
+    "fruity gobstomper": "HYBRID",
+    "fruity gobbstomper": "HYBRID",
+    "blueberry octane": "HYBRID",
+    "macchiato gold": "HYBRID",
+    "strawberry banana": "HYBRID",
+    "ninja fruit": "HYBRID",
+    "poppin peach": "HYBRID",
+    "alien og": "HYBRID",
+    "kush mint": "HYBRID",
+    "lemonade classic": "HYBRID",
+
+    # SATIVA
+    "acapulco gold": "SATIVA",
+    "blue kiwi": "SATIVA",
+    "cloudberry": "SATIVA",
+    "strawberry": "SATIVA",
+    "pink grapefruit": "SATIVA",
+    "mango sour": "SATIVA",
+    "mosa x blood orange": "SATIVA",
+    "peach shockwave": "SATIVA",
+    "sticky grape": "SATIVA",
+    "strawberry lemonade": "SATIVA",
+    "blue daze": "SATIVA",
+    "pineapple paradise": "SATIVA",
+    "peach lemonade": "SATIVA",
+    "rainbow melon": "SATIVA",
+    "sunset sherb": "SATIVA"
+}
+
+def classify_vape(name: str, brand: str = "") -> str:
+    full = f"{brand} {name}".lower()
+    for pattern, species in STRAIN_DATABASE_VAPE.items():
+        if pattern in full:
+            return species
+    if "sativa" in full: return "SATIVA"
+    if "indica" in full: return "INDICA"
+    return "HYBRID"
 
 class TendyInventoryService:
     """Production inventory service fetching, caching, and categorizing live items from Tendy POS."""
@@ -313,15 +500,13 @@ class TendyInventoryService:
                 inf_items.append(entry)
 
             elif "Pre-Rolls" in cat:
-                name_low = name.lower()
-                if any(k in name_low for k in ["sativa", "lemon", "haze", "sour diesel", "jack", "tropic", "sunshine", "carmel", "animal face"]):
-                    entry["species"] = "SATIVA"
-                    sat_items.append(entry)
-                elif any(k in name_low for k in ["indica", "kush", "pink", "purple", "gmo", "black mountain", "gas", "comatose", "grape"]):
-                    entry["species"] = "INDICA"
+                spec = classify_preroll(name, brand)
+                entry["species"] = spec
+                if spec == "INDICA":
                     ind_items.append(entry)
+                elif spec == "SATIVA":
+                    sat_items.append(entry)
                 else:
-                    entry["species"] = "HYBRID"
                     hyb_items.append(entry)
 
         result = {
@@ -449,38 +634,33 @@ class TendyInventoryService:
             if "Flower" in cat or "Dried" in cat or "Milled" in cat:
                 n_low = name.lower()
                 is_mil = "milled" in cat.lower() or "milled" in n_low
-                if any(k in n_low for k in ["sativa", "lemon", "haze", "sour", "rooster", "cosmic", "cheezequake", "citrus"]):
-                    entry["species"] = "SATIVA"
+                spec = classify_flower(name, brand)
+                entry["species"] = spec
+                if spec == "SATIVA":
                     (sat_mil if is_mil else sat_dr).append(entry)
-                elif any(k in n_low for k in ["indica", "couch", "cookies", "gmo", "muffinz", "blueberry", "kush", "cali"]):
-                    entry["species"] = "INDICA"
+                elif spec == "INDICA":
                     (ind_mil if is_mil else ind_dr).append(entry)
                 else:
-                    entry["species"] = "HYBRID"
                     (hyb_mil if is_mil else hyb_dr).append(entry)
 
             elif "510 Cartridges" in cat:
-                n_low = name.lower()
-                if any(k in n_low for k in ["sativa", "acapulco", "lemonade", "mango", "strawberry", "grapefruit", "shockwave"]):
-                    entry["species"] = "SATIVA"
+                spec = classify_vape(name, brand)
+                entry["species"] = spec
+                if spec == "SATIVA":
                     v510_sat.append(entry)
-                elif any(k in n_low for k in ["indica", "kush", "berry", "cherry", "tiger", "watermelon", "blood orange", "freeze"]):
-                    entry["species"] = "INDICA"
+                elif spec == "INDICA":
                     v510_ind.append(entry)
                 else:
-                    entry["species"] = "HYBRID"
                     v510_hyb.append(entry)
 
             elif "Disposable Vapes" in cat:
-                n_low = name.lower()
-                if any(k in n_low for k in ["sativa", "daze", "pineapple", "peach", "rainbow", "sunset"]):
-                    entry["species"] = "SATIVA"
+                spec = classify_vape(name, brand)
+                entry["species"] = spec
+                if spec == "SATIVA":
                     disp_sat.append(entry)
-                elif any(k in n_low for k in ["indica", "punch", "mango", "watermelon"]):
-                    entry["species"] = "INDICA"
+                elif spec == "INDICA":
                     disp_ind.append(entry)
                 else:
-                    entry["species"] = "HYBRID"
                     disp_hyb.append(entry)
 
         total_items = len(ind_dr) + len(ind_mil) + len(hyb_dr) + len(hyb_mil) + len(sat_dr) + len(sat_mil) + len(v510_ind) + len(v510_hyb) + len(v510_sat) + len(disp_ind) + len(disp_hyb) + len(disp_sat)
