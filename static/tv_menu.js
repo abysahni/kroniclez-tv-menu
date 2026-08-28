@@ -403,8 +403,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     showNav();
 
-    // 1. If preloaded state exists, render immediately with zero delay
-    if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.success) {
+    // 1. If preloaded state exists and has products, render immediately
+    if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.success && window.__INITIAL_MENU_DATA__.total_in_stock > 0) {
         renderMenuData(window.__INITIAL_MENU_DATA__);
     } else {
         fetchLiveMenu(currentScreenId, currentStoreId);
