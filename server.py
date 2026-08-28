@@ -110,6 +110,16 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
         elif path == "/api/health" or path == "/healthz":
             self._send_json({"status": "ok", "service": "kroniclez-tv-menu", "store": config.STORE_NAME})
 
+        elif path == "/api/debug":
+            raw = inventory_service.fetch_tendy_raw_inventory()
+            feed1 = inventory_service.fetch_teamhub_screen_feed(1)
+            self._send_json({
+                "raw_count": len(raw),
+                "has_scoped_token": bool(inventory_service._scoped_token),
+                "feed1_ok": bool(feed1 and feed1.get("success")),
+                "screen1": inventory_service.get_screen_1_prerolls()
+            })
+
         elif path == "/api/config":
             self._send_json({
                 "store_name": config.STORE_NAME,
