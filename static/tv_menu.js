@@ -281,12 +281,13 @@ function renderMenuData(res) {
         
         const gSat = (d.gummies_sativa && d.gummies_sativa.items) || [];
         const chocolates = (d.chocolates && d.chocolates.items) || [];
-        const col3EdiblesTotal = gSat.length + chocolates.length;
+        const wellness = (d.wellness && d.wellness.items) || [];
+        const col3Total = gSat.length + chocolates.length + wellness.length;
 
-        const col3EdiblesHtml = `
+        const col3UnifiedHtml = `
             <div class="soft-card card-pink">
-                <div class="card-head-title">SOFT CHEWS & CHOCOLATES <span class="title-count">(${col3EdiblesTotal})</span></div>
-                <div class="card-head-sub">SATIVA GUMMIES • ARTISAN CHOCOLATES</div>
+                <div class="card-head-title">SATIVA CHEWS, CHOCOLATE & WELLNESS <span class="title-count">(${col3Total})</span></div>
+                <div class="card-head-sub">SATIVA GUMMIES • ARTISAN CHOCOLATES • DROPS & CAPSULES</div>
                 <div class="table-header-soft">
                     <div>PRODUCT</div>
                     <div style="text-align:center;">STRAIN</div>
@@ -295,12 +296,16 @@ function renderMenuData(res) {
                     <div style="text-align:right;">PRICE</div>
                 </div>
                 ${gSat.length > 0 ? `
-                    <div class="subhead" style="color:#f472b6; margin: 4px 0 2px; font-size:12px;"><span><i class="bi bi-circle-fill" style="font-size:8px;"></i> Sativa Soft Chews</span> <span style="font-size:11px; color:#888;">${gSat.length} SKUs</span></div>
+                    <div class="subhead" style="color:#f472b6; margin: 3px 0 1px; font-size:11px;"><span><i class="bi bi-circle-fill" style="font-size:7px;"></i> Sativa Soft Chews</span> <span style="font-size:10px; color:#888;">${gSat.length} SKUs</span></div>
                     ${gSat.map(it => renderSoftRow(it)).join('')}
                 ` : ''}
                 ${chocolates.length > 0 ? `
-                    <div class="subhead" style="color:#fb923c; margin: 8px 0 2px; font-size:12px;"><span><i class="bi bi-box2-heart" style="font-size:11px;"></i> Artisan Chocolates</span> <span style="font-size:11px; color:#888;">${chocolates.length} SKUs</span></div>
+                    <div class="subhead" style="color:#fb923c; margin: 4px 0 1px; font-size:11px;"><span><i class="bi bi-box2-heart" style="font-size:10px;"></i> Artisan Chocolates</span> <span style="font-size:10px; color:#888;">${chocolates.length} SKUs</span></div>
                     ${chocolates.map(it => renderSoftRow(it)).join('')}
+                ` : ''}
+                ${wellness.length > 0 ? `
+                    <div class="subhead" style="color:#c084fc; margin: 4px 0 1px; font-size:11px;"><span><i class="bi bi-capsule" style="font-size:10px;"></i> Oils, Drops & Wellness</span> <span style="font-size:10px; color:#888;">${wellness.length} SKU</span></div>
+                    ${wellness.map(it => renderSoftRow(it)).join('')}
                 ` : ''}
             </div>
         `;
@@ -318,10 +323,9 @@ function renderMenuData(res) {
                     ${renderSoftCard('gummies_ind_hyb', d)}
                 </div>
 
-                <!-- COLUMN 3: SATIVA SOFT CHEWS + ARTISAN CHOCOLATES + OILS/WELLNESS -->
+                <!-- COLUMN 3: SATIVA SOFT CHEWS + ARTISAN CHOCOLATES + WELLNESS -->
                 <div class="column-deck">
-                    ${col3EdiblesHtml}
-                    ${renderSoftCard('wellness', d)}
+                    ${col3UnifiedHtml}
                 </div>
             </div>
         `;

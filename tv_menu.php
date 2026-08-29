@@ -650,12 +650,12 @@ body {
 /* Soft Chews Product Row (Screen 3) */
 .soft-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 52px 42px 38px 66px;
-    column-gap: 4px;
+    grid-template-columns: minmax(0, 1fr) 50px 40px 36px 64px;
+    column-gap: 3px;
     align-items: center;
-    padding: 2.0px 1px;
+    padding: 1.4px 1px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 12.5px;
+    font-size: 12px;
 }
 
 .soft-row:last-child { border-bottom: none; }
@@ -669,14 +669,14 @@ body {
     overflow-wrap: break-word !important;
     color: #ffffff;
     font-weight: 700;
-    font-size: 13px;
-    line-height: 1.2;
-    padding-right: 4px;
+    font-size: 12px;
+    line-height: 1.15;
+    padding-right: 3px;
 }
 
 .soft-meta {
     text-align: center;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
     white-space: nowrap;
 }
@@ -688,7 +688,7 @@ body {
     text-align: center;
     color: #4ade80;
     font-weight: 800;
-    font-size: 13px;
+    font-size: 12px;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
 }
@@ -696,7 +696,7 @@ body {
 .soft-cbd {
     text-align: center;
     color: #cbd5e1;
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
