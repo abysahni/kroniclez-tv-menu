@@ -1,0 +1,83 @@
+{
+  "active_rules_description": "Kroniclez Multi-Promotion Schedule & Rules Engine",
+  "promotions": [
+    {
+      "id": "daily_happy_hour",
+      "name": "Daily Happy Hour (1PM - 4PM)",
+      "enabled": true,
+      "schedule_type": "time_window",
+      "start_time": "13:00",
+      "end_time": "16:00",
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "discount_percent": 10,
+      "categories": [
+        "Infused Pre-Rolls",
+        "Dried Flower",
+        "Milled Flower",
+        "510 Cartridges",
+        "Disposable Vapes",
+        "Concentrates & Extracts"
+      ],
+      "brands": [],
+      "excluded_keywords": ["sapphire kush", "dragon cake"]
+    },
+    {
+      "id": "munchie_monday",
+      "name": "Munchie Monday (Edibles & Beverages)",
+      "enabled": false,
+      "schedule_type": "all_day",
+      "days": ["Monday"],
+      "discount_percent": 10,
+      "categories": [
+        "Soft Chews",
+        "Edibles",
+        "Chocolates",
+        "Infused Beverages"
+      ],
+      "brands": [],
+      "excluded_keywords": []
+    },
+    {
+      "id": "terp_tuesday",
+      "name": "Terp Tuesday (Vapes & Concentrates)",
+      "enabled": false,
+      "schedule_type": "all_day",
+      "days": ["Tuesday"],
+      "discount_percent": 10,
+      "categories": [
+        "510 Cartridges",
+        "Disposable Vapes",
+        "Concentrates & Extracts"
+      ],
+      "brands": [],
+      "excluded_keywords": []
+    },
+    {
+      "id": "flower_friday",
+      "name": "Flower Friday (Dried & Milled Flower)",
+      "enabled": false,
+      "schedule_type": "all_day",
+      "days": ["Friday"],
+      "discount_percent": 10,
+      "categories": [
+        "Dried Flower",
+        "Milled Flower"
+      ],
+      "brands": [],
+      "excluded_keywords": []
+    },
+    {
+      "id": "always_on_infused",
+      "name": "Always-On Infused Deals",
+      "enabled": false,
+      "schedule_type": "all_day",
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "discount_percent": 10,
+      "categories": [
+        "Infused Pre-Rolls"
+      ],
+      "brands": [],
+      "excluded_keywords": []
+    }
+  ]
+}

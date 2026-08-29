@@ -117,6 +117,16 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             results = agent.run_full_audit()
             self._send_json({"success": True, **results})
 
+        elif path in ["/api/promotions", "/promotions"]:
+            from promotion_engine import promotion_engine, get_toronto_now
+            now = get_toronto_now()
+            self._send_json({
+                "success": True,
+                "current_time": now.strftime("%I:%M:%S %p %Z"),
+                "current_day": now.strftime("%A"),
+                "promotions": promotion_engine.get_all_promotions()
+            })
+
         elif path == "/api/debug":
             raw = inventory_service.fetch_tendy_raw_inventory()
             feed1 = inventory_service.fetch_teamhub_screen_feed(1)

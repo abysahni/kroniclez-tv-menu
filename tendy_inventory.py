@@ -15,6 +15,7 @@ except ImportError:
     TORONTO_TZ = timezone(timedelta(hours=-4))
 
 import config
+from promotion_engine import promotion_engine
 
 def get_toronto_now() -> datetime:
     """Return current timestamp strictly in America/Toronto timezone."""
@@ -799,17 +800,17 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=1)
             potency = lookup_authentic_potency(name, brand, screen_id=1)
             sale_p = float(price or 0.0)
-            is_promo = is_happy_hour_active() and ("infused" in cat.lower() or "infused" in name.lower())
-            old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
+            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
-                "old_price": old_p,
+                "old_price": promo_res["old_price"],
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": is_promo
+                "is_sale": promo_res["is_sale"],
+                "promo_name": promo_res.get("promo_name")
             }
 
             if "Infused Pre-Rolls" in cat or "infused" in name.lower():
@@ -981,18 +982,17 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=2)
             potency = lookup_authentic_potency(name, brand, screen_id=2)
             sale_p = float(price or 0.0)
-            n_low = name.lower()
-            is_promo = is_happy_hour_active() and not ("sapphire kush" in n_low or "dragon cake" in n_low)
-            old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
+            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
-                "old_price": old_p,
+                "old_price": promo_res["old_price"],
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": is_promo
+                "is_sale": promo_res["is_sale"],
+                "promo_name": promo_res.get("promo_name")
             }
 
             if "Flower" in cat or "Dried" in cat or "Milled" in cat:
@@ -1174,17 +1174,17 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
             sale_p = float(price or 0.0)
-            is_promo = is_happy_hour_active() and (any(k in cat_low for k in ["concentrate", "extract", "rosin", "shatter", "topical", "oil", "capsule", "wellness"]) or any(k in name_low for k in ["shatter", "rosin", "diamonds", "moonrocks", "cbd cream"]))
-            old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
+            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
-                "old_price": old_p,
+                "old_price": promo_res["old_price"],
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1mg"),
-                "is_sale": is_promo
+                "is_sale": promo_res["is_sale"],
+                "promo_name": promo_res.get("promo_name")
             }
 
             if "chocolate" in cat_low or "chocolate" in name_low or "bhang" in full_low or "chowie" in full_low:
