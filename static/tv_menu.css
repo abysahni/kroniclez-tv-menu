@@ -461,6 +461,16 @@ body {
     vertical-align: middle;
 }
 
+/* Crimson Row Tint & Neon Red Accent Bar for Featured Items */
+.p-row.row-featured, .soft-row.row-featured {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.20) 0%, rgba(185, 28, 28, 0.05) 100%) !important;
+    border-left: 3.5px solid #ef4444 !important;
+    border-radius: 3px;
+    padding-left: 4px !important;
+    margin: 1px 0;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.18);
+}
+
 /* Price Styling */
 .p-price {
     display: flex;

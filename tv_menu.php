@@ -913,6 +913,7 @@ body {
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
 .badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
 .badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
+.p-row.row-featured, .soft-row.row-featured { background: linear-gradient(90deg, rgba(239, 68, 68, 0.20) 0%, rgba(185, 28, 28, 0.05) 100%) !important; border-left: 3.5px solid #ef4444 !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(239, 68, 68, 0.18); }
 .badge-cbn { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(147, 51, 234, 0.25); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.5); display: inline-block; vertical-align: middle; }
 .badge-cbg { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(14, 165, 233, 0.25); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.5); display: inline-block; vertical-align: middle; }
 .badge-cbd { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.5); display: inline-block; vertical-align: middle; }
@@ -920,6 +921,7 @@ body {
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
 .badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
 .badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
+.p-row.row-featured, .soft-row.row-featured { background: linear-gradient(90deg, rgba(239, 68, 68, 0.20) 0%, rgba(185, 28, 28, 0.05) 100%) !important; border-left: 3.5px solid #ef4444 !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(239, 68, 68, 0.18); }
 
 /* ========================================================================== */
 /* FLOATING CONTROLS & STATUS                                                 */
@@ -1127,7 +1129,7 @@ body {
                 : `<span class="regular">${formatCAD(it.price)}</span>`;
 
             return `
-                <div class="p-row">
+                <div class="p-row ${(it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? 'row-featured' : ''}">
                     <div class="p-name">${badge}${it.product_name || ''}</div>
                     <div class="p-thc">${it.thc || '28%'}</div>
                     <div class="p-price">${priceHtml}</div>
@@ -1166,7 +1168,7 @@ body {
                 : `<span class="regular">${formatCAD(it.price)}</span>`;
 
             return `
-                <div class="soft-row">
+                <div class="soft-row ${(it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? 'row-featured' : ''}">
                     <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
                     <div class="soft-meta ${metaClass}">${metaText}</div>
                     <div class="soft-thc">${it.thc || '10mg'}</div>

@@ -60,8 +60,11 @@ function renderRowHtml(it, showStrainBadge = false) {
         priceHtml = `<span class="regular">${formatCAD(it.price)}</span>`;
     }
 
+    const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
+    const featuredClass = isFeatured ? 'row-featured' : '';
+
     return `
-        <div class="p-row">
+        <div class="p-row ${featuredClass}">
             <div class="p-name">${badge}${pName}${tagBadge}${stockBadge}</div>
             <div class="p-thc">${thc}</div>
             <div class="p-price">${priceHtml}</div>
@@ -113,8 +116,11 @@ function renderSoftRow(it) {
         priceHtml = `<span class="regular">${formatCAD(it.price)}</span>`;
     }
 
+    const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
+    const featuredClass = isFeatured ? 'row-featured' : '';
+
     return `
-        <div class="soft-row">
+        <div class="soft-row ${featuredClass}">
             <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>
