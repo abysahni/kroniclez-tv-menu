@@ -492,14 +492,14 @@ body {
     background: #0d1217;
     border: 1px solid #1c2a36;
     border-radius: 8px;
-    padding: 6px 8px;
+    padding: 5px 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     width: 100%;
 }
 
 .card-head-title {
     text-align: center;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.1;
     font-weight: 900;
     text-transform: uppercase;
@@ -510,11 +510,11 @@ body {
 .card-head-sub {
     text-align: center;
     color: #a0a0a0;
-    font-size: 9.5px;
+    font-size: 9px;
     line-height: 1;
     font-weight: 800;
     letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     text-transform: uppercase;
 }
 
@@ -653,9 +653,9 @@ body {
     grid-template-columns: minmax(0, 1fr) 52px 42px 38px 66px;
     column-gap: 4px;
     align-items: center;
-    padding: 2.8px 1px;
+    padding: 2.0px 1px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 13px;
+    font-size: 12.5px;
 }
 
 .soft-row:last-child { border-bottom: none; }
