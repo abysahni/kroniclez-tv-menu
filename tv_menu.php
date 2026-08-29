@@ -641,10 +641,45 @@ body {
 .p-thc {
     text-align: right;
     color: #4ade80;
-    font-size: 12px;
-    font-weight: 800;
-    white-space: nowrap;
     font-family: 'JetBrains Mono', monospace;
+}
+
+/* Screen 1 Enhanced Typography & Visibility (Pre-Rolls) */
+.container-prerolls .p-row {
+    padding: 1.8px 0;
+}
+.container-prerolls .p-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.18;
+}
+.container-prerolls .p-thc {
+    font-size: 13px;
+    font-weight: 800;
+}
+.container-prerolls .p-price .regular {
+    font-size: 14px;
+    font-weight: 900;
+}
+.container-prerolls .p-price .sale {
+    font-size: 14.5px;
+    font-weight: 900;
+}
+.container-prerolls .title {
+    font-size: 17px;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+}
+.container-prerolls .subhead {
+    font-size: 11.5px;
+    margin: 3px 0 1.5px;
+}
+.container-prerolls .table-header {
+    font-size: 9.5px;
+    margin: 1.5px 0;
+}
+.container-prerolls .panel {
+    padding: 5px 7px;
 }
 
 /* Screen 2 Targeted Micro-Adjustment (Indica & Hybrid Flower Column Fit) */
