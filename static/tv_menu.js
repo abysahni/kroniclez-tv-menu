@@ -329,34 +329,7 @@ function renderMenuData(res) {
 
     updateNavPills(screen);
     updateSyncStatus(res.updated_at);
-    autoFitToViewport();
 }
-
-// Automatically scale menu container to fit 100% within TV screen height
-function autoFitToViewport() {
-    const mount = document.getElementById('menuMount');
-    if (!mount) return;
-
-    mount.style.transform = 'none';
-    mount.style.width = '100%';
-
-    requestAnimationFrame(() => {
-        const availableH = window.innerHeight - 8;
-        const scrollH = mount.scrollHeight;
-
-        if (scrollH > availableH && scrollH > 0 && availableH > 0) {
-            const scale = availableH / scrollH;
-            mount.style.transform = `scale(${scale})`;
-            mount.style.transformOrigin = 'top center';
-            mount.style.width = `${(100 / scale).toFixed(2)}%`;
-        } else {
-            mount.style.transform = 'none';
-            mount.style.width = '100%';
-        }
-    });
-}
-
-window.addEventListener('resize', autoFitToViewport);
 
 // Fetch live menu from API strictly for current TV's dedicated screen
 function fetchLiveMenu(screenId, storeId) {
