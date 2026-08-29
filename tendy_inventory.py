@@ -793,7 +793,8 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=1)
             potency = lookup_authentic_potency(name, brand, screen_id=1)
             sale_p = float(price or 0.0)
-            old_p = round(sale_p / 0.90, 2) if sale_p > 0 else 0.0
+            is_promo = ("infused" in cat.lower() or "infused" in name.lower())
+            old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
@@ -802,7 +803,7 @@ class TendyInventoryService:
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": True
+                "is_sale": is_promo
             }
 
             if "Infused Pre-Rolls" in cat or "infused" in name.lower():
@@ -974,7 +975,9 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=2)
             potency = lookup_authentic_potency(name, brand, screen_id=2)
             sale_p = float(price or 0.0)
-            old_p = round(sale_p / 0.90, 2) if sale_p > 0 else 0.0
+            n_low = name.lower()
+            is_promo = not ("sapphire kush" in n_low or "dragon cake" in n_low)
+            old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
@@ -983,7 +986,7 @@ class TendyInventoryService:
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": True
+                "is_sale": is_promo
             }
 
             if "Flower" in cat or "Dried" in cat or "Milled" in cat:
@@ -1155,7 +1158,10 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
             sale_p = float(price or 0.0)
-            old_p = round(sale_p / 0.90, 2) if sale_p > 0 else 0.0
+            n_low = name.lower()
+            c_low = cat.lower()
+            is_promo = any(k in c_low for k in ["concentrate", "extract", "rosin", "shatter", "topical", "oil", "capsule", "wellness"]) or any(k in n_low for k in ["shatter", "rosin", "diamonds", "moonrocks", "cbd cream"])
+            old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
@@ -1164,7 +1170,7 @@ class TendyInventoryService:
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1mg"),
-                "is_sale": True
+                "is_sale": is_promo
             }
 
             if "Soft Chews" in cat or "gummy" in name.lower() or "chew" in name.lower():
