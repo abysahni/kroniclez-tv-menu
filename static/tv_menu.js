@@ -337,14 +337,28 @@ function fetchLiveMenu(screenId, storeId) {
     const stId = storeId || currentStoreId;
 
     fetch(`/api/tv-menu?screen=${sId}&store=${stId}`)
-        .then(r => r.json())
+        .then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return r.json();
+        })
         .then(res => {
             if (res.success) {
                 renderMenuData(res);
+                try {
+                    localStorage.setItem(`kroniclez_tv_cache_${sId}`, JSON.stringify(res));
+                } catch (e) {}
             }
         })
         .catch(err => {
-            console.error("TV Menu fetch error:", err);
+            console.warn("TV Menu live fetch hiccup, falling back to cache:", err);
+            try {
+                const cached = localStorage.getItem(`kroniclez_tv_cache_${sId}`);
+                if (cached) {
+                    renderMenuData(JSON.parse(cached));
+                }
+            } catch (e) {}
+            // Retry in 4 seconds if disconnected
+            setTimeout(() => fetchLiveMenu(sId, stId), 4000);
         });
 }
 
@@ -414,10 +428,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
     showNav();
 
-    // Render immediately if pre-injected data matches current screen
+    // 1. Render immediately if pre-injected data exists
     if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.success && window.__INITIAL_MENU_DATA__.screen === currentScreenId && window.__INITIAL_MENU_DATA__.total_in_stock > 0) {
         renderMenuData(window.__INITIAL_MENU_DATA__);
+        try {
+            localStorage.setItem(`kroniclez_tv_cache_${currentScreenId}`, JSON.stringify(window.__INITIAL_MENU_DATA__));
+        } catch (e) {}
     } else {
+        // 2. Instant cache recovery from localStorage
+        try {
+            const cached = localStorage.getItem(`kroniclez_tv_cache_${currentScreenId}`);
+            if (cached) {
+                renderMenuData(JSON.parse(cached));
+            }
+        } catch (e) {}
         fetchLiveMenu(currentScreenId, currentStoreId);
     }
 

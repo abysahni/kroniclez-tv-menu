@@ -197,17 +197,21 @@ window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, **initial_screen_da
         self.wfile.write(body)
 
 def background_keepalive_worker():
-    """Ping health endpoint periodically to keep cloud dyno awake."""
+    """Ping health endpoint every 3 minutes to keep Render container warm and 100% awake."""
     while True:
-        time.sleep(480)
-        render_url = os.getenv("RENDER_EXTERNAL_URL")
-        target = f"{render_url}/api/health" if render_url else f"http://127.0.0.1:{config.PORT}/api/health"
+        time.sleep(180)
+        target = "https://kroniclez-tv-menu.onrender.com/api/health"
         try:
-            req = urllib.request.Request(target, headers={"User-Agent": "KroniclezTVMenu-KeepAlive/1.0"})
-            with urllib.request.urlopen(req, timeout=10) as r:
+            req = urllib.request.Request(target, headers={"User-Agent": "KroniclezTVMenu-KeepAlive/2.0"})
+            with urllib.request.urlopen(req, timeout=12) as r:
                 pass
         except Exception:
-            pass
+            try:
+                local_req = urllib.request.Request(f"http://127.0.0.1:{config.PORT}/api/health")
+                with urllib.request.urlopen(local_req, timeout=5) as r:
+                    pass
+            except Exception:
+                pass
 
 def background_audit_worker():
     """Autonomous audit agent worker: runs on startup and every 15 minutes."""
