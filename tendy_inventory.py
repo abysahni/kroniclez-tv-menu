@@ -26,6 +26,44 @@ def is_happy_hour_active() -> bool:
     now_toronto = get_toronto_now()
     return 13 <= now_toronto.hour < 16
 
+def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, Any]:
+    """
+    Computes active price and original price.
+    Automatically detects if product was manually set on sale in Tendy POS (Sale Price < Regular Price calculated from Cost & Markup),
+    or if an active multi-promotion rule applies.
+    """
+    pricing = it.get("productPricing") or {}
+    cost = float(pricing.get("cost") or 0.0)
+    markup = float(pricing.get("markup") or 0.0)
+    sale_p = float(pricing.get("sale_price") or 0.0)
+    name = it.get("name", "")
+    cat = (it.get("category") or {}).get("name", "")
+    brand = (it.get("brand") or {}).get("name", "")
+
+    # Calculate Tendy POS Regular Price from Cost & Markup
+    if cost > 0 and markup > 0:
+        reg_p = round(cost * (1.0 + (markup / 100.0)), 2)
+    else:
+        reg_p = sale_p
+
+    # Check 1: Manual Discount in Tendy POS (Sale Price < Regular Price)
+    if reg_p > sale_p and (reg_p - sale_p) >= 0.05:
+        return {
+            "price": sale_p,
+            "old_price": reg_p,
+            "is_sale": True,
+            "promo_name": "Tendy POS Special Price"
+        }
+
+    # Check 2: Scheduled Multi-Promotion Engine
+    promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
+    return {
+        "price": sale_p,
+        "old_price": promo_res.get("old_price"),
+        "is_sale": promo_res.get("is_sale", False),
+        "promo_name": promo_res.get("promo_name")
+    }
+
 def is_accessory(it: Dict[str, Any]) -> bool:
     """Filter out non-cannabis accessories (batteries, papers, lighters, grinders)."""
     raw_cat = it.get("category") or it.get("category_name") or it.get("categoryName") or ""
@@ -796,21 +834,20 @@ class TendyInventoryService:
             stock = pricing.get("stock", 0)
             brand = (it.get("brand") or {}).get("name", "")
             var = it.get("variantName", "")
+            
             p_title = clean_product_title(name, brand, var, screen_id=1)
             potency = lookup_authentic_potency(name, brand, screen_id=1)
-            sale_p = float(price or 0.0)
-            sku_id = str(it.get("id") or it.get("sku") or "")
-            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p, sku_id)
+            pricing_data = compute_item_pricing(it, screen_id=1)
             entry = {
                 "product_name": p_title,
-                "price": sale_p,
-                "old_price": promo_res["old_price"],
+                "price": pricing_data["price"],
+                "old_price": pricing_data["old_price"],
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": promo_res["is_sale"],
-                "promo_name": promo_res.get("promo_name")
+                "is_sale": pricing_data["is_sale"],
+                "promo_name": pricing_data.get("promo_name")
             }
 
             if "Infused Pre-Rolls" in cat or "infused" in name.lower():
@@ -981,19 +1018,17 @@ class TendyInventoryService:
             
             p_title = clean_product_title(name, brand, var, screen_id=2)
             potency = lookup_authentic_potency(name, brand, screen_id=2)
-            sale_p = float(price or 0.0)
-            sku_id = str(it.get("id") or it.get("sku") or "")
-            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p, sku_id)
+            pricing_data = compute_item_pricing(it, screen_id=2)
             entry = {
                 "product_name": p_title,
-                "price": sale_p,
-                "old_price": promo_res["old_price"],
+                "price": pricing_data["price"],
+                "old_price": pricing_data["old_price"],
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": promo_res["is_sale"],
-                "promo_name": promo_res.get("promo_name")
+                "is_sale": pricing_data["is_sale"],
+                "promo_name": pricing_data.get("promo_name")
             }
 
             if "Flower" in cat or "Dried" in cat or "Milled" in cat:
@@ -1174,19 +1209,17 @@ class TendyInventoryService:
 
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
-            sale_p = float(price or 0.0)
-            sku_id = str(it.get("id") or it.get("sku") or "")
-            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p, sku_id)
+            pricing_data = compute_item_pricing(it, screen_id=3)
             entry = {
                 "product_name": p_title,
-                "price": sale_p,
-                "old_price": promo_res["old_price"],
+                "price": pricing_data["price"],
+                "old_price": pricing_data["old_price"],
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1mg"),
-                "is_sale": promo_res["is_sale"],
-                "promo_name": promo_res.get("promo_name")
+                "is_sale": pricing_data["is_sale"],
+                "promo_name": pricing_data.get("promo_name")
             }
 
             if "chocolate" in cat_low or "chocolate" in name_low or "bhang" in full_low or "chowie" in full_low:

@@ -218,8 +218,10 @@ if ($screen === 1) {
         $p_title = cleanTitle($name, $brand, $var, 1);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '28.5%');
         $sku_id = isset($it['id']) ? strval($it['id']) : (isset($it['sku']) ? strval($it['sku']) : '');
-        $reg_p = isset($REGULAR_PRICES[$sku_id]) ? floatval($REGULAR_PRICES[$sku_id]['regular_price'] ?? 0) : null;
-        if ($reg_p && $reg_p > 0 && $price < ($reg_p - 0.05)) {
+        $cost = isset($pricing["cost"]) ? floatval($pricing["cost"]) : 0.0;
+        $markup = isset($pricing["markup"]) ? floatval($pricing["markup"]) : 0.0;
+        $reg_p = ($cost > 0 && $markup > 0) ? round($cost * (1.0 + ($markup / 100.0)), 2) : $price;
+        if ($reg_p > $price && ($reg_p - $price) >= 0.05) {
             $is_promo = true;
             $old_price = $reg_p;
         } else {
