@@ -205,13 +205,15 @@ if ($screen === 1) {
 
         $p_title = cleanTitle($name, $brand, $var, 1);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '28.5%');
+        $old_price = $price > 0 ? round($price / 0.90, 2) : 0.0;
         $entry = [
             'product_name' => $p_title,
             'price' => $price,
+            'old_price' => $old_price,
             'brand' => $brand,
             'thc' => $pot['thc'],
             'cbd' => $pot['cbd'],
-            'is_sale' => false
+            'is_sale' => true
         ];
 
         if (stripos($cat, 'Infused') !== false || stripos($name, 'infused') !== false) {
@@ -259,13 +261,15 @@ if ($screen === 1) {
 
         $p_title = cleanTitle($name, $brand, $var, 2);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '88.0%');
+        $old_price = $price > 0 ? round($price / 0.90, 2) : 0.0;
         $entry = [
             'product_name' => $p_title,
             'price' => $price,
+            'old_price' => $old_price,
             'brand' => $brand,
             'thc' => $pot['thc'],
             'cbd' => $pot['cbd'],
-            'is_sale' => false
+            'is_sale' => true
         ];
 
         if (stripos($cat, 'Dried Flower') !== false || stripos($cat, 'Milled') !== false) {
@@ -331,7 +335,7 @@ if ($screen === 1) {
             'brand' => $brand,
             'thc' => $pot['thc'],
             'cbd' => $pot['cbd'],
-            'is_sale' => false
+            'is_sale' => true
         ];
 
         if (stripos($cat, 'Beverage') !== false || stripos($cat, 'Drink') !== false) {

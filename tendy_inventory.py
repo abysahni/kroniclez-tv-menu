@@ -792,14 +792,17 @@ class TendyInventoryService:
             
             p_title = clean_product_title(name, brand, var, screen_id=1)
             potency = lookup_authentic_potency(name, brand, screen_id=1)
+            sale_p = float(price or 0.0)
+            old_p = round(sale_p / 0.90, 2) if sale_p > 0 else 0.0
             entry = {
                 "product_name": p_title,
-                "price": price,
+                "price": sale_p,
+                "old_price": old_p,
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": False
+                "is_sale": True
             }
 
             if "Infused Pre-Rolls" in cat or "infused" in name.lower():
@@ -970,14 +973,17 @@ class TendyInventoryService:
             
             p_title = clean_product_title(name, brand, var, screen_id=2)
             potency = lookup_authentic_potency(name, brand, screen_id=2)
+            sale_p = float(price or 0.0)
+            old_p = round(sale_p / 0.90, 2) if sale_p > 0 else 0.0
             entry = {
                 "product_name": p_title,
-                "price": price,
+                "price": sale_p,
+                "old_price": old_p,
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
-                "is_sale": False
+                "is_sale": True
             }
 
             if "Flower" in cat or "Dried" in cat or "Milled" in cat:
@@ -1148,14 +1154,17 @@ class TendyInventoryService:
             
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
+            sale_p = float(price or 0.0)
+            old_p = round(sale_p / 0.90, 2) if sale_p > 0 else 0.0
             entry = {
                 "product_name": p_title,
-                "price": price,
+                "price": sale_p,
+                "old_price": old_p,
                 "stock": stock,
                 "brand": brand,
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1mg"),
-                "is_sale": False
+                "is_sale": True
             }
 
             if "Soft Chews" in cat or "gummy" in name.lower() or "chew" in name.lower():
