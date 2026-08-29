@@ -20,6 +20,11 @@ def get_toronto_now() -> datetime:
     """Return current timestamp strictly in America/Toronto timezone."""
     return datetime.now(TORONTO_TZ)
 
+def is_happy_hour_active() -> bool:
+    """Returns True strictly when daily promotion is running between 1:00 PM (13:00) and 4:00 PM (16:00) Toronto time."""
+    now_toronto = get_toronto_now()
+    return 13 <= now_toronto.hour < 16
+
 def is_accessory(it: Dict[str, Any]) -> bool:
     """Filter out non-cannabis accessories (batteries, papers, lighters, grinders)."""
     raw_cat = it.get("category") or it.get("category_name") or it.get("categoryName") or ""
@@ -794,7 +799,7 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=1)
             potency = lookup_authentic_potency(name, brand, screen_id=1)
             sale_p = float(price or 0.0)
-            is_promo = ("infused" in cat.lower() or "infused" in name.lower())
+            is_promo = is_happy_hour_active() and ("infused" in cat.lower() or "infused" in name.lower())
             old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,
@@ -977,7 +982,7 @@ class TendyInventoryService:
             potency = lookup_authentic_potency(name, brand, screen_id=2)
             sale_p = float(price or 0.0)
             n_low = name.lower()
-            is_promo = not ("sapphire kush" in n_low or "dragon cake" in n_low)
+            is_promo = is_happy_hour_active() and not ("sapphire kush" in n_low or "dragon cake" in n_low)
             old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,
@@ -1169,7 +1174,7 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
             sale_p = float(price or 0.0)
-            is_promo = any(k in cat_low for k in ["concentrate", "extract", "rosin", "shatter", "topical", "oil", "capsule", "wellness"]) or any(k in name_low for k in ["shatter", "rosin", "diamonds", "moonrocks", "cbd cream"])
+            is_promo = is_happy_hour_active() and (any(k in cat_low for k in ["concentrate", "extract", "rosin", "shatter", "topical", "oil", "capsule", "wellness"]) or any(k in name_low for k in ["shatter", "rosin", "diamonds", "moonrocks", "cbd cream"]))
             old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,

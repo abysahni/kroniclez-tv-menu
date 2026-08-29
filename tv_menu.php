@@ -180,6 +180,13 @@ function lookupPotency($name, $brand, $map, $default_thc = '28%') {
     return ["thc" => $default_thc, "cbd" => "<1.0%"];
 }
 
+function isHappyHourActive() {
+    $tz = new DateTimeZone('America/Toronto');
+    $now = new DateTime('now', $tz);
+    $hour = (int)$now->format('H');
+    return ($hour >= 13 && $hour < 16);
+}
+
 function classifyStrain($name, $brand) {
     $full = strtolower("$brand $name");
     if (strpos($full, "dutchy") !== false) return "INDICA";
@@ -210,7 +217,7 @@ if ($screen === 1) {
 
         $p_title = cleanTitle($name, $brand, $var, 1);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '28.5%');
-        $is_promo = (stripos($cat, 'Infused') !== false || stripos($name, 'infused') !== false);
+        $is_promo = isHappyHourActive() && (stripos($cat, 'Infused') !== false || stripos($name, 'infused') !== false);
         $old_price = ($is_promo && $price > 0) ? round($price / 0.90, 2) : null;
         $entry = [
             'product_name' => $p_title,
