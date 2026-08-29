@@ -492,7 +492,7 @@ body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     width: 100vw;
     min-height: 100vh;
-    padding: 6px 8px;
+    padding: 6px 8px 30px 8px;
     display: flex;
     flex-direction: column;
 }
@@ -1006,6 +1006,79 @@ body {
     background: #22c55e;
     box-shadow: 0 0 8px #22c55e;
 }
+
+
+/* ========================================================================== */
+/* CONTINUOUS LIVE FOOTER TICKER                                              */
+/* ========================================================================== */
+
+.tv-ticker-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 25px;
+    background: rgba(10, 10, 12, 0.96);
+    border-top: 1px solid rgba(250, 204, 21, 0.35);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    z-index: 999;
+    backdrop-filter: blur(10px);
+}
+
+.ticker-track {
+    display: flex;
+    width: max-content;
+    animation: ticker-scroll 32s linear infinite;
+}
+
+.ticker-content {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    gap: 16px;
+    padding-right: 16px;
+}
+
+@keyframes ticker-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.ticker-item {
+    font-size: 11px;
+    font-weight: 600;
+    color: #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.2px;
+}
+
+.ticker-item strong { color: #facc15; font-weight: 800; }
+.ticker-dot { color: rgba(250, 204, 21, 0.6); font-size: 10px; margin: 0 4px; }
+
+.ticker-badge {
+    font-size: 8.5px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.ticker-badge.gold { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
+.ticker-badge.green { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.5); }
+.ticker-badge.red { background: rgba(239, 68, 68, 0.25); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.5); }
+.ticker-badge.cyan { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
+.ticker-badge.purple { background: rgba(192, 132, 252, 0.2); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.5); }
+.ticker-badge.yellow { background: rgba(234, 179, 8, 0.2); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.5); }
+.ticker-badge.gray { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.5); }
 
     </style>
 </head>
