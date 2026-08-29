@@ -404,88 +404,458 @@ $json_injected = json_encode($response_payload);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
-        html { background: #000000; font-size: 18px; }
-        body { background: #000000; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%; min-height: 100vh; overflow-x: hidden; overflow-y: auto; padding: 6px 8px; }
-        
-        .container-prerolls { display: grid; grid-template-columns: 1fr 1fr 1fr 1.25fr; gap: 8px; width: 100%; align-items: start; }
-        .container-vapes-flower { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; width: 100%; align-items: start; }
-        .container-softchews { display: grid; grid-template-columns: 1fr 1.05fr 1.05fr; gap: 8px; width: 100%; align-items: start; }
-        .column-deck { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
 
-        .panel { background: #141414; border-radius: 8px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.08); }
-        .soft-card { background: #0d1217; border: 1px solid #1c2a36; border-radius: 8px; padding: 8px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.5); width: 100%; }
+html {
+    background: #000000;
+    font-size: 14px;
+    height: 100%;
+    overflow: hidden;
+}
 
-        .card-head-title { text-align: center; font-size: 21px; line-height: 1.1; font-weight: 900; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.6px; }
-        .card-head-sub { text-align: center; color: #a0a0a0; font-size: 10px; line-height: 1; font-weight: 800; letter-spacing: 0.6px; margin-bottom: 6px; text-transform: uppercase; }
+body {
+    background: #000000;
+    color: #ffffff;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
-        .card-gold .card-head-title { color: #facc15; }
-        .card-cyan .card-head-title { color: #38bdf8; }
-        .card-purple .card-head-title { color: #c084fc; }
-        .card-pink .card-head-title { color: #f472b6; }
-        .card-orange .card-head-title { color: #fb923c; }
+#menuMount {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transform-origin: top center;
+}
 
-        .title { font-size: 21px; font-weight: 900; text-align: center; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid #333333; letter-spacing: 0.6px; text-transform: uppercase; }
-        .title-count { display: inline-block; font-size: 0.88em; font-weight: 800; margin-left: 3px; opacity: 0.9; }
+/* ========================================================================== */
+/* SCREEN CONTAINERS & GRID LAYOUTS                                           */
+/* ========================================================================== */
 
-        .indica { color: #4ade80; }
-        .hybrid { color: #facc15; }
-        .sativa { color: #f87171; }
-        .infused { color: #38bdf8; }
-        .vapes510 { color: #60a5fa; }
-        .disposable { color: #f472b6; }
+/* Screen 1 (Pre-Rolls & Infused): 4 Balanced Columns */
+.container-prerolls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.15fr;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+}
 
-        .subhead { font-size: 14.5px; margin: 8px 0 4px; padding-bottom: 3px; border-bottom: 1px solid #3a3a3a; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: space-between; }
+/* Screen 2 (Flower & Vapes): 4 Balanced Columns */
+.container-vapes-flower {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+}
 
-        .table-header { display: grid; grid-template-columns: minmax(0, 1fr) 68px 74px; column-gap: 4px; margin: 3px 0; padding-bottom: 3px; border-bottom: 1px solid #383838; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .table-header-soft { display: grid; grid-template-columns: minmax(0, 1fr) 58px 46px 42px 70px; column-gap: 4px; align-items: center; font-size: 11px; font-weight: 900; text-transform: uppercase; padding-bottom: 4px; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.18); }
+/* Screen 3 (Soft Chews, Drinks & Concentrates): 3 Deck Columns */
+.container-softchews {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr 1.05fr;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+}
 
-        .card-gold .table-header-soft { color: #facc15; }
-        .card-cyan .table-header-soft { color: #38bdf8; }
-        .card-purple .table-header-soft { color: #c084fc; }
-        .card-pink .table-header-soft { color: #f472b6; }
-        .card-orange .table-header-soft { color: #fb923c; }
+.column-deck {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    height: 100%;
+}
 
-        .h-name { color: #ffffff; text-align: left; }
-        .h-thc { color: #4ade80; text-align: right; }
-        .h-price { color: #facc15; text-align: right; }
+/* ========================================================================== */
+/* PANELS & CARDS                                                             */
+/* ========================================================================== */
 
-        .p-row { display: grid; grid-template-columns: minmax(0, 1fr) 68px 74px; column-gap: 4px; align-items: center; padding: 3.5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .p-row:last-child { border-bottom: none; }
+/* Standard Panels (TV Screens 1 & 2) */
+.panel {
+    background: #121212;
+    border-radius: 6px;
+    padding: 4px 6px;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-        .p-name { min-width: 0; white-space: normal !important; word-break: break-word !important; overflow-wrap: break-word !important; overflow: visible !important; text-overflow: clip !important; font-size: 15px; font-weight: 700; padding-right: 4px; color: #ffffff; line-height: 1.25; }
-        .p-thc { text-align: right; color: #4ade80; font-size: 15px; font-weight: 800; white-space: nowrap; font-family: 'JetBrains Mono', monospace; }
+/* Soft Cards (TV Screen 3) */
+.soft-card {
+    background: #0d1217;
+    border: 1px solid #1c2a36;
+    border-radius: 6px;
+    padding: 4px 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
-        .soft-row { display: grid; grid-template-columns: minmax(0, 1fr) 58px 46px 42px 70px; column-gap: 4px; align-items: center; padding: 4px 2px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px; }
-        .soft-row:last-child { border-bottom: none; }
-        .soft-row:nth-child(even) { background: rgba(255,255,255,0.03); }
+.card-head-title {
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.1;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 1px;
+    letter-spacing: 0.5px;
+}
 
-        .soft-name { min-width: 0; white-space: normal !important; word-break: break-word !important; overflow-wrap: break-word !important; overflow: visible !important; text-overflow: clip !important; color: #ffffff; font-weight: 700; font-size: 14.5px; line-height: 1.25; padding-right: 4px; }
-        .soft-meta { text-align: center; font-size: 11.5px; font-weight: 800; white-space: nowrap; }
-        .meta-indica { color: #4ade80 !important; }
-        .meta-hybrid { color: #facc15 !important; }
-        .meta-sativa { color: #f87171 !important; }
+.card-head-sub {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 8.5px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+}
 
-        .soft-thc { text-align: center; color: #4ade80; font-weight: 800; font-size: 14.5px; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
-        .soft-cbd { text-align: center; color: #cbd5e1; font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.card-gold .card-head-title { color: #facc15; }
+.card-cyan .card-head-title { color: #38bdf8; }
+.card-purple .card-head-title { color: #c084fc; }
+.card-pink .card-head-title { color: #f472b6; }
+.card-orange .card-head-title { color: #fb923c; }
 
-        .p-price { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; line-height: 1; white-space: nowrap; text-align: right; }
-        .p-price .regular { color: #facc15; font-size: 16.5px; font-weight: 900; font-family: 'JetBrains Mono', monospace; }
-        .p-price .sale { color: #ef4444; font-size: 17px; font-weight: 900; font-family: 'JetBrains Mono', monospace; }
-        .p-price .old { color: #facc15; font-size: 11px; font-weight: 700; text-decoration: line-through; opacity: 0.8; font-family: 'JetBrains Mono', monospace; }
+/* Category Headings for Screens 1 & 2 */
+.title {
+    font-size: 15px;
+    font-weight: 900;
+    text-align: center;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid #333333;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
 
-        .badge-strain { font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 4px; margin-right: 4px; text-transform: uppercase; display: inline-block; }
-        .b-indica { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.5); }
-        .b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
-        .b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
+.title-count {
+    display: inline-block;
+    font-size: 0.88em;
+    font-weight: 800;
+    margin-left: 2px;
+    opacity: 0.9;
+}
 
-        .tv-sync-status { position: fixed; top: 8px; right: 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #888; display: flex; align-items: center; gap: 6px; pointer-events: none; z-index: 100; }
-        .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+.indica { color: #4ade80; }
+.hybrid { color: #facc15; }
+.sativa { color: #f87171; }
+.infused { color: #38bdf8; }
+.vapes510 { color: #60a5fa; }
+.disposable { color: #f472b6; }
+.milled { color: #a3e635; }
+.beverages { color: #38bdf8; }
+.edibles { color: #fb7185; }
+.concentrates { color: #fbbf24; }
 
-        .tv-floating-nav { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(18, 18, 18, 0.95); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 999px; padding: 5px 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8); z-index: 9999; backdrop-filter: blur(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
-        .tv-floating-nav.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, 20px); }
-        .nav-link-btn { color: #cbd5e1; font-size: 12px; font-weight: 700; text-decoration: none; padding: 5px 14px; border-radius: 999px; background: #202020; border: 1px solid #383838; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; cursor: pointer; }
-        .nav-link-btn.active, .nav-link-btn:hover { background: #4ade80; color: #000000; border-color: #4ade80; font-weight: 900; box-shadow: 0 0 12px rgba(74, 222, 128, 0.4); }
+/* Subheadings */
+.subhead {
+    font-size: 10.5px;
+    margin: 2.5px 0 1px;
+    padding-bottom: 1px;
+    border-bottom: 1px solid #3a3a3a;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ========================================================================== */
+/* TABLE HEADERS & ROWS (FULL WRAP TEXT — NO TRUNCATION)                      */
+/* ========================================================================== */
+
+.table-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 52px 64px;
+    column-gap: 3px;
+    margin: 1px 0;
+    padding-bottom: 1px;
+    border-bottom: 1px solid #383838;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.table-header-soft {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 48px 38px 36px 60px;
+    column-gap: 3px;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding-bottom: 2px;
+    margin-bottom: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.card-gold .table-header-soft { color: #facc15; }
+.card-cyan .table-header-soft { color: #38bdf8; }
+.card-purple .table-header-soft { color: #c084fc; }
+.card-pink .table-header-soft { color: #f472b6; }
+.card-orange .table-header-soft { color: #fb923c; }
+
+.h-name { color: #ffffff; text-align: left; }
+.h-thc { color: #4ade80; text-align: right; }
+.h-price { color: #facc15; text-align: right; }
+
+/* Standard Product Row (Screens 1 & 2) */
+.p-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 52px 64px;
+    column-gap: 3px;
+    align-items: center;
+    padding: 1.1px 0;
+    min-height: 0;
+    height: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.p-row:last-child {
+    border-bottom: none;
+}
+
+/* Full text wrap for product names */
+.p-name {
+    min-width: 0;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding-right: 3px;
+    color: #ffffff;
+    line-height: 1.15;
+}
+
+.p-thc {
+    text-align: right;
+    color: #4ade80;
+    font-size: 11.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Soft Chews Product Row (Screen 3) */
+.soft-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 48px 38px 36px 60px;
+    column-gap: 3px;
+    align-items: center;
+    padding: 1.6px 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 11.5px;
+}
+
+.soft-row:last-child { border-bottom: none; }
+.soft-row:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+
+/* Full text wrap for soft product names */
+.soft-name {
+    min-width: 0;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 11.5px;
+    line-height: 1.15;
+    padding-right: 3px;
+}
+
+.soft-meta {
+    text-align: center;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.meta-indica { color: #4ade80 !important; }
+.meta-hybrid { color: #facc15 !important; }
+.meta-sativa { color: #f87171 !important; }
+
+.soft-thc {
+    text-align: center;
+    color: #4ade80;
+    font-weight: 800;
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+}
+
+.soft-cbd {
+    text-align: center;
+    color: #cbd5e1;
+    font-size: 10.5px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+}
+
+/* Price Styling */
+.p-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.p-price .regular {
+    color: #facc15;
+    font-size: 12.5px;
+    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.p-price .sale {
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.05;
+}
+
+.p-price .old {
+    color: #facc15;
+    font-size: 8.5px;
+    font-weight: 700;
+    text-decoration: line-through;
+    margin-top: 1px;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.8;
+}
+
+/* Strain Badges */
+.badge-strain {
+    font-size: 7.5px;
+    font-weight: 800;
+    padding: 0.5px 3px;
+    border-radius: 3px;
+    margin-right: 3px;
+    text-transform: uppercase;
+    display: inline-block;
+}
+.b-indica { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.5); }
+.b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
+.b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
+
+/* ========================================================================== */
+/* FLOATING CONTROLS & STATUS                                                 */
+/* ========================================================================== */
+
+.tv-floating-nav {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(18, 18, 18, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tv-floating-nav.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 20px);
+}
+
+.nav-link-btn {
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    transition: all 0.2s ease;
+}
+
+.nav-link-btn:hover, .nav-link-btn.active {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+.nav-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-fs-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    padding: 3px 6px;
+}
+
+.nav-fs-btn:hover {
+    color: #ffffff;
+}
+
+.tv-sync-pill {
+    position: fixed;
+    top: 6px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    padding: 2px 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: #94a3b8;
+    font-weight: 700;
+    z-index: 9998;
+    pointer-events: none;
+}
+
+.sync-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+}
+
     </style>
 </head>
 <body>
