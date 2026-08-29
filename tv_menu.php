@@ -217,8 +217,15 @@ if ($screen === 1) {
 
         $p_title = cleanTitle($name, $brand, $var, 1);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '28.5%');
-        $is_promo = isHappyHourActive() && (stripos($cat, 'Infused') !== false || stripos($name, 'infused') !== false);
-        $old_price = ($is_promo && $price > 0) ? round($price / 0.90, 2) : null;
+        $sku_id = isset($it['id']) ? strval($it['id']) : (isset($it['sku']) ? strval($it['sku']) : '');
+        $reg_p = isset($REGULAR_PRICES[$sku_id]) ? floatval($REGULAR_PRICES[$sku_id]['regular_price'] ?? 0) : null;
+        if ($reg_p && $reg_p > 0 && $price < ($reg_p - 0.05)) {
+            $is_promo = true;
+            $old_price = $reg_p;
+        } else {
+            $is_promo = false;
+            $old_price = null;
+        }
         $entry = [
             'product_name' => $p_title,
             'price' => $price,

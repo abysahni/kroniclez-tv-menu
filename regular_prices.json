@@ -1,0 +1,1451 @@
+{
+  "100068": {
+    "name": "Hard Hitters Blue Zello Liquid Diamond 510 Thread Cartridge",
+    "brand": "endgame",
+    "current_price": 32.35,
+    "cost": 21.0,
+    "regular_price": 35.94
+  },
+  "100069": {
+    "name": "Mango Sour Cured Resin 510 Thread Cartridge",
+    "brand": "eastcann",
+    "current_price": 37.49,
+    "cost": 25.43,
+    "regular_price": 41.66
+  },
+  "100070": {
+    "name": "Hard Hitters Cloudberry Liquid Diamond 510 Thread Cartridge",
+    "brand": "endgame",
+    "current_price": 32.35,
+    "cost": 21.0,
+    "regular_price": 35.94
+  },
+  "100071": {
+    "name": "Hard Hitters Blueberry Octane Liquid Diamond 510 Thread",
+    "brand": "endgame",
+    "current_price": 32.35,
+    "cost": 21.0,
+    "regular_price": 35.94
+  },
+  "100072": {
+    "name": "High Potency 92+ 510 Thread Cartridge Hawaiian Za",
+    "brand": "jays",
+    "current_price": 28.6,
+    "cost": 19.7,
+    "regular_price": 31.78
+  },
+  "100073": {
+    "name": "High Potency 92+ 510 Cartridge Macchiato Gold",
+    "brand": "jays",
+    "current_price": 29.6,
+    "cost": 19.7,
+    "regular_price": 32.89
+  },
+  "100074": {
+    "name": "Poppin Peach LIVE ROSIN AMPLIFIED Distillate 510 Thread",
+    "brand": "frootyhooty",
+    "current_price": 33.04,
+    "cost": 22.25,
+    "regular_price": 36.71
+  },
+  "100075": {
+    "name": "Strawberry Lemonade 510 Thread Vape Cartridge",
+    "brand": "standard issue",
+    "current_price": 28.73,
+    "cost": 19.06,
+    "regular_price": 31.92
+  },
+  "100076": {
+    "name": "Wild Berry 510 Thread Cartridge",
+    "brand": "standard issue",
+    "current_price": 28.73,
+    "cost": 19.06,
+    "regular_price": 31.92
+  },
+  "100077": {
+    "name": "Jungle Fruit 510 Thread Cartridge",
+    "brand": "xplor",
+    "current_price": 28.58,
+    "cost": 19.69,
+    "regular_price": 31.76
+  },
+  "100078": {
+    "name": "Banana OG x Kush Mints 510 Thread Cartridge",
+    "brand": "endgame",
+    "current_price": 28.31,
+    "cost": 19.49,
+    "regular_price": 31.46
+  },
+  "100079": {
+    "name": "Mosa x Blood Orange  510 Thread Cartridge",
+    "brand": "endgame",
+    "current_price": 29.61,
+    "cost": 19.49,
+    "regular_price": 32.9
+  },
+  "100080": {
+    "name": "Fruity Gobbstomper Fuel Cell Cartridge (Ceramic)",
+    "brand": "skullcrusher by rad",
+    "current_price": 27.73,
+    "cost": 19.06,
+    "regular_price": 30.81
+  },
+  "100081": {
+    "name": "Blue Razz Fuel Cell 510 Thread Cartridge",
+    "brand": "skullcrusher by rad",
+    "current_price": 27.73,
+    "cost": 19.06,
+    "regular_price": 30.81
+  },
+  "100083": {
+    "name": "Acapulco Gold 510 Thread Cartridge",
+    "brand": "jonny chronic",
+    "current_price": 26.73,
+    "cost": 19.06,
+    "regular_price": 29.7
+  },
+  "100084": {
+    "name": "Indica 510 Thread Cartridge",
+    "brand": "community",
+    "current_price": 26.73,
+    "cost": 19.06,
+    "regular_price": 29.7
+  },
+  "100085": {
+    "name": "Sativa 510 Thread Cartridge",
+    "brand": "community",
+    "current_price": 26.73,
+    "cost": 19.06,
+    "regular_price": 29.7
+  },
+  "100086": {
+    "name": "Blueberry Kush 510 Thread Cartridge",
+    "brand": "jonny chronic",
+    "current_price": 28.73,
+    "cost": 19.06,
+    "regular_price": 31.92
+  },
+  "100087": {
+    "name": "Blue Kiwi 510 Thread Cartridge",
+    "brand": "-ness",
+    "current_price": 30.34,
+    "cost": 20.99,
+    "regular_price": 33.71
+  },
+  "100088": {
+    "name": "Key Lime Rapid Seltzer",
+    "brand": "versus",
+    "current_price": 4.9,
+    "cost": 3.63,
+    "regular_price": 5.44
+  },
+  "100089": {
+    "name": "Root Beer",
+    "brand": "bubble kush",
+    "current_price": 5.94,
+    "cost": 4.4,
+    "regular_price": 6.6
+  },
+  "100090": {
+    "name": "Cream Soda Zero",
+    "brand": "xmg zero",
+    "current_price": 5.95,
+    "cost": 4.41,
+    "regular_price": 6.61
+  },
+  "100091": {
+    "name": "Orange Vanilla Cream Soda",
+    "brand": "palmetto",
+    "current_price": 5.1,
+    "cost": 3.78,
+    "regular_price": 5.67
+  },
+  "100092": {
+    "name": "Neon Rush",
+    "brand": "versus",
+    "current_price": 5.95,
+    "cost": 4.41,
+    "regular_price": 6.61
+  },
+  "100093": {
+    "name": "Ray's Strawberry Lemonade",
+    "brand": "ray's lemonade",
+    "current_price": 7.17,
+    "cost": 5.31,
+    "regular_price": 7.97
+  },
+  "100094": {
+    "name": "Orange Soda",
+    "brand": "xmg",
+    "current_price": 5.95,
+    "cost": 4.41,
+    "regular_price": 6.61
+  },
+  "100095": {
+    "name": "Cherry Blasted Lime",
+    "brand": "xmg atomic sours",
+    "current_price": 6.72,
+    "cost": 4.98,
+    "regular_price": 7.47
+  },
+  "100097": {
+    "name": "Mango Fuzz BOOSTED All-In-One Vape",
+    "brand": "back forty",
+    "current_price": 41.09,
+    "cost": 26.71,
+    "regular_price": 45.66
+  },
+  "100098": {
+    "name": "Kush Mint BOOSTED All-In-One Vape",
+    "brand": "back forty",
+    "current_price": 41.09,
+    "cost": 26.71,
+    "regular_price": 45.66
+  },
+  "100099": {
+    "name": "Sunset Sherb x Acai Berry G. Disposable",
+    "brand": "endgame",
+    "current_price": 34.71,
+    "cost": 22.75,
+    "regular_price": 38.57
+  },
+  "100100": {
+    "name": "Alien OG All-in-One Disposable Pen",
+    "brand": "boxhot",
+    "current_price": 34.58,
+    "cost": 24.13,
+    "regular_price": 38.42
+  },
+  "100101": {
+    "name": "Highlighters - Blue Daze All-In-One Vape",
+    "brand": "boxhot",
+    "current_price": 36.58,
+    "cost": 24.13,
+    "regular_price": 40.64
+  },
+  "100102": {
+    "name": "Peach Lemonade Disposable Pen",
+    "brand": "back forty",
+    "current_price": 35.62,
+    "cost": 24.16,
+    "regular_price": 39.58
+  },
+  "100103": {
+    "name": "Watermelon Ice Disposable Pen",
+    "brand": "back forty",
+    "current_price": 35.62,
+    "cost": 24.16,
+    "regular_price": 39.58
+  },
+  "100104": {
+    "name": "Frosted Cream Puffs",
+    "brand": "spinach",
+    "current_price": 22.98,
+    "cost": 14.94,
+    "regular_price": 25.53
+  },
+  "100105": {
+    "name": "Tutti Frutti Crunchy Puff Smalls",
+    "brand": "bc smalls",
+    "current_price": 24.42,
+    "cost": 15.87,
+    "regular_price": 27.13
+  },
+  "100106": {
+    "name": "Chromatica",
+    "brand": "color cannabis",
+    "current_price": 34.23,
+    "cost": 22.25,
+    "regular_price": 38.03
+  },
+  "100107": {
+    "name": "Cosmic Lemonade",
+    "brand": "color cannabis",
+    "current_price": 34.23,
+    "cost": 22.25,
+    "regular_price": 38.03
+  },
+  "100108": {
+    "name": "Ripped Sativa",
+    "brand": "ripped",
+    "current_price": 16.55,
+    "cost": 10.76,
+    "regular_price": 18.39
+  },
+  "100110": {
+    "name": "Farmer's Market",
+    "brand": "catch me outside",
+    "current_price": 104.72,
+    "cost": 68.07,
+    "regular_price": 116.36
+  },
+  "100111": {
+    "name": "Blueberry Muffinz",
+    "brand": "3saints",
+    "current_price": 37.17,
+    "cost": 24.16,
+    "regular_price": 41.3
+  },
+  "100112": {
+    "name": "Strawberry Cheezequake",
+    "brand": "3saints",
+    "current_price": 37.17,
+    "cost": 24.16,
+    "regular_price": 41.3
+  },
+  "100113": {
+    "name": "Sour Chem",
+    "brand": "spinach",
+    "current_price": 22.98,
+    "cost": 14.94,
+    "regular_price": 25.53
+  },
+  "100114": {
+    "name": "GMO Cookies",
+    "brand": "spinach",
+    "current_price": 22.98,
+    "cost": 14.94,
+    "regular_price": 25.53
+  },
+  "100115": {
+    "name": "Frosted Lemons",
+    "brand": "3saints",
+    "current_price": 21.49,
+    "cost": 13.97,
+    "regular_price": 23.88
+  },
+  "100116": {
+    "name": "The Goods",
+    "brand": "the corner boy cannabis co.",
+    "current_price": 21.29,
+    "cost": 13.84,
+    "regular_price": 23.66
+  },
+  "100117": {
+    "name": "Pop n\u2019 Pour Blue Raspberry",
+    "brand": "super toast",
+    "current_price": 18.34,
+    "cost": 11.92,
+    "regular_price": 20.38
+  },
+  "100118": {
+    "name": "Chubby Nuggies",
+    "brand": "chub's",
+    "current_price": 9.74,
+    "cost": 6.33,
+    "regular_price": 10.82
+  },
+  "100119": {
+    "name": "Purple Cherry Punch",
+    "brand": "big bag o' buds",
+    "current_price": 20.51,
+    "cost": 13.33,
+    "regular_price": 22.79
+  },
+  "100120": {
+    "name": "Strawberry Pie Milled Ready-to-Roll",
+    "brand": "common ground",
+    "current_price": 26.91,
+    "cost": 17.49,
+    "regular_price": 29.9
+  },
+  "100121": {
+    "name": "Do-Si-Dos Milled Flower",
+    "brand": "common ground",
+    "current_price": 26.68,
+    "cost": 17.34,
+    "regular_price": 29.64
+  },
+  "100122": {
+    "name": "Rooster Call",
+    "brand": "catch me outside",
+    "current_price": 19.52,
+    "cost": 12.69,
+    "regular_price": 21.69
+  },
+  "100123": {
+    "name": "Couch Potato",
+    "brand": "catch me outside",
+    "current_price": 19.52,
+    "cost": 12.69,
+    "regular_price": 21.69
+  },
+  "100124": {
+    "name": "Cropped Blueberry",
+    "brand": "divvy",
+    "current_price": 24.51,
+    "cost": 15.93,
+    "regular_price": 27.23
+  },
+  "100125": {
+    "name": "Sgt. Pineapple",
+    "brand": "super toast",
+    "current_price": 30.62,
+    "cost": 19.9,
+    "regular_price": 34.02
+  },
+  "100126": {
+    "name": "Pop n' Pour Strawnana",
+    "brand": "super toast",
+    "current_price": 18.34,
+    "cost": 11.92,
+    "regular_price": 20.38
+  },
+  "100127": {
+    "name": "Kush Cookies",
+    "brand": "3saints",
+    "current_price": 22.46,
+    "cost": 14.6,
+    "regular_price": 24.96
+  },
+  "100128": {
+    "name": "Old School Hash",
+    "brand": "nugz hash",
+    "current_price": 25.49,
+    "cost": 18.88,
+    "regular_price": 28.32
+  },
+  "100129": {
+    "name": "Liquid Imagination Pre-Roll",
+    "brand": "back forty",
+    "current_price": 19.66,
+    "cost": 14.56,
+    "regular_price": 21.84
+  },
+  "100130": {
+    "name": "Maui Wowie Pre-Roll",
+    "brand": "piff",
+    "current_price": 8.55,
+    "cost": 6.33,
+    "regular_price": 9.5
+  },
+  "100131": {
+    "name": "Maui Wowie Pre-Roll",
+    "brand": "piff",
+    "current_price": 3.79,
+    "cost": 2.81,
+    "regular_price": 4.21
+  },
+  "100132": {
+    "name": "Lil Buddy Indica Pre-Roll",
+    "brand": "buddy blooms",
+    "current_price": 4.25,
+    "cost": 3.15,
+    "regular_price": 4.72
+  },
+  "100133": {
+    "name": "Lil Buddy Sativa Pre-Roll",
+    "brand": "buddy blooms",
+    "current_price": 4.25,
+    "cost": 3.15,
+    "regular_price": 4.72
+  },
+  "100134": {
+    "name": "Cali Kush Pre-Roll",
+    "brand": "piff",
+    "current_price": 3.79,
+    "cost": 2.81,
+    "regular_price": 4.21
+  },
+  "100135": {
+    "name": "Cali Kush Pre-Roll",
+    "brand": "piff",
+    "current_price": 8.55,
+    "cost": 6.33,
+    "regular_price": 9.5
+  },
+  "100136": {
+    "name": "Billy Blunt Pre-Roll",
+    "brand": "piff",
+    "current_price": 6.62,
+    "cost": 4.9,
+    "regular_price": 7.36
+  },
+  "100137": {
+    "name": "Juicy Blunt",
+    "brand": "piff",
+    "current_price": 6.99,
+    "cost": 4.9,
+    "regular_price": 7.77
+  },
+  "100138": {
+    "name": "Dutchy Blunt",
+    "brand": "piff",
+    "current_price": 6.62,
+    "cost": 4.9,
+    "regular_price": 7.36
+  },
+  "100139": {
+    "name": "Panama Gold Pre-Roll",
+    "brand": "piff",
+    "current_price": 8.55,
+    "cost": 6.33,
+    "regular_price": 9.5
+  },
+  "100140": {
+    "name": "Tropical Pocket Puffs Pre-Roll",
+    "brand": "dime bag",
+    "current_price": 9.38,
+    "cost": 6.95,
+    "regular_price": 10.42
+  },
+  "100141": {
+    "name": "Diesel Pocket Puffs Pre-Roll",
+    "brand": "dime bag",
+    "current_price": 9.99,
+    "cost": 6.95,
+    "regular_price": 11.1
+  },
+  "100142": {
+    "name": "Forbidden Applez Pre-roll",
+    "brand": "fruit drops",
+    "current_price": 7.26,
+    "cost": 5.38,
+    "regular_price": 8.07
+  },
+  "100143": {
+    "name": "Sativa Pre-roll",
+    "brand": "xplor",
+    "current_price": 4.7,
+    "cost": 3.48,
+    "regular_price": 5.22
+  },
+  "100144": {
+    "name": "Pink Rozay Pre-Roll",
+    "brand": "common ground",
+    "current_price": 6.39,
+    "cost": 4.73,
+    "regular_price": 7.1
+  },
+  "100145": {
+    "name": "TwoFer Pre-Roll",
+    "brand": "community c/o purple hills",
+    "current_price": 8.28,
+    "cost": 6.13,
+    "regular_price": 9.2
+  },
+  "100146": {
+    "name": "Indica Pre-Roll",
+    "brand": "thumbs up",
+    "current_price": 9.71,
+    "cost": 7.19,
+    "regular_price": 10.79
+  },
+  "100147": {
+    "name": "Indica Pre-Roll",
+    "brand": "thumbs up",
+    "current_price": 8.84,
+    "cost": 6.35,
+    "regular_price": 9.82
+  },
+  "100148": {
+    "name": "OPP Sativa - Indica Variety Pack Pre-Roll",
+    "brand": "thumbs up",
+    "current_price": 8.57,
+    "cost": 6.35,
+    "regular_price": 9.52
+  },
+  "100149": {
+    "name": "Sativa Pre-Roll",
+    "brand": "thumbs up",
+    "current_price": 9.71,
+    "cost": 7.19,
+    "regular_price": 10.79
+  },
+  "100150": {
+    "name": "Sativa Pre-Roll",
+    "brand": "thumbs up",
+    "current_price": 8.57,
+    "cost": 6.35,
+    "regular_price": 9.52
+  },
+  "100151": {
+    "name": "Blueberry Pre-Roll",
+    "brand": "divvy",
+    "current_price": 19.99,
+    "cost": 11.8,
+    "regular_price": 22.21
+  },
+  "100152": {
+    "name": "Pineapple Express Pre-Roll",
+    "brand": "potluck",
+    "current_price": 4.79,
+    "cost": 3.55,
+    "regular_price": 5.32
+  },
+  "100153": {
+    "name": "Lavender Haze Pre-Roll",
+    "brand": "millrite",
+    "current_price": 7.68,
+    "cost": 5.69,
+    "regular_price": 8.53
+  },
+  "100154": {
+    "name": "Zombie Kush Pre-Roll",
+    "brand": "royal cannabis supply co.",
+    "current_price": 5.99,
+    "cost": 3.43,
+    "regular_price": 6.66
+  },
+  "100155": {
+    "name": "Peggys Puff Pre-Roll",
+    "brand": "truro",
+    "current_price": 5.14,
+    "cost": 3.81,
+    "regular_price": 5.71
+  },
+  "100156": {
+    "name": "Junior J Pre-roll",
+    "brand": "versus",
+    "current_price": 3.99,
+    "cost": 2.06,
+    "regular_price": 4.43
+  },
+  "100157": {
+    "name": "Blueberry Dream Pre-Roll",
+    "brand": "big bag o' buds",
+    "current_price": 24.02,
+    "cost": 17.79,
+    "regular_price": 26.69
+  },
+  "100158": {
+    "name": "Strawberry Pie Pre-Roll",
+    "brand": "common ground",
+    "current_price": 13.26,
+    "cost": 9.82,
+    "regular_price": 14.73
+  },
+  "100159": {
+    "name": "Permanent Marker Pre-Roll",
+    "brand": "5 points cannabis",
+    "current_price": 20.24,
+    "cost": 14.99,
+    "regular_price": 22.49
+  },
+  "100160": {
+    "name": "Zsweet Pre-Roll",
+    "brand": "5 points cannabis",
+    "current_price": 20.24,
+    "cost": 14.99,
+    "regular_price": 22.49
+  },
+  "100161": {
+    "name": "Animal Mintz Slims Pre-Roll",
+    "brand": "super toast",
+    "current_price": 19.68,
+    "cost": 14.58,
+    "regular_price": 21.87
+  },
+  "100162": {
+    "name": "Rooster Call Pre-Roll",
+    "brand": "catch me outside",
+    "current_price": 16.75,
+    "cost": 12.41,
+    "regular_price": 18.61
+  },
+  "100163": {
+    "name": "Sour Kush Pre-Roll",
+    "brand": "divvy",
+    "current_price": 19.99,
+    "cost": 11.8,
+    "regular_price": 22.21
+  },
+  "100164": {
+    "name": "Sgt. Pineapple Hoagies Pre-Roll",
+    "brand": "super toast",
+    "current_price": 18.78,
+    "cost": 13.91,
+    "regular_price": 20.87
+  },
+  "100165": {
+    "name": "Pineapple Nuken Pre-Rolls",
+    "brand": "divvy",
+    "current_price": 19.99,
+    "cost": 11.8,
+    "regular_price": 22.21
+  },
+  "100166": {
+    "name": "Indica Pre-roll",
+    "brand": "xplor",
+    "current_price": 4.7,
+    "cost": 3.48,
+    "regular_price": 5.22
+  },
+  "100167": {
+    "name": "Roll Up Indica Pre-roll",
+    "brand": "divvy",
+    "current_price": 4.25,
+    "cost": 3.15,
+    "regular_price": 4.72
+  },
+  "100168": {
+    "name": "Roll Up Sativa Pre-roll",
+    "brand": "divvy",
+    "current_price": 4.25,
+    "cost": 3.15,
+    "regular_price": 4.72
+  },
+  "100169": {
+    "name": "BC Organic Pink Drip Pre-Roll",
+    "brand": "simply bare",
+    "current_price": 6.79,
+    "cost": 5.03,
+    "regular_price": 7.54
+  },
+  "100170": {
+    "name": "BC Organic Fruit Loopz Pre-Roll",
+    "brand": "simply bare",
+    "current_price": 6.78,
+    "cost": 5.02,
+    "regular_price": 7.53
+  },
+  "100171": {
+    "name": "Redees Hemp'd Animal Rntz Pre-Roll",
+    "brand": "redecan",
+    "current_price": 19.66,
+    "cost": 14.56,
+    "regular_price": 21.84
+  },
+  "100172": {
+    "name": "Animal Face Pre-Roll",
+    "brand": "carmel",
+    "current_price": 19.16,
+    "cost": 14.19,
+    "regular_price": 21.29
+  },
+  "100173": {
+    "name": "Double Dutchies: Double Up Pre-roll",
+    "brand": "good supply",
+    "current_price": 8.91,
+    "cost": 6.6,
+    "regular_price": 9.9
+  },
+  "100175": {
+    "name": "Grape Diamonds Pre-Roll",
+    "brand": "countryside cannabis harvest reserve",
+    "current_price": 5.97,
+    "cost": 4.42,
+    "regular_price": 6.63
+  },
+  "100176": {
+    "name": "Kush Cookies Pre-Roll",
+    "brand": "3saints",
+    "current_price": 4.73,
+    "cost": 3.5,
+    "regular_price": 5.26
+  },
+  "100177": {
+    "name": "Crumbled Lime Pre-Roll",
+    "brand": "3saints",
+    "current_price": 4.73,
+    "cost": 3.5,
+    "regular_price": 5.26
+  },
+  "100178": {
+    "name": "Frozen Grapes Pre-roll",
+    "brand": "fruit drops",
+    "current_price": 7.26,
+    "cost": 5.38,
+    "regular_price": 8.07
+  },
+  "100179": {
+    "name": "Lemon Shocker Pre-Roll",
+    "brand": "fruit drops",
+    "current_price": 7.26,
+    "cost": 5.38,
+    "regular_price": 8.07
+  },
+  "100180": {
+    "name": "Flyers Frosted Infused Strawberry Cough Pre-Rolls",
+    "brand": "claybourne",
+    "current_price": 26.96,
+    "cost": 18.19,
+    "regular_price": 29.96
+  },
+  "100181": {
+    "name": "Flyers Frosted Infused Pineapple Express Pre-Rolls",
+    "brand": "claybourne",
+    "current_price": 26.96,
+    "cost": 18.19,
+    "regular_price": 29.96
+  },
+  "100182": {
+    "name": "High Potency 50+ Diamond Infused Macchiato Gold Pre-Rolls",
+    "brand": "jays",
+    "current_price": 22.44,
+    "cost": 15.88,
+    "regular_price": 24.93
+  },
+  "100183": {
+    "name": "Flyers Infused Blunt Blue Dream",
+    "brand": "claybourne",
+    "current_price": 20.9,
+    "cost": 14.0,
+    "regular_price": 23.22
+  },
+  "100184": {
+    "name": "Flyers Infused Blunt Watermelon Z",
+    "brand": "claybourne",
+    "current_price": 20.9,
+    "cost": 14.0,
+    "regular_price": 23.22
+  },
+  "100185": {
+    "name": "Sour Blue Raspberry",
+    "brand": "olli o's",
+    "current_price": 18.99,
+    "cost": 11.41,
+    "regular_price": 21.1
+  },
+  "100186": {
+    "name": "CBD Bomb - The CBD Blue One",
+    "brand": "no future",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100187": {
+    "name": "The Sour Blue One - Live Rosin Sativa THC Gummy",
+    "brand": "no future",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100188": {
+    "name": "Fully Blasted Pink Lemonade Gummy",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100189": {
+    "name": "Fully Blasted Peach Passionfruit 1:1 CBN THC Gummy",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100190": {
+    "name": "Fully Blasted Peach Orange 1:1 THC CBD Gummy",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100191": {
+    "name": "Fully Blasted Strawberry Mango Gummy",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100192": {
+    "name": "SOURZ by Spinach - Peach Orange 1:1",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 4.99,
+    "cost": 3.31,
+    "regular_price": 5.54
+  },
+  "100193": {
+    "name": "SOURZ by Spinach - Strawberry Mango Sativa Soft Chews",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 4.99,
+    "cost": 3.31,
+    "regular_price": 5.54
+  },
+  "100194": {
+    "name": "Fully Blasted Blue Raspberry Watermelon Gummies",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 18.99,
+    "cost": 12.7,
+    "regular_price": 21.1
+  },
+  "100195": {
+    "name": "Fully Blasted Strawberry Mango Gummies",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 18.99,
+    "cost": 12.7,
+    "regular_price": 21.1
+  },
+  "100196": {
+    "name": "Fully Blasted Peach Orange 1:1 THC CBD Gummies",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 18.99,
+    "cost": 12.7,
+    "regular_price": 21.1
+  },
+  "100197": {
+    "name": "Space Tokens Platinum Blueberry Live Rosin Indica Multi Pack",
+    "brand": "fly north",
+    "current_price": 18.99,
+    "cost": 12.5,
+    "regular_price": 21.1
+  },
+  "100198": {
+    "name": "Space Tokens Live Rosin Wild Strawberry Splash Sativa Multi",
+    "brand": "fly north",
+    "current_price": 18.99,
+    "cost": 12.5,
+    "regular_price": 21.1
+  },
+  "100199": {
+    "name": "SOURZ by Spinach - Blue Raspberry Watermelon Indica",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 4.99,
+    "cost": 3.31,
+    "regular_price": 5.54
+  },
+  "100200": {
+    "name": "Blackberry Lemonade 1:1:1 CBN/CBD/THC",
+    "brand": "pearls by gr\u00f6n",
+    "current_price": 4.99,
+    "cost": 3.29,
+    "regular_price": 5.54
+  },
+  "100201": {
+    "name": "Blue Razzleberry 3:1 CBG/THC",
+    "brand": "pearls by gr\u00f6n",
+    "current_price": 4.99,
+    "cost": 3.29,
+    "regular_price": 5.54
+  },
+  "100202": {
+    "name": "Fully Blasted Blue Raspberry Watermelon Gummy",
+    "brand": "sourz by spinach\u00ae",
+    "current_price": 2.99,
+    "cost": 1.86,
+    "regular_price": 3.32
+  },
+  "100203": {
+    "name": "TenTen Sunny Drift Live Rosin Gummy",
+    "brand": "highxotic",
+    "current_price": 2.99,
+    "cost": 2.0,
+    "regular_price": 3.32
+  },
+  "100204": {
+    "name": "TenTen Caribbean Chill Live Rosin Gummy",
+    "brand": "highxotic",
+    "current_price": 2.99,
+    "cost": 2.0,
+    "regular_price": 3.32
+  },
+  "100205": {
+    "name": "Blackberry Lemonade 1:1:1 CBN/CBD/THC",
+    "brand": "pearls by gr\u00f6n",
+    "current_price": 38.61,
+    "cost": 28.6,
+    "regular_price": 42.9
+  },
+  "100206": {
+    "name": "Blue Razzleberry 3:1 CBG/THC",
+    "brand": "pearls by gr\u00f6n",
+    "current_price": 38.61,
+    "cost": 28.6,
+    "regular_price": 42.9
+  },
+  "101121": {
+    "name": "Rippin Razz Shatter 2.0",
+    "brand": "dab bods",
+    "current_price": 28.31,
+    "cost": 18.4,
+    "regular_price": 31.46
+  },
+  "101122": {
+    "name": "High Potency 95+ 510 Cartridge Strawberry",
+    "brand": "jays",
+    "current_price": 30.31,
+    "cost": 19.7,
+    "regular_price": 33.68
+  },
+  "101123": {
+    "name": "Fruit Punch Slims Pre-roll",
+    "brand": "super toast",
+    "current_price": 22.43,
+    "cost": 14.58,
+    "regular_price": 24.92
+  },
+  "101124": {
+    "name": "Liquid Diamond Blood Orange Tangie 510 Thread Cartridge",
+    "brand": "ripped",
+    "current_price": 29.32,
+    "cost": 19.06,
+    "regular_price": 32.58
+  },
+  "101125": {
+    "name": "Liquid Diamond Strawberry Banana 510 Thread Cartridge",
+    "brand": "ripped",
+    "current_price": 29.32,
+    "cost": 19.06,
+    "regular_price": 32.58
+  },
+  "101126": {
+    "name": "Liquid Diamond Pink Grapefruit 510 Thread Cartridge",
+    "brand": "ripped",
+    "current_price": 29.32,
+    "cost": 19.06,
+    "regular_price": 32.58
+  },
+  "101127": {
+    "name": "Sativa",
+    "brand": "1spliff pure milled",
+    "current_price": 29.48,
+    "cost": 19.16,
+    "regular_price": 32.76
+  },
+  "101128": {
+    "name": "Indica",
+    "brand": "1spliff pure milled",
+    "current_price": 29.48,
+    "cost": 19.16,
+    "regular_price": 32.76
+  },
+  "101129": {
+    "name": "Ripped Sativa",
+    "brand": "ripped",
+    "current_price": 54.35,
+    "cost": 35.33,
+    "regular_price": 60.39
+  },
+  "101130": {
+    "name": "Moon Drifter",
+    "brand": "starting point!",
+    "current_price": 60.55,
+    "cost": 39.36,
+    "regular_price": 67.28
+  },
+  "101131": {
+    "name": "Couch Potato",
+    "brand": "catch me outside",
+    "current_price": 62.88,
+    "cost": 40.87,
+    "regular_price": 69.87
+  },
+  "101132": {
+    "name": "Rooster Call",
+    "brand": "catch me outside",
+    "current_price": 62.88,
+    "cost": 40.87,
+    "regular_price": 69.87
+  },
+  "101133": {
+    "name": "The Handy Harvest",
+    "brand": "handy dandies",
+    "current_price": 21.46,
+    "cost": 13.95,
+    "regular_price": 23.84
+  },
+  "101134": {
+    "name": "Couch Potato Pre-Roll",
+    "brand": "catch me outside",
+    "current_price": 19.09,
+    "cost": 12.41,
+    "regular_price": 21.21
+  },
+  "101135": {
+    "name": "Triangle Kush 3000 Pre-Roll",
+    "brand": "7 farms down",
+    "current_price": 4.86,
+    "cost": 3.16,
+    "regular_price": 5.4
+  },
+  "101136": {
+    "name": "CITRUS SWEET 'n SOUR",
+    "brand": "3saints",
+    "current_price": 28.63,
+    "cost": 18.61,
+    "regular_price": 31.81
+  },
+  "101137": {
+    "name": "Qwazars - Solventless Hash Infused Joint",
+    "brand": "3saints",
+    "current_price": 12.68,
+    "cost": 8.24,
+    "regular_price": 14.09
+  },
+  "101138": {
+    "name": "High Potency 50+ Diamond Infused Strawberry Pre-Rolls",
+    "brand": "jays",
+    "current_price": 24.43,
+    "cost": 15.88,
+    "regular_price": 27.14
+  },
+  "101139": {
+    "name": "Infused Multi Strain Pre-roll Pack",
+    "brand": "dank diner",
+    "current_price": 29.34,
+    "cost": 19.07,
+    "regular_price": 32.6
+  },
+  "107942": {
+    "name": "Lemon Freeze Live Resin 510 Thread Cartridge",
+    "brand": "pepe",
+    "current_price": 34.14,
+    "cost": 22.19,
+    "regular_price": 37.93
+  },
+  "107943": {
+    "name": "Peach Shockwave Fuel Cell 510 Thread Cartridge (Ceramic)",
+    "brand": "rad",
+    "current_price": 29.32,
+    "cost": 19.06,
+    "regular_price": 32.58
+  },
+  "107944": {
+    "name": "Fruit Punch Bowl Diamonds AIO",
+    "brand": "yard",
+    "current_price": 36.2,
+    "cost": 23.53,
+    "regular_price": 40.22
+  },
+  "107945": {
+    "name": "Lemonade Classic All-in-One Vape",
+    "brand": "yard",
+    "current_price": 36.2,
+    "cost": 23.53,
+    "regular_price": 40.22
+  },
+  "107946": {
+    "name": "HITZ All-in-One Vape - Pineapple Paradise",
+    "brand": "spinach",
+    "current_price": 21.67,
+    "cost": 12.56,
+    "regular_price": 24.08
+  },
+  "107947": {
+    "name": "Secret Formula",
+    "brand": "wink",
+    "current_price": 21.06,
+    "cost": 13.69,
+    "regular_price": 23.4
+  },
+  "107948": {
+    "name": "Lemon Pave Milled Ready-to-Roll",
+    "brand": "common ground",
+    "current_price": 26.91,
+    "cost": 17.49,
+    "regular_price": 29.9
+  },
+  "107949": {
+    "name": "Bahama Berry Pre-Roll",
+    "brand": "common ground",
+    "current_price": 15.11,
+    "cost": 9.82,
+    "regular_price": 16.79
+  },
+  "107950": {
+    "name": "Pink Moon Pre-Roll",
+    "brand": "millrite",
+    "current_price": 8.34,
+    "cost": 5.42,
+    "regular_price": 9.27
+  },
+  "107951": {
+    "name": "Rolls Pre-roll",
+    "brand": "ripped",
+    "current_price": 19.58,
+    "cost": 12.73,
+    "regular_price": 21.76
+  },
+  "107952": {
+    "name": "Red Jasper Diamond Infused Rose Blunts For Lovers",
+    "brand": "queen of bud",
+    "current_price": 32.17,
+    "cost": 20.91,
+    "regular_price": 35.74
+  },
+  "107953": {
+    "name": "Cherry Boat Pre-Roll",
+    "brand": "7 farms down",
+    "current_price": 4.86,
+    "cost": 3.16,
+    "regular_price": 5.4
+  },
+  "107954": {
+    "name": "Maui Wowie Milled",
+    "brand": "piff",
+    "current_price": 26.38,
+    "cost": 17.15,
+    "regular_price": 29.31
+  },
+  "107955": {
+    "name": "Cali Kush Milled",
+    "brand": "piff",
+    "current_price": 26.38,
+    "cost": 17.15,
+    "regular_price": 29.31
+  },
+  "107956": {
+    "name": "Rainbow Melon BOOSTED All-In-One Vape",
+    "brand": "back forty",
+    "current_price": 41.09,
+    "cost": 26.71,
+    "regular_price": 45.66
+  },
+  "107957": {
+    "name": "Backpackers Pre-Roll - Lemon Diesel",
+    "brand": "back forty",
+    "current_price": 40.78,
+    "cost": 26.51,
+    "regular_price": 45.31
+  },
+  "107958": {
+    "name": "Northern Lights 60+ Diamonds & Shatter Infused Blunt",
+    "brand": "shatterizer",
+    "current_price": 21.14,
+    "cost": 13.74,
+    "regular_price": 23.49
+  },
+  "109012": {
+    "name": "Pomegranate 4:1 CBD/THC",
+    "brand": "pearls by gr\u00f6n",
+    "current_price": 5.06,
+    "cost": 3.29,
+    "regular_price": 5.62
+  },
+  "109013": {
+    "name": "No.23 True Hybrid Rosin - Blue Raspberry Cotton Clouds",
+    "brand": "glenn's",
+    "current_price": 2.99,
+    "cost": 1.24,
+    "regular_price": 3.32
+  },
+  "109014": {
+    "name": "Spark THC Moonrocks",
+    "brand": "aspire",
+    "current_price": 44.02,
+    "cost": 28.61,
+    "regular_price": 48.91
+  },
+  "109015": {
+    "name": "10th Planet Pre-Rolls",
+    "brand": "buddy blooms",
+    "current_price": 30.26,
+    "cost": 19.67,
+    "regular_price": 33.62
+  },
+  "109016": {
+    "name": "Big Bang Berry Infused Pre-Roll",
+    "brand": "deep space",
+    "current_price": 29.99,
+    "cost": 20.29,
+    "regular_price": 33.32
+  },
+  "109017": {
+    "name": "Ninja Fruit 510 Thread Cartridge",
+    "brand": "-ness",
+    "current_price": 32.99,
+    "cost": 20.99,
+    "regular_price": 36.66
+  },
+  "109018": {
+    "name": "Watermelon Splash Liquid Diamond 510 Thread Cartridge",
+    "brand": "general admission",
+    "current_price": 36.91,
+    "cost": 23.99,
+    "regular_price": 41.01
+  },
+  "109019": {
+    "name": "Purple Punch Distillate Infused Pre-Roll",
+    "brand": "divvy",
+    "current_price": 14.18,
+    "cost": 9.22,
+    "regular_price": 15.76
+  },
+  "109020": {
+    "name": "Blue Venom 510 Thread Cartridge",
+    "brand": "fuego",
+    "current_price": 32.31,
+    "cost": 21.0,
+    "regular_price": 35.9
+  },
+  "109021": {
+    "name": "Island Rush Infused Pre-Roll",
+    "brand": "divvy",
+    "current_price": 14.43,
+    "cost": 9.38,
+    "regular_price": 16.03
+  },
+  "109022": {
+    "name": "Tiger Blood Indica 1:0 510 Thread Cartridge",
+    "brand": "general admission",
+    "current_price": 36.91,
+    "cost": 23.99,
+    "regular_price": 41.01
+  },
+  "109023": {
+    "name": "Titanimal Bubble Infused Pre-roll",
+    "brand": "truro",
+    "current_price": 9.26,
+    "cost": 6.02,
+    "regular_price": 10.29
+  },
+  "109024": {
+    "name": "Heavy Hitter Flower & Diamonds Infused Pre-Roll",
+    "brand": "1964",
+    "current_price": 8.75,
+    "cost": 5.69,
+    "regular_price": 9.72
+  },
+  "109025": {
+    "name": "Baby Jeeter Berry White Infused Pre-Roll",
+    "brand": "jeeter",
+    "current_price": 26.94,
+    "cost": 17.51,
+    "regular_price": 29.93
+  },
+  "109026": {
+    "name": "Baby Jeeter Multi-Pack Infused Pre-Roll",
+    "brand": "jeeter",
+    "current_price": 42.23,
+    "cost": 27.45,
+    "regular_price": 46.92
+  },
+  "109027": {
+    "name": "Grapey Grape Infused Pre-Roll",
+    "brand": "general admission",
+    "current_price": 26.54,
+    "cost": 17.25,
+    "regular_price": 29.49
+  },
+  "109028": {
+    "name": "Diamonds",
+    "brand": "the loud plug",
+    "current_price": 35.58,
+    "cost": 23.13,
+    "regular_price": 39.53
+  },
+  "109029": {
+    "name": "Berry Sunshine Hi-Fi Infused Pre-Roll",
+    "brand": "general admission",
+    "current_price": 26.54,
+    "cost": 17.25,
+    "regular_price": 29.49
+  },
+  "109030": {
+    "name": "Sour Chem Pre-Roll",
+    "brand": "spinach",
+    "current_price": 10.14,
+    "cost": 6.59,
+    "regular_price": 11.27
+  },
+  "109032": {
+    "name": "Cherry Liquid Diamond 510 Vape",
+    "brand": "tasty's",
+    "current_price": 40.08,
+    "cost": 26.05,
+    "regular_price": 44.53
+  },
+  "109718": {
+    "name": "1:1 Mochaccino Milk Chocolate",
+    "brand": "bhang",
+    "current_price": 4.99,
+    "cost": 3.19,
+    "regular_price": 5.54
+  },
+  "109719": {
+    "name": "Pink Gas Infused Pre-Roll",
+    "brand": "shatterizer",
+    "current_price": 23.99,
+    "cost": 14.6,
+    "regular_price": 26.66
+  },
+  "109720": {
+    "name": "UK Cheddar Cheese Pre-Roll",
+    "brand": "big bag o' buds",
+    "current_price": 27.79,
+    "cost": 17.79,
+    "regular_price": 30.88
+  },
+  "109721": {
+    "name": "PLG #7 (Pink Lemon Gas) Pre-Roll",
+    "brand": "double j's",
+    "current_price": 20.99,
+    "cost": 13.16,
+    "regular_price": 23.32
+  },
+  "111235": {
+    "name": "Gas Whip Diamonds",
+    "brand": "fume by dom jackson",
+    "current_price": 34.62,
+    "cost": 22.5,
+    "regular_price": 38.47
+  },
+  "111236": {
+    "name": "Sticky Grape 510 Thread Cartridge",
+    "brand": "-ness",
+    "current_price": 32.29,
+    "cost": 20.99,
+    "regular_price": 35.88
+  },
+  "113805": {
+    "name": "Cream Soda",
+    "brand": "xmg",
+    "current_price": 6.78,
+    "cost": 4.41,
+    "regular_price": 7.53
+  },
+  "113806": {
+    "name": "Balance Solid Milk Chocolate",
+    "brand": "chowie wowie",
+    "current_price": 5.62,
+    "cost": 3.65,
+    "regular_price": 6.24
+  },
+  "113807": {
+    "name": "Pink Kush Pre-Roll",
+    "brand": "pure sunfarms",
+    "current_price": 12.75,
+    "cost": 8.29,
+    "regular_price": 14.17
+  },
+  "113808": {
+    "name": "Backpackers Pre-Roll - Blue Magic",
+    "brand": "back forty",
+    "current_price": 40.78,
+    "cost": 26.51,
+    "regular_price": 45.31
+  },
+  "113809": {
+    "name": "Wedding Cake Pre-Roll",
+    "brand": "spinach",
+    "current_price": 21.54,
+    "cost": 14.0,
+    "regular_price": 23.93
+  },
+  "113810": {
+    "name": "Fully Charged Party Pack Infused Pre-Roll Multi-pack",
+    "brand": "spinach",
+    "current_price": 23.97,
+    "cost": 15.58,
+    "regular_price": 26.63
+  },
+  "113811": {
+    "name": "Sour Chem Pre-Roll",
+    "brand": "spinach",
+    "current_price": 10.12,
+    "cost": 6.58,
+    "regular_price": 11.24
+  },
+  "113486": {
+    "name": "Sheesh Hash Sodas - Cherry D Live Rosin Cola - 355ml",
+    "brand": "sheesh hash sodas",
+    "current_price": 8.99,
+    "cost": 5.4,
+    "regular_price": 9.99
+  },
+  "118357": {
+    "name": "Dragon Cake Milled Flower",
+    "brand": "kronnix",
+    "current_price": 26.99,
+    "cost": 17.0,
+    "regular_price": 29.99
+  },
+  "118358": {
+    "name": "Sapphire Kush Milled",
+    "brand": "kronnix",
+    "current_price": 26.99,
+    "cost": 17.0,
+    "regular_price": 29.99
+  }
+}

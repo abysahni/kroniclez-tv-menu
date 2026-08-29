@@ -796,11 +796,11 @@ class TendyInventoryService:
             stock = pricing.get("stock", 0)
             brand = (it.get("brand") or {}).get("name", "")
             var = it.get("variantName", "")
-            
             p_title = clean_product_title(name, brand, var, screen_id=1)
             potency = lookup_authentic_potency(name, brand, screen_id=1)
             sale_p = float(price or 0.0)
-            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
+            sku_id = str(it.get("id") or it.get("sku") or "")
+            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p, sku_id)
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
@@ -982,7 +982,8 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=2)
             potency = lookup_authentic_potency(name, brand, screen_id=2)
             sale_p = float(price or 0.0)
-            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
+            sku_id = str(it.get("id") or it.get("sku") or "")
+            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p, sku_id)
             entry = {
                 "product_name": p_title,
                 "price": sale_p,
@@ -1174,7 +1175,8 @@ class TendyInventoryService:
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
             sale_p = float(price or 0.0)
-            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
+            sku_id = str(it.get("id") or it.get("sku") or "")
+            promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p, sku_id)
             entry = {
                 "product_name": p_title,
                 "price": sale_p,

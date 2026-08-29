@@ -15,67 +15,113 @@ def get_toronto_now() -> datetime:
     return datetime.now(TORONTO_TZ)
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "promotions_config.json")
+REGULAR_PRICES_PATH = os.path.join(os.path.dirname(__file__), "regular_prices.json")
 
 class PromotionEngine:
-    """Autonomous Promotion Engine supporting multiple time-based, day-based, category-based, and brand-based promotions."""
+    """
+    Autonomous Promotion Engine supporting:
+    1. Direct Regular Price Comparison (any price lowered below regular price triggers sale mode).
+    2. Scheduled Multi-Promotions (Happy Hour 1PM-4PM, Munchie Monday, Flower Friday, etc.).
+    """
 
-    def __init__(self, config_path: str = CONFIG_PATH):
+    def __init__(self, config_path: str = CONFIG_PATH, reg_prices_path: str = REGULAR_PRICES_PATH):
         self.config_path = config_path
-        self._last_loaded = 0
+        self.reg_prices_path = reg_prices_path
+        self._last_loaded_config = 0
+        self._last_loaded_reg = 0
         self._promotions = []
-        self._load_config()
+        self._regular_prices = {}
+        self._load_all()
 
-    def _load_config(self):
+    def _load_all(self):
+        # 1. Load Promotions Config
         try:
             if os.path.exists(self.config_path):
                 with open(self.config_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     self._promotions = data.get("promotions", [])
-                    self._last_loaded = os.path.getmtime(self.config_path)
+                    self._last_loaded_config = os.path.getmtime(self.config_path)
             else:
                 self._promotions = []
         except Exception as e:
             print(f"[PromotionEngine] Error loading {self.config_path}: {e}")
 
+        # 2. Load Regular Prices Database
+        try:
+            if os.path.exists(self.reg_prices_path):
+                with open(self.reg_prices_path, "r", encoding="utf-8") as f:
+                    self._regular_prices = json.load(f)
+                    self._last_loaded_reg = os.path.getmtime(self.reg_prices_path)
+            else:
+                self._regular_prices = {}
+        except Exception as e:
+            print(f"[PromotionEngine] Error loading {self.reg_prices_path}: {e}")
+
     def get_all_promotions(self) -> List[Dict[str, Any]]:
-        if os.path.exists(self.config_path) and os.path.getmtime(self.config_path) > self._last_loaded:
-            self._load_config()
+        if os.path.exists(self.config_path) and os.path.getmtime(self.config_path) > self._last_loaded_config:
+            self._load_all()
         return self._promotions
 
-    def evaluate_item(self, name: str, category: str, brand: str = "", price: float = 0.0) -> Dict[str, Any]:
-        """
-        Evaluate if a product qualifies for any active promotion right now.
-        Returns:
-            {
-                "is_sale": bool,
-                "price": float,
-                "old_price": Optional[float],
-                "discount_percent": int,
-                "promo_name": Optional[str]
-            }
-        """
-        if os.path.exists(self.config_path) and os.path.getmtime(self.config_path) > self._last_loaded:
-            self._load_config()
+    def get_regular_price(self, name: str, sku_id: str = "") -> Optional[float]:
+        """Lookup regular baseline price for an item by SKU ID or normalized name."""
+        if os.path.exists(self.reg_prices_path) and os.path.getmtime(self.reg_prices_path) > self._last_loaded_reg:
+            self._load_all()
 
-        now = get_toronto_now()
-        current_day = now.strftime("%A")  # e.g. "Monday", "Saturday"
-        current_time_str = now.strftime("%H:%M")  # e.g. "13:45", "18:05"
+        # Try SKU match
+        if sku_id and str(sku_id) in self._regular_prices:
+            return float(self._regular_prices[str(sku_id)].get("regular_price", 0))
 
+        # Try Name match
+        name_clean = (name or "").strip().lower()
+        for k, v in self._regular_prices.items():
+            if v.get("name", "").strip().lower() == name_clean:
+                return float(v.get("regular_price", 0))
+
+        return None
+
+    def evaluate_item(self, name: str, category: str, brand: str = "", price: float = 0.0, sku_id: str = "") -> Dict[str, Any]:
+        """
+        Evaluate if a product qualifies for sale display.
+        Rule 1: If current POS price < regular baseline price -> Auto Sale!
+        Rule 2: If active scheduled promotion rule applies -> Scheduled Sale!
+        """
+        if os.path.exists(self.config_path) and os.path.getmtime(self.config_path) > self._last_loaded_config:
+            self._load_all()
+        if os.path.exists(self.reg_prices_path) and os.path.getmtime(self.reg_prices_path) > self._last_loaded_reg:
+            self._load_all()
+
+        sale_p = float(price or 0.0)
         name_low = (name or "").lower()
         cat_low = (category or "").lower()
         brand_low = (brand or "").lower()
-        sale_p = float(price or 0.0)
+
+        # --- RULE 1: DIRECT REGULAR PRICE COMPARISON ---
+        reg_p = self.get_regular_price(name, sku_id)
+        if reg_p and reg_p > 0:
+            # If current price is at least $0.10 lower than regular price, it is a SALE!
+            if sale_p < (reg_p - 0.05):
+                disc_pct = round(((reg_p - sale_p) / reg_p) * 100)
+                return {
+                    "is_sale": True,
+                    "price": sale_p,
+                    "old_price": reg_p,
+                    "discount_percent": disc_pct,
+                    "promo_name": "Special Sale Price"
+                }
+
+        # --- RULE 2: SCHEDULED MULTI-PROMOTION RULES ---
+        now = get_toronto_now()
+        current_day = now.strftime("%A")
+        current_time_str = now.strftime("%H:%M")
 
         for promo in self._promotions:
             if not promo.get("enabled", True):
                 continue
 
-            # 1. Day of week filter
             days = [d.capitalize() for d in promo.get("days", [])]
             if days and current_day not in days:
                 continue
 
-            # 2. Time window filter
             schedule_type = promo.get("schedule_type", "all_day")
             if schedule_type == "time_window":
                 start_t = promo.get("start_time", "00:00")
@@ -83,12 +129,10 @@ class PromotionEngine:
                 if not (start_t <= current_time_str < end_t):
                     continue
 
-            # 3. Excluded keywords filter
             excluded = promo.get("excluded_keywords", [])
             if any(k.lower() in name_low for k in excluded):
                 continue
 
-            # 4. Category & Brand Matching
             promo_cats = [c.lower() for c in promo.get("categories", [])]
             promo_brands = [b.lower() for b in promo.get("brands", [])]
 
@@ -100,7 +144,6 @@ class PromotionEngine:
                     if c in cat_low or c in name_low:
                         cat_match = True
                         break
-                    # Alias match for flower/vapes/edibles
                     if "flower" in c and ("flower" in cat_low or "milled" in cat_low):
                         cat_match = True
                         break
@@ -135,7 +178,7 @@ class PromotionEngine:
                     "promo_name": promo.get("name", "Special Promotion")
                 }
 
-        # No promo active
+        # Regular Price / No Promo
         return {
             "is_sale": False,
             "price": sale_p,
