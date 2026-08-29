@@ -54,7 +54,6 @@ STRAIN_DATABASE_PREROLL = {
     "strawberry pie": "INDICA",
     "permanent marker": "INDICA",
     "sour kush": "INDICA",
-    "pineapple nuken": "SATIVA",
     "pink drip": "INDICA",
     "kush cookies": "INDICA",
     "frozen grapes": "INDICA",
@@ -70,8 +69,11 @@ STRAIN_DATABASE_PREROLL = {
     "indica pre-roll": "INDICA",
     "roll up indica": "INDICA",
     "lil buddy indica": "INDICA",
+    "dutchy blunt": "INDICA",
+    "dutchy": "INDICA",
 
     # SATIVA
+    "pineapple nuken": "SATIVA",
     "maui wowie": "SATIVA",
     "lil buddy sativa": "SATIVA",
     "panama gold": "SATIVA",
@@ -100,7 +102,6 @@ STRAIN_DATABASE_PREROLL = {
     "liquid imagination": "HYBRID",
     "billy blunt": "HYBRID",
     "juicy blunt": "HYBRID",
-    "dutchy blunt": "HYBRID",
     "forbidden applez": "HYBRID",
     "twofer": "HYBRID",
     "opp sativa - indica": "HYBRID",

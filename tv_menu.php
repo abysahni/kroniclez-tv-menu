@@ -182,6 +182,7 @@ function lookupPotency($name, $brand, $map, $default_thc = '28%') {
 
 function classifyStrain($name, $brand) {
     $full = strtolower("$brand $name");
+    if (strpos($full, "dutchy") !== false) return "INDICA";
     if (strpos($full, "pineapple nuken") !== false) return "SATIVA";
     $full = strtolower("$brand $name");
     if (preg_replace('/\b(sativa|lemon|sour|haze|diesel|tangie|mango|sunshine|cough|acapulco|jack|linx|grapefruit|shockwave|sticky)\b/', '', $full) !== $full) return 'SATIVA';
