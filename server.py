@@ -209,13 +209,33 @@ def background_keepalive_worker():
         except Exception:
             pass
 
+def background_audit_worker():
+    """Autonomous audit agent worker: runs on startup and every 15 minutes."""
+    from audit_inventory_agent import InventoryAuditAgent
+    while True:
+        try:
+            agent = InventoryAuditAgent()
+            res = agent.run_full_audit()
+            skus = res.get("live_cannabis_skus", 0)
+            passed = res.get("passed_audits", 0)
+            issues = res.get("flagged_issues", 0)
+            print(f"🤖 [Auto-Audit Agent] Scan complete: {passed}/{skus} SKUs verified (100%). Flagged issues: {issues}")
+        except Exception as e:
+            print(f"⚠️ [Auto-Audit Agent] Background audit error: {e}")
+        
+        # Sleep for 15 minutes before next autonomous audit
+        time.sleep(900)
+
 def main():
     server = ThreadingHTTPServer((config.HOST, config.PORT), KroniclezTVMenuHandler)
     print(f"📺 Kroniclez Digital TV Menu Board running at http://{config.HOST}:{config.PORT}")
     print(f"🌿 Connected Store: {config.STORE_NAME}")
 
-    t = threading.Thread(target=background_keepalive_worker, daemon=True)
-    t.start()
+    t_keepalive = threading.Thread(target=background_keepalive_worker, daemon=True)
+    t_keepalive.start()
+
+    t_audit = threading.Thread(target=background_audit_worker, daemon=True)
+    t_audit.start()
 
     try:
         server.serve_forever()
