@@ -31,6 +31,14 @@ if ($screen < 1 || $screen > 3) $screen = 1;
 $is_api = isset($_GET['api']) && $_GET['api'] == '1';
 
 // Potency & Strain Database
+$REGULAR_PRICES = [
+    "00882464077381" => 22.99,
+    "102323_10x0.35g___" => 22.99,
+    "pineapple nuken" => 22.99,
+    "00628045101829" => 35.94,
+    "00684074001080" => 7.35
+];
+
 $POTENCY_MAP = [
     // Pre-rolls
     "animal face" => ["thc" => "31.5%", "cbd" => "<1.0%"],

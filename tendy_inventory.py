@@ -1,3 +1,4 @@
+import os
 import json
 import re
 import ssl
@@ -26,36 +27,59 @@ def is_happy_hour_active() -> bool:
     now_toronto = get_toronto_now()
     return 13 <= now_toronto.hour < 16
 
+REGULAR_PRICES_PATH = os.path.join(os.path.dirname(__file__), "regular_prices.json")
+
+def load_regular_prices_registry() -> Dict[str, Any]:
+    try:
+        if os.path.exists(REGULAR_PRICES_PATH):
+            with open(REGULAR_PRICES_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"⚠️ Error loading regular prices: {e}")
+    return {}
+
 def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, Any]:
     """
     Computes active price and original price.
-    Automatically detects if product was manually set on sale in Tendy POS (Sale Price < Regular Price calculated from Cost & Markup),
+    Automatically detects if product has a regular price registry entry where Sale Price < Regular Price,
     or if an active multi-promotion rule applies.
     """
     pricing = it.get("productPricing") or {}
-    cost = float(pricing.get("cost") or 0.0)
-    markup = float(pricing.get("markup") or 0.0)
     sale_p = float(pricing.get("sale_price") or 0.0)
     name = it.get("name", "")
     cat = (it.get("category") or {}).get("name", "")
     brand = (it.get("brand") or {}).get("name", "")
+    barcode = str(it.get("barcode") or "")
+    sku = str(it.get("sku") or "")
+    name_low = name.lower()
 
-    # Calculate Tendy POS Regular Price from Cost & Markup
-    if cost > 0 and markup > 0:
-        reg_p = round(cost * (1.0 + (markup / 100.0)), 2)
+    # 1. Check direct Regular Price Registry (e.g. Pineapple Nuken $22.99 regular vs $19.98 sale)
+    reg_registry = load_regular_prices_registry()
+    products_map = reg_registry.get("products", {})
+    
+    matched_entry = None
+    if barcode and barcode in products_map:
+        matched_entry = products_map[barcode]
+    elif sku and sku in products_map:
+        matched_entry = products_map[sku]
     else:
-        reg_p = sale_p
+        for k, v in products_map.items():
+            v_name = (v.get("name") or "").lower()
+            if v_name and (v_name in name_low or name_low in v_name):
+                matched_entry = v
+                break
 
-    # Check 1: Manual Discount in Tendy POS (Sale Price < Regular Price)
-    if reg_p > sale_p and (reg_p - sale_p) >= 0.05:
-        return {
-            "price": sale_p,
-            "old_price": reg_p,
-            "is_sale": True,
-            "promo_name": "Tendy POS Special Price"
-        }
+    if matched_entry:
+        reg_p = float(matched_entry.get("regular_price", 0.0))
+        if reg_p > sale_p and (reg_p - sale_p) >= 0.05:
+            return {
+                "price": sale_p,
+                "old_price": reg_p,
+                "is_sale": True,
+                "promo_name": "Special Sale Price"
+            }
 
-    # Check 2: Scheduled Multi-Promotion Engine
+    # 2. Check Multi-Promotion Engine (e.g. Happy Hour / category promotions)
     promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
     return {
         "price": sale_p,
