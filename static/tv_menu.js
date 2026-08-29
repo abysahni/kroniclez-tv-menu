@@ -36,7 +36,19 @@ function renderRowHtml(it, showStrainBadge = false) {
 
     const pName = it.product_name || '';
     const thc = it.thc || '28%';
-    const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
+    
+    let tagBadge = '';
+    if (it.tag === 'STAFF PICK') {
+        tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
+    } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
+        tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
+    }
+
+    let stockBadge = '';
+    const stockNum = parseInt(it.stock, 10);
+    if (stockNum > 0 && stockNum <= 3) {
+        stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
+    }
 
     let priceHtml = '';
     if (it.is_sale && it.old_price) {
@@ -50,7 +62,7 @@ function renderRowHtml(it, showStrainBadge = false) {
 
     return `
         <div class="p-row">
-            <div class="p-name">${badge}${pName}${tagBadge}</div>
+            <div class="p-name">${badge}${pName}${tagBadge}${stockBadge}</div>
             <div class="p-thc">${thc}</div>
             <div class="p-price">${priceHtml}</div>
         </div>
@@ -65,7 +77,18 @@ function renderSoftRow(it) {
     if (spec.includes('INDICA')) { metaClass = 'meta-indica'; metaText = 'Indica'; }
     else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
 
-    const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
+    let tagBadge = '';
+    if (it.tag === 'STAFF PICK') {
+        tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
+    } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
+        tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
+    }
+
+    let stockBadge = '';
+    const stockNum = parseInt(it.stock, 10);
+    if (stockNum > 0 && stockNum <= 3) {
+        stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
+    }
 
     // Functional Cannabinoid Badge (Option 2)
     let funcBadge = '';
@@ -92,7 +115,7 @@ function renderSoftRow(it) {
 
     return `
         <div class="soft-row">
-            <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}</div>
+            <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>
             <div class="soft-cbd">${it.cbd || '—'}</div>

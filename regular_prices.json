@@ -112,6 +112,69 @@
       "barcode": "00628110180247",
       "regular_price": 48.91,
       "tag": "FEATURED"
+    },
+    "00824164007848": {
+      "name": "JEETER • Baby Jeeter Multi-Pack Infused Pre-Roll 5x0.5g",
+      "sku": "312557_5x0.5g___",
+      "barcode": "00824164007848",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00628186000951": {
+      "name": "BACK FORTY • Backpackers Pre-Roll - Lemon Diesel 10x0.75g",
+      "sku": "107032_10x0.75g___",
+      "barcode": "00628186000951",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00813540003314": {
+      "name": "QUEEN OF BUD • Red Jasper Diamond Infused Rose Blunts 2x1g",
+      "sku": "312304_2x1g___",
+      "barcode": "00813540003314",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00628634099483": {
+      "name": "CATCH ME OUTSIDE • Couch Potato 14g",
+      "sku": "108013_14g___",
+      "barcode": "00628634099483",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00843087007339": {
+      "name": "RIPPED • Ripped Sativa 14g",
+      "sku": "105840_14g___",
+      "barcode": "00843087007339",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00628186000913": {
+      "name": "BACK FORTY • Mango Fuzz BOOSTED All-In-One Vape 1.2g",
+      "sku": "305272_1.2g___",
+      "barcode": "00628186000913",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00836780001704": {
+      "name": "THE LOUD PLUG • Diamonds 1g",
+      "sku": "315024_1g___",
+      "barcode": "00836780001704",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00846067006926": {
+      "name": "FUME BY DOM JACKSON • Gas Whip Diamonds 1g",
+      "sku": "311124_1g___",
+      "barcode": "00846067006926",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
+    },
+    "00800447003172": {
+      "name": "PEARLS BY GRÖN • Blackberry Lemonade 1:1:1 CBN/CBD/THC 10x5 pack",
+      "sku": "332217_10x5 Pack___",
+      "barcode": "00800447003172",
+      "regular_price": 0.0,
+      "tag": "STAFF PICK"
     }
   }
 }

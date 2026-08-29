@@ -911,11 +911,15 @@ body {
 .b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
 .b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
+.badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
+.badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
 .badge-cbn { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(147, 51, 234, 0.25); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.5); display: inline-block; vertical-align: middle; }
 .badge-cbg { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(14, 165, 233, 0.25); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.5); display: inline-block; vertical-align: middle; }
 .badge-cbd { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.5); display: inline-block; vertical-align: middle; }
 .badge-balance { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.5); display: inline-block; vertical-align: middle; }
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
+.badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
+.badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
 
 /* ========================================================================== */
 /* FLOATING CONTROLS & STATUS                                                 */
@@ -1137,7 +1141,19 @@ body {
             if (spec.includes('INDICA')) { metaClass = 'meta-indica'; metaText = 'Indica'; }
             else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
 
-            const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
+            let tagBadge = '';
+            if (it.tag === 'STAFF PICK') {
+                tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
+            } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
+                tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
+            }
+
+            let stockBadge = '';
+            const stockNum = parseInt(it.stock, 10);
+            if (stockNum > 0 && stockNum <= 3) {
+                stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
+            }
+
             let funcBadge = '';
             const pNameLow = (it.product_name || '').toLowerCase();
             if (pNameLow.includes('cbn')) funcBadge = '<span class="badge-cbn">🌙 CBN • SLEEP</span>';
@@ -1151,7 +1167,7 @@ body {
 
             return `
                 <div class="soft-row">
-                    <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}</div>
+                    <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
                     <div class="soft-meta ${metaClass}">${metaText}</div>
                     <div class="soft-thc">${it.thc || '10mg'}</div>
                     <div class="soft-cbd">${it.cbd || '—'}</div>

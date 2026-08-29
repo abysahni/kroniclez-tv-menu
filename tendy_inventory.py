@@ -82,6 +82,14 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
                 "tag": tag_val,
                 "promo_name": "Featured Sale Price"
             }
+        elif tag_val == "STAFF PICK":
+            return {
+                "price": sale_p,
+                "old_price": None,
+                "is_sale": False,
+                "tag": "STAFF PICK",
+                "promo_name": "Staff Pick"
+            }
 
     # 2. Check Multi-Promotion Engine (e.g. Happy Hour / category promotions)
     promo_res = promotion_engine.evaluate_item(name, cat, brand, sale_p)
