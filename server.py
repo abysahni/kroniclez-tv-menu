@@ -54,6 +54,8 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             ".json": "application/json; charset=utf-8",
             ".svg": "image/svg+xml",
             ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
             ".ico": "image/x-icon",
             ".woff2": "font/woff2"
         }
@@ -66,10 +68,9 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header("Content-Type", content_type)
-        if ext in [".css", ".js", ".svg", ".png", ".woff2"]:
-            self.send_header("Cache-Control", "public, max-age=3600")
-        else:
-            self.send_header("Cache-Control", "no-cache")
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
         if is_gzipped:
             self.send_header("Content-Encoding", "gzip")
         self.send_header("Content-Length", str(len(body)))

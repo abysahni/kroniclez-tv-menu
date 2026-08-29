@@ -227,6 +227,12 @@ STRAIN_DATABASE_VAPE = {
 
 def classify_vape(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    for pattern, species in STRAIN_DATABASE_VAPE.items():
+        if pattern in full:
+            return species
+    if "sativa" in full: return "SATIVA"
+    if "indica" in full: return "INDICA"
+    return "HYBRID"
 def clean_product_title(name: str, brand: str = "", variant: str = "", screen_id: int = 1) -> str:
     """Format clean, luxury dispensary menu title without redundant category keywords."""
     b = brand.strip().upper() if brand else ""
@@ -679,8 +685,8 @@ class TendyInventoryService:
         if cache_key in self._cache and (now - self._cache_timestamps.get(cache_key, 0)) < 25:
             return self._cache[cache_key]
 
-        feed = self.fetch_teamhub_screen_feed(screen_id=1, store_id=store_id)
-        if feed and feed.get("structured") and feed.get("structured", {}).get("indica", {}).get("items"):
+        feed = None
+        if False:
             d = feed["structured"]
             ind_items = [it for it in d.get("indica", {}).get("items", []) if not is_accessory(it)]
             for it in ind_items:
@@ -854,8 +860,8 @@ class TendyInventoryService:
         if cache_key in self._cache and (now - self._cache_timestamps.get(cache_key, 0)) < 25:
             return self._cache[cache_key]
 
-        feed = self.fetch_teamhub_screen_feed(screen_id=2, store_id=store_id)
-        if feed and feed.get("structured") and feed.get("structured", {}).get("flower", {}).get("indica_dried", {}).get("items"):
+        feed = None
+        if False:
             d = feed["structured"]
             f = d.get("flower", {})
             v = d.get("vapes", {})
@@ -1047,8 +1053,8 @@ class TendyInventoryService:
         if cache_key in self._cache and (now - self._cache_timestamps.get(cache_key, 0)) < 25:
             return self._cache[cache_key]
 
-        feed = self.fetch_teamhub_screen_feed(screen_id=3, store_id=store_id)
-        if feed and feed.get("structured") and feed.get("structured", {}).get("gummies", {}).get("items"):
+        feed = None
+        if False:
             d = feed["structured"]
             all_gummies = [it for it in d.get("gummies", {}).get("items", []) if not is_accessory(it)]
             g_ind_hyb = []

@@ -11,11 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="/static/tv_menu.css?v=1">
+    <link rel="stylesheet" href="/static/tv_menu.css?v=50">
 </head>
 <body>
 
-    <!-- TV Sync Status Indicator -->
+    <!-- TV Sync Status Indicator (Top Right) -->
     <div class="tv-sync-status">
         <span class="pulse-dot"></span>
         <span id="tv-sync-time">TENDY LIVE SYNC</span>
@@ -31,18 +31,15 @@
 
     <!-- Floating TV Navigation Dock (Auto-hides on idle) -->
     <nav id="floatingNav" class="tv-floating-nav">
-        <span style="font-size: 10px; font-weight: 900; color: #777; letter-spacing: 0.5px;">KRONICLEZ TV:</span>
+        <span style="font-size: 10px; font-weight: 900; color: #777; letter-spacing: 0.5px;">DEDICATED TV:</span>
         <button type="button" id="nav-btn-screen1" class="nav-link-btn" onclick="switchScreen(1)">
-            <i class="bi bi-fire"></i> Pre-Rolls
+            <i class="bi bi-fire"></i> TV 1: Pre-Rolls
         </button>
         <button type="button" id="nav-btn-screen2" class="nav-link-btn" onclick="switchScreen(2)">
-            <i class="bi bi-flower1"></i> Vapes & Flower
+            <i class="bi bi-flower1"></i> TV 2: Vapes & Flower
         </button>
         <button type="button" id="nav-btn-screen3" class="nav-link-btn" onclick="switchScreen(3)">
-            <i class="bi bi-cup-straw"></i> Soft Chews & Drinks
-        </button>
-        <button type="button" id="nav-btn-auto" class="nav-link-btn" onclick="toggleAutoCycle()" title="Toggle Auto-Cycle (30s rotation)">
-            <i class="bi bi-arrow-repeat"></i> Auto
+            <i class="bi bi-cup-straw"></i> TV 3: Edibles & Drinks
         </button>
         <button type="button" class="nav-link-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">
             <i class="bi bi-fullscreen"></i>
@@ -50,6 +47,6 @@
     </nav>
 
     <!-- Client Script -->
-    <script src="/static/tv_menu.js?v=1"></script>
+    <script src="/static/tv_menu.js?v=50"></script>
 </body>
 </html>
