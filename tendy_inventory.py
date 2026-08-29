@@ -54,7 +54,7 @@ STRAIN_DATABASE_PREROLL = {
     "strawberry pie": "INDICA",
     "permanent marker": "INDICA",
     "sour kush": "INDICA",
-    "pineapple nuken": "INDICA",
+    "pineapple nuken": "SATIVA",
     "pink drip": "INDICA",
     "kush cookies": "INDICA",
     "frozen grapes": "INDICA",
