@@ -61,10 +61,12 @@ function renderRowHtml(it, showStrainBadge = false) {
     }
 
     const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
-    const isLowStock = (!isFeatured && stockNum > 0 && stockNum <= 3);
+    const isStaffPick = (it.tag === 'STAFF PICK');
+    const isLowStock = (!isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
 
     let rowClass = '';
     if (isFeatured) rowClass = 'row-featured';
+    else if (isStaffPick) rowClass = 'row-staff-pick';
     else if (isLowStock) rowClass = 'row-low-stock';
 
     return `
@@ -121,10 +123,12 @@ function renderSoftRow(it) {
     }
 
     const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
-    const isLowStock = (!isFeatured && stockNum > 0 && stockNum <= 3);
+    const isStaffPick = (it.tag === 'STAFF PICK');
+    const isLowStock = (!isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
 
     let rowClass = '';
     if (isFeatured) rowClass = 'row-featured';
+    else if (isStaffPick) rowClass = 'row-staff-pick';
     else if (isLowStock) rowClass = 'row-low-stock';
 
     return `

@@ -471,6 +471,16 @@ body {
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.18);
 }
 
+/* Gold Row Tint & Solid Gold Accent Bar for Staff Pick Items */
+.p-row.row-staff-pick, .soft-row.row-staff-pick {
+    background: linear-gradient(90deg, rgba(234, 179, 8, 0.20) 0%, rgba(202, 138, 4, 0.05) 100%) !important;
+    border-left: 3.5px solid #eab308 !important;
+    border-radius: 3px;
+    padding-left: 4px !important;
+    margin: 1px 0;
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.20);
+}
+
 /* Amber / Gold Row Tint & Accent Bar for Limited Stock Items */
 .p-row.row-low-stock, .soft-row.row-low-stock {
     background: linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.04) 100%) !important;
