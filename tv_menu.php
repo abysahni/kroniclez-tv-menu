@@ -646,41 +646,67 @@ body {
 }
 
 /* Screen 1 Enhanced Typography & Visibility (Pre-Rolls) */
+.container-prerolls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.25fr;
+    gap: 8px;
+    width: 100%;
+}
 .container-prerolls .p-row {
-    padding: 1.8px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 58px 70px;
+    column-gap: 4px;
+    align-items: center;
+    padding: 2.4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .container-prerolls .p-name {
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.18;
+    font-size: 14.5px;
+    font-weight: 750;
+    line-height: 1.22;
+    padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 13px;
+    font-size: 14.5px;
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 14px;
+    font-size: 15.5px;
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 14.5px;
+    font-size: 16px;
     font-weight: 900;
 }
+.container-prerolls .p-price .old {
+    font-size: 10.5px;
+    font-weight: 700;
+}
 .container-prerolls .title {
-    font-size: 17px;
-    padding-bottom: 3px;
-    margin-bottom: 3px;
+    font-size: 19px;
+    font-weight: 900;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
 }
 .container-prerolls .subhead {
-    font-size: 11.5px;
-    margin: 3px 0 1.5px;
+    font-size: 12.5px;
+    font-weight: 800;
+    margin: 4px 0 2px;
+    padding-bottom: 2px;
 }
 .container-prerolls .table-header {
-    font-size: 9.5px;
-    margin: 1.5px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 58px 70px;
+    column-gap: 4px;
+    font-size: 10.5px;
+    font-weight: 800;
+    margin: 2px 0;
+    padding-bottom: 2px;
 }
 .container-prerolls .panel {
-    padding: 5px 7px;
+    padding: 6px 8px;
+    border-radius: 8px;
 }
 
 /* Screen 2 Targeted Micro-Adjustment (Indica & Hybrid Flower Column Fit) */
