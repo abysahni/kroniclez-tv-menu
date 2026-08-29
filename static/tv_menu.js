@@ -61,10 +61,14 @@ function renderRowHtml(it, showStrainBadge = false) {
     }
 
     const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
-    const featuredClass = isFeatured ? 'row-featured' : '';
+    const isLowStock = (!isFeatured && stockNum > 0 && stockNum <= 3);
+
+    let rowClass = '';
+    if (isFeatured) rowClass = 'row-featured';
+    else if (isLowStock) rowClass = 'row-low-stock';
 
     return `
-        <div class="p-row ${featuredClass}">
+        <div class="p-row ${rowClass}">
             <div class="p-name">${badge}${pName}${tagBadge}${stockBadge}</div>
             <div class="p-thc">${thc}</div>
             <div class="p-price">${priceHtml}</div>
@@ -117,10 +121,14 @@ function renderSoftRow(it) {
     }
 
     const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
-    const featuredClass = isFeatured ? 'row-featured' : '';
+    const isLowStock = (!isFeatured && stockNum > 0 && stockNum <= 3);
+
+    let rowClass = '';
+    if (isFeatured) rowClass = 'row-featured';
+    else if (isLowStock) rowClass = 'row-low-stock';
 
     return `
-        <div class="soft-row ${featuredClass}">
+        <div class="soft-row ${rowClass}">
             <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>

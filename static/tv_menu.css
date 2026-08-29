@@ -471,6 +471,16 @@ body {
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.18);
 }
 
+/* Amber / Gold Row Tint & Accent Bar for Limited Stock Items */
+.p-row.row-low-stock, .soft-row.row-low-stock {
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.04) 100%) !important;
+    border-left: 3.5px solid #f59e0b !important;
+    border-radius: 3px;
+    padding-left: 4px !important;
+    margin: 1px 0;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.16);
+}
+
 /* Price Styling */
 .p-price {
     display: flex;
