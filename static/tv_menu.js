@@ -36,6 +36,7 @@ function renderRowHtml(it, showStrainBadge = false) {
 
     const pName = it.product_name || '';
     const thc = it.thc || '28%';
+    const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
 
     let priceHtml = '';
     if (it.is_sale && it.old_price) {
@@ -49,7 +50,7 @@ function renderRowHtml(it, showStrainBadge = false) {
 
     return `
         <div class="p-row">
-            <div class="p-name">${badge}${pName}</div>
+            <div class="p-name">${badge}${pName}${tagBadge}</div>
             <div class="p-thc">${thc}</div>
             <div class="p-price">${priceHtml}</div>
         </div>
@@ -64,6 +65,8 @@ function renderSoftRow(it) {
     if (spec.includes('INDICA')) { metaClass = 'meta-indica'; metaText = 'Indica'; }
     else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
 
+    const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
+
     let priceHtml = '';
     if (it.is_sale && it.old_price) {
         priceHtml = `
@@ -76,7 +79,7 @@ function renderSoftRow(it) {
 
     return `
         <div class="soft-row">
-            <div class="soft-name">${it.product_name}</div>
+            <div class="soft-name">${it.product_name}${tagBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>
             <div class="soft-cbd">${it.cbd || '—'}</div>

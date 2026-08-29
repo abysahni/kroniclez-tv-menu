@@ -1,43 +1,117 @@
 {
-  "description": "Kroniclez Regular Catalog Prices (Standard MSRP before Promotional Markdowns)",
+  "description": "Kroniclez Regular Catalog Prices and Featured Items Registry",
   "products": {
     "00882464077381": {
-      "name": "Pineapple Nuken Pre-Rolls",
+      "name": "DIVVY • Pineapple Nuken Pre-Rolls",
       "sku": "102323_10x0.35g___",
-      "regular_price": 22.99
+      "barcode": "00882464077381",
+      "regular_price": 22.99,
+      "tag": "FEATURED"
     },
-    "00826061000441": {
-      "name": "Watermelon Ice Disposable Pen",
-      "sku": "309532_0.95g___",
-      "regular_price": 38.88
+    "00843087001733": {
+      "name": "THUMBS UP • Sativa Pre-Roll 2x1g",
+      "sku": "105400_2x1g___",
+      "barcode": "00843087001733",
+      "regular_price": 9.52,
+      "tag": "FEATURED"
     },
-    "00628120720709": {
-      "name": "Moon Drifter",
-      "sku": "108741_14g___",
-      "regular_price": 66.66
+    "00843087003928": {
+      "name": "THUMBS UP • Indica Pre-Roll 2x1g",
+      "sku": "105059_2x1g___",
+      "barcode": "00843087003928",
+      "regular_price": 9.94,
+      "tag": "FEATURED"
     },
-    "00800129905541": {
-      "name": "Blueberry Muffinz",
-      "sku": "108743_7g___",
-      "regular_price": 40.54
-    },
-    "00628045101829": {
-      "name": "Hard Hitters Blue Zello Liquid Diamond 510 Thread Cartridge",
-      "sku": "303135_1g___",
-      "regular_price": 35.94
+    "00835861000353": {
+      "name": "ROYAL CANNABIS SUPPLY CO. • Zombie Kush Pre-Roll 1x1g",
+      "sku": "103234_1x1g___",
+      "barcode": "00835861000353",
+      "regular_price": 6.65,
+      "tag": "FEATURED"
     },
     "00684074001080": {
-      "name": "Dutchy Blunt",
+      "name": "PIFF • Dutchy Blunt 1x1g",
       "sku": "110332_1x1g___",
-      "regular_price": 7.35
+      "barcode": "00684074001080",
+      "regular_price": 7.35,
+      "tag": "FEATURED"
+    },
+    "00628120720709": {
+      "name": "STARTING POINT! • Moon Drifter 14g",
+      "sku": "108741_14g___",
+      "barcode": "00628120720709",
+      "regular_price": 66.66,
+      "tag": "FEATURED"
+    },
+    "00800129905541": {
+      "name": "3SAINTS • Blueberry Muffinz 7g",
+      "sku": "108743_7g___",
+      "barcode": "00800129905541",
+      "regular_price": 40.54,
+      "tag": "FEATURED"
+    },
+    "00628186000920": {
+      "name": "BACK FORTY • Rainbow Melon BOOSTED AIO 1.2g",
+      "sku": "305278_1.2g___",
+      "barcode": "00628186000920",
+      "regular_price": 45.65,
+      "tag": "FEATURED"
+    },
+    "00628090650914": {
+      "name": "FROOTYHOOTY • Poppin Peach Live Rosin 510 1g",
+      "sku": "303100_1g___",
+      "barcode": "00628090650914",
+      "regular_price": 36.71,
+      "tag": "FEATURED"
+    },
+    "00628045101331": {
+      "name": "ENDGAME • Mosa x Blood Orange 510 1g",
+      "sku": "300641_1g___",
+      "barcode": "00628045101331",
+      "regular_price": 32.90,
+      "tag": "FEATURED"
+    },
+    "00826061000519": {
+      "name": "BACK FORTY • Peach Lemonade Disposable Pen 0.95g",
+      "sku": "309559_0.95g___",
+      "barcode": "00826061000519",
+      "regular_price": 39.58,
+      "tag": "FEATURED"
+    },
+    "00826061000441": {
+      "name": "BACK FORTY • Watermelon Ice Disposable Pen 0.95g",
+      "sku": "309532_0.95g___",
+      "barcode": "00826061000441",
+      "regular_price": 38.88,
+      "tag": "FEATURED"
+    },
+    "00990309000729": {
+      "name": "JAYS • High Potency 92+ Hawaiian Za 510 0.95g",
+      "sku": "307198_0.95g___",
+      "barcode": "00990309000729",
+      "regular_price": 31.78,
+      "tag": "FEATURED"
+    },
+    "00629108384227": {
+      "name": "TASTY'S • Cherry Liquid Diamond 510 1.2g",
+      "sku": "308085_1.2g___",
+      "barcode": "00629108384227",
+      "regular_price": 44.53,
+      "tag": "FEATURED"
+    },
+    "00628045101829": {
+      "name": "HARD HITTERS • Blue Zello Liquid Diamond 510 1g",
+      "sku": "303135_1g___",
+      "barcode": "00628045101829",
+      "regular_price": 35.94,
+      "tag": "FEATURED"
+    },
+    "00628110180247": {
+      "name": "ASPIRE • Spark THC Moonrocks 50 caps",
+      "sku": "113126_50 caps___",
+      "barcode": "00628110180247",
+      "regular_price": 48.91,
+      "tag": "FEATURED"
     }
-  },
-  "default_category_discounts": {
-    "Infused Pre-Rolls": 0.10,
-    "Dried Flower": 0.10,
-    "Milled Flower": 0.10,
-    "510 Cartridges": 0.10,
-    "Disposable Vapes": 0.10,
-    "Concentrates & Extracts": 0.10
   }
 }

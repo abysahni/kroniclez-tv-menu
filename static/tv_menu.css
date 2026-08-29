@@ -437,6 +437,21 @@ body {
 .b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
 .b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
 
+.badge-featured {
+    font-size: 8px;
+    font-weight: 900;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    display: inline-block;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #ffffff;
+    letter-spacing: 0.4px;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+    vertical-align: middle;
+}
+
 /* ========================================================================== */
 /* FLOATING CONTROLS & STATUS                                                 */
 /* ========================================================================== */

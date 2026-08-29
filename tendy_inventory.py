@@ -65,18 +65,22 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
     else:
         for k, v in products_map.items():
             v_name = (v.get("name") or "").lower()
-            if v_name and (v_name in name_low or name_low in v_name):
+            # Require at least 2 distinct words to match or match specific phrase
+            key_words = [w for w in re.findall(r"\w+", v_name) if len(w) > 3 and w not in ["pre", "rolls", "roll", "cartridge", "flower", "thread", "disposable", "indica", "sativa", "hybrid"]]
+            if key_words and all(kw in name_low for kw in key_words):
                 matched_entry = v
                 break
 
     if matched_entry:
         reg_p = float(matched_entry.get("regular_price", 0.0))
+        tag_val = matched_entry.get("tag", "FEATURED")
         if reg_p > sale_p and (reg_p - sale_p) >= 0.05:
             return {
                 "price": sale_p,
                 "old_price": reg_p,
                 "is_sale": True,
-                "promo_name": "Special Sale Price"
+                "tag": tag_val,
+                "promo_name": "Featured Sale Price"
             }
 
     # 2. Check Multi-Promotion Engine (e.g. Happy Hour / category promotions)
@@ -85,6 +89,7 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
         "price": sale_p,
         "old_price": promo_res.get("old_price"),
         "is_sale": promo_res.get("is_sale", False),
+        "tag": "FEATURED" if promo_res.get("is_sale") else None,
         "promo_name": promo_res.get("promo_name")
     }
 
@@ -871,6 +876,7 @@ class TendyInventoryService:
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
                 "is_sale": pricing_data["is_sale"],
+                "tag": pricing_data.get("tag"),
                 "promo_name": pricing_data.get("promo_name")
             }
 
@@ -1052,6 +1058,7 @@ class TendyInventoryService:
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1.0%"),
                 "is_sale": pricing_data["is_sale"],
+                "tag": pricing_data.get("tag"),
                 "promo_name": pricing_data.get("promo_name")
             }
 
@@ -1243,6 +1250,7 @@ class TendyInventoryService:
                 "thc": potency["thc"],
                 "cbd": potency.get("cbd", "<1mg"),
                 "is_sale": pricing_data["is_sale"],
+                "tag": pricing_data.get("tag"),
                 "promo_name": pricing_data.get("promo_name")
             }
 

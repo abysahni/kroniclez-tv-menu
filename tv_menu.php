@@ -34,18 +34,52 @@ $is_api = isset($_GET['api']) && $_GET['api'] == '1';
 $REGULAR_PRICES = [
     "00882464077381" => 22.99,
     "102323_10x0.35g___" => 22.99,
-    "pineapple nuken" => 22.99,
-    "00826061000441" => 38.88,
-    "309532_0.95g___" => 38.88,
-    "watermelon ice" => 38.88,
+    "pineapple nuken pre-rolls" => 22.99,
+    "00843087001733" => 9.52,
+    "105400_2x1g___" => 9.52,
+    "sativa pre-roll 2x1g" => 9.52,
+    "00843087003928" => 9.94,
+    "105059_2x1g___" => 9.94,
+    "indica pre-roll 2x1g" => 9.94,
+    "00835861000353" => 6.65,
+    "103234_1x1g___" => 6.65,
+    "zombie kush pre-roll 1x1g" => 6.65,
+    "00684074001080" => 7.35,
+    "110332_1x1g___" => 7.35,
+    "dutchy blunt 1x1g" => 7.35,
     "00628120720709" => 66.66,
     "108741_14g___" => 66.66,
-    "moon drifter" => 66.66,
+    "moon drifter 14g" => 66.66,
     "00800129905541" => 40.54,
     "108743_7g___" => 40.54,
-    "blueberry muffinz" => 40.54,
+    "blueberry muffinz 7g" => 40.54,
+    "00628186000920" => 45.65,
+    "305278_1.2g___" => 45.65,
+    "rainbow melon boosted aio 1.2g" => 45.65,
+    "00628090650914" => 36.71,
+    "303100_1g___" => 36.71,
+    "poppin peach live rosin 510 1g" => 36.71,
+    "00628045101331" => 32.9,
+    "300641_1g___" => 32.9,
+    "mosa x blood orange 510 1g" => 32.9,
+    "00826061000519" => 39.58,
+    "309559_0.95g___" => 39.58,
+    "peach lemonade disposable pen 0.95g" => 39.58,
+    "00826061000441" => 38.88,
+    "309532_0.95g___" => 38.88,
+    "watermelon ice disposable pen 0.95g" => 38.88,
+    "00990309000729" => 31.78,
+    "307198_0.95g___" => 31.78,
+    "high potency 92+ hawaiian za 510 0.95g" => 31.78,
+    "00629108384227" => 44.53,
+    "308085_1.2g___" => 44.53,
+    "cherry liquid diamond 510 1.2g" => 44.53,
     "00628045101829" => 35.94,
-    "00684074001080" => 7.35
+    "303135_1g___" => 35.94,
+    "blue zello liquid diamond 510 1g" => 35.94,
+    "00628110180247" => 48.91,
+    "113126_50 caps___" => 48.91,
+    "spark thc moonrocks 50 caps" => 48.91,
 ];
 
 $POTENCY_MAP = [
@@ -876,6 +910,7 @@ body {
 .b-indica { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.5); }
 .b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
 .b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
+.badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
 
 /* ========================================================================== */
 /* FLOATING CONTROLS & STATUS                                                 */
@@ -1030,7 +1065,7 @@ body {
 
             return `
                 <div class="soft-row">
-                    <div class="soft-name">${it.product_name}</div>
+                    <div class="soft-name">${it.product_name}${(it.tag === "FEATURED" || (it.is_sale && it.old_price)) ? "<span class=\"badge-featured\">⭐ FEATURED</span>" : ""}</div>
                     <div class="soft-meta ${metaClass}">${metaText}</div>
                     <div class="soft-thc">${it.thc || '10mg'}</div>
                     <div class="soft-cbd">${it.cbd || '—'}</div>
