@@ -204,6 +204,8 @@ if ($screen === 1) {
         $price = isset($pricing['sale_price']) ? floatval($pricing['sale_price']) : 0.0;
         $stock = isset($pricing['stock']) ? intval($pricing['stock']) : 0;
         if ($stock <= 0 || stripos($cat, 'accessories') !== false) continue;
+        if (stripos($cat, 'pre-roll') !== false || stripos($cat, 'cartridge') !== false || stripos($cat, 'disposable') !== false || stripos($cat, 'flower') !== false || stripos($cat, 'milled') !== false) continue;
+        if (stripos($name, 'joint') !== false || stripos($name, 'blunt') !== false || stripos($name, 'vape') !== false || stripos($name, 'cartridge') !== false || stripos($name, '510 ') !== false) continue;
 
         $p_title = cleanTitle($name, $brand, $var, 1);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '28.5%');
@@ -261,6 +263,8 @@ if ($screen === 1) {
         $price = isset($pricing['sale_price']) ? floatval($pricing['sale_price']) : 0.0;
         $stock = isset($pricing['stock']) ? intval($pricing['stock']) : 0;
         if ($stock <= 0 || stripos($cat, 'accessories') !== false) continue;
+        if (stripos($cat, 'pre-roll') !== false || stripos($cat, 'cartridge') !== false || stripos($cat, 'disposable') !== false || stripos($cat, 'flower') !== false || stripos($cat, 'milled') !== false) continue;
+        if (stripos($name, 'joint') !== false || stripos($name, 'blunt') !== false || stripos($name, 'vape') !== false || stripos($name, 'cartridge') !== false || stripos($name, '510 ') !== false) continue;
 
         $p_title = cleanTitle($name, $brand, $var, 2);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '88.0%');
@@ -329,6 +333,8 @@ if ($screen === 1) {
         $price = isset($pricing['sale_price']) ? floatval($pricing['sale_price']) : 0.0;
         $stock = isset($pricing['stock']) ? intval($pricing['stock']) : 0;
         if ($stock <= 0 || stripos($cat, 'accessories') !== false) continue;
+        if (stripos($cat, 'pre-roll') !== false || stripos($cat, 'cartridge') !== false || stripos($cat, 'disposable') !== false || stripos($cat, 'flower') !== false || stripos($cat, 'milled') !== false) continue;
+        if (stripos($name, 'joint') !== false || stripos($name, 'blunt') !== false || stripos($name, 'vape') !== false || stripos($name, 'cartridge') !== false || stripos($name, '510 ') !== false) continue;
 
         $p_title = cleanTitle($name, $brand, $var, 3);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '10mg');

@@ -1155,12 +1155,20 @@ class TendyInventoryService:
             brand = (it.get("brand") or {}).get("name", "")
             var = it.get("variantName", "")
             
+            cat_low = cat.lower()
+            name_low = name.lower()
+            full_low = f"{brand} {name} {cat}".lower()
+
+            # Strictly exclude items that belong to Screen 1 or Screen 2
+            if any(k in cat_low for k in ["pre-roll", "cartridge", "disposable", "dried flower", "milled", "all-in-one", "flower"]):
+                continue
+            if any(k in name_low for k in ["joint", "blunt", "vape", "cartridge", "510 "]):
+                continue
+
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
             sale_p = float(price or 0.0)
-            n_low = name.lower()
-            c_low = cat.lower()
-            is_promo = any(k in c_low for k in ["concentrate", "extract", "rosin", "shatter", "topical", "oil", "capsule", "wellness"]) or any(k in n_low for k in ["shatter", "rosin", "diamonds", "moonrocks", "cbd cream"])
+            is_promo = any(k in cat_low for k in ["concentrate", "extract", "rosin", "shatter", "topical", "oil", "capsule", "wellness"]) or any(k in name_low for k in ["shatter", "rosin", "diamonds", "moonrocks", "cbd cream"])
             old_p = round(sale_p / 0.90, 2) if (is_promo and sale_p > 0) else None
             entry = {
                 "product_name": p_title,
@@ -1173,12 +1181,15 @@ class TendyInventoryService:
                 "is_sale": is_promo
             }
 
-            if "Soft Chews" in cat or "gummy" in name.lower() or "chew" in name.lower():
-                n_low = name.lower()
-                if "sativa" in n_low:
+            if "chocolate" in cat_low or "chocolate" in name_low or "bhang" in full_low or "chowie" in full_low:
+                entry["species"] = "HYBRID"
+                chocolates.append(entry)
+
+            elif "soft chew" in cat_low or "gummy" in name_low or "gummies" in name_low or "chew" in name_low or "sourz" in full_low or "pearls" in full_low:
+                if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
                     entry["species"] = "SATIVA"
                     g_sat.append(entry)
-                elif "indica" in n_low:
+                elif "indica" in full_low or "blueberry" in name_low or "cbn" in name_low:
                     entry["species"] = "INDICA"
                     g_ind_hyb.append(entry)
                 else:
@@ -1186,19 +1197,15 @@ class TendyInventoryService:
                     g_ind_hyb.append(entry)
                 all_gummies.append(entry)
 
-            elif "Beverages" in cat or "drink" in name.lower() or "tea" in name.lower():
+            elif "beverage" in cat_low or "drink" in name_low or "tea" in name_low or "seltzer" in name_low or "soda" in name_low or "cola" in name_low:
                 entry["species"] = "HYBRID"
                 beverages.append(entry)
 
-            elif "Chocolates" in cat or "chocolate" in name.lower():
-                entry["species"] = "HYBRID"
-                chocolates.append(entry)
-
-            elif "Concentrates" in cat or "hash" in name.lower() or "resin" in name.lower() or "rosin" in name.lower() or "shatter" in name.lower():
+            elif "concentrate" in cat_low or "extract" in cat_low or "hash" in name_low or "shatter" in name_low or "wax" in name_low or "diamonds" in name_low:
                 entry["species"] = "HYBRID"
                 concentrates.append(entry)
 
-            elif "Oils" in cat or "Drops" in cat or "Topicals" in cat:
+            elif "oil" in cat_low or "drop" in cat_low or "topical" in cat_low or "capsule" in cat_low or "wellness" in cat_low or "moonrocks" in name_low:
                 entry["species"] = "HYBRID"
                 wellness.append(entry)
 
