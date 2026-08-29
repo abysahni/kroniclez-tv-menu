@@ -911,6 +911,11 @@ body {
 .b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
 .b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
+.badge-cbn { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(147, 51, 234, 0.25); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.5); display: inline-block; vertical-align: middle; }
+.badge-cbg { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(14, 165, 233, 0.25); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.5); display: inline-block; vertical-align: middle; }
+.badge-cbd { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.5); display: inline-block; vertical-align: middle; }
+.badge-balance { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.5); display: inline-block; vertical-align: middle; }
+.badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
 
 /* ========================================================================== */
 /* FLOATING CONTROLS & STATUS                                                 */
@@ -1059,13 +1064,21 @@ body {
             if (spec.includes('INDICA')) { metaClass = 'meta-indica'; metaText = 'Indica'; }
             else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
 
+            const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
+            let funcBadge = '';
+            const pNameLow = (it.product_name || '').toLowerCase();
+            if (pNameLow.includes('cbn')) funcBadge = '<span class="badge-cbn">🌙 CBN • SLEEP</span>';
+            else if (pNameLow.includes('cbg')) funcBadge = '<span class="badge-cbg">⚡ CBG • FOCUS</span>';
+            else if (pNameLow.includes('4:1') || pNameLow.includes('cbd bomb')) funcBadge = '<span class="badge-cbd">🌿 CBD • CALM</span>';
+            else if (pNameLow.includes('1:1') && !pNameLow.includes('cbn')) funcBadge = '<span class="badge-balance">⚖️ 1:1 • BALANCED</span>';
+
             let priceHtml = (it.is_sale && it.old_price) 
                 ? `<span class="sale">${formatCAD(it.price)}</span><span class="old">${formatCAD(it.old_price)}</span>`
                 : `<span class="regular">${formatCAD(it.price)}</span>`;
 
             return `
                 <div class="soft-row">
-                    <div class="soft-name">${it.product_name}${(it.tag === "FEATURED" || (it.is_sale && it.old_price)) ? "<span class=\"badge-featured\">⭐ FEATURED</span>" : ""}</div>
+                    <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}</div>
                     <div class="soft-meta ${metaClass}">${metaText}</div>
                     <div class="soft-thc">${it.thc || '10mg'}</div>
                     <div class="soft-cbd">${it.cbd || '—'}</div>
@@ -1077,10 +1090,47 @@ body {
         function renderSoftCard(cardKey, dataObj) {
             const sec = dataObj[cardKey];
             if (!sec || !sec.items || sec.items.length === 0) return '';
+            const count = sec.items.length;
             const subHtml = sec.subtitle ? `<div class="card-head-sub">${sec.subtitle}</div>` : '';
+
+            if (cardKey === 'beverages') {
+                const sodas = [];
+                const seltzers = [];
+                sec.items.forEach(it => {
+                    const nl = (it.product_name || '').toLowerCase();
+                    if (nl.includes('soda') || nl.includes('cola') || nl.includes('root beer') || nl.includes('cream soda')) {
+                        sodas.push(it);
+                    } else {
+                        seltzers.push(it);
+                    }
+                });
+
+                return `
+                    <div class="soft-card card-cyan">
+                        <div class="card-head-title">${sec.title} <span class="title-count">(${count})</span></div>
+                        <div class="card-head-sub">${sec.subtitle || 'CRAFT SODAS • SPARKLING SELTZERS'}</div>
+                        <div class="table-header-soft">
+                            <div>BEVERAGE</div>
+                            <div style="text-align:center;">TYPE</div>
+                            <div style="text-align:center;">THC</div>
+                            <div style="text-align:center;">CBD</div>
+                            <div style="text-align:right;">PRICE</div>
+                        </div>
+                        ${sodas.length > 0 ? `
+                            <div class="subhead" style="color:#38bdf8; margin: 3px 0 1px; font-size:11.5px; font-weight:800;"><span>🥤 Craft Sodas & Colas</span> <span style="font-size:10px; color:#888;">${sodas.length} SKUs</span></div>
+                            ${sodas.map(it => renderSoftRow(it)).join('')}
+                        ` : ''}
+                        ${seltzers.length > 0 ? `
+                            <div class="subhead" style="color:#2dd4bf; margin: 5px 0 1px; font-size:11.5px; font-weight:800;"><span>🍋 Seltzers, Teas & Lemonades</span> <span style="font-size:10px; color:#888;">${seltzers.length} SKUs</span></div>
+                            ${seltzers.map(it => renderSoftRow(it)).join('')}
+                        ` : ''}
+                    </div>
+                `;
+            }
+
             return `
                 <div class="soft-card card-${sec.color || 'gold'}">
-                    <div class="card-head-title">${sec.title} <span class="title-count">(${sec.items.length})</span></div>
+                    <div class="card-head-title">${sec.title} <span class="title-count">(${count})</span></div>
                     ${subHtml}
                     <div class="table-header-soft">
                         <div>PRODUCT</div>

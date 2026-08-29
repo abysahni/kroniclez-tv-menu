@@ -67,6 +67,19 @@ function renderSoftRow(it) {
 
     const tagBadge = (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? '<span class="badge-featured">⭐ FEATURED</span>' : '';
 
+    // Functional Cannabinoid Badge (Option 2)
+    let funcBadge = '';
+    const pNameLow = (it.product_name || '').toLowerCase();
+    if (pNameLow.includes('cbn')) {
+        funcBadge = '<span class="badge-cbn">🌙 CBN • SLEEP</span>';
+    } else if (pNameLow.includes('cbg')) {
+        funcBadge = '<span class="badge-cbg">⚡ CBG • FOCUS</span>';
+    } else if (pNameLow.includes('4:1') || pNameLow.includes('cbd bomb')) {
+        funcBadge = '<span class="badge-cbd">🌿 CBD • CALM</span>';
+    } else if (pNameLow.includes('1:1') && !pNameLow.includes('cbn')) {
+        funcBadge = '<span class="badge-balance">⚖️ 1:1 • BALANCED</span>';
+    }
+
     let priceHtml = '';
     if (it.is_sale && it.old_price) {
         priceHtml = `
@@ -79,7 +92,7 @@ function renderSoftRow(it) {
 
     return `
         <div class="soft-row">
-            <div class="soft-name">${it.product_name}${tagBadge}</div>
+            <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>
             <div class="soft-cbd">${it.cbd || '—'}</div>
@@ -95,6 +108,43 @@ function renderSoftCard(cardKey, dataObj) {
 
     const count = sec.items.length;
     const subHtml = sec.subtitle ? `<div class="card-head-sub">${sec.subtitle}</div>` : '';
+
+    // Option 4: Sub-Categorize Infused Beverages into Sodas & Seltzers
+    if (cardKey === 'beverages') {
+        const sodas = [];
+        const seltzers = [];
+        sec.items.forEach(it => {
+            const nl = (it.product_name || '').toLowerCase();
+            if (nl.includes('soda') || nl.includes('cola') || nl.includes('root beer') || nl.includes('cream soda')) {
+                sodas.push(it);
+            } else {
+                seltzers.push(it);
+            }
+        });
+
+        return `
+            <div class="soft-card card-cyan">
+                <div class="card-head-title">${sec.title} <span class="title-count">(${count})</span></div>
+                <div class="card-head-sub">${sec.subtitle || 'CRAFT SODAS • SPARKLING SELTZERS'}</div>
+                <div class="table-header-soft">
+                    <div>BEVERAGE</div>
+                    <div style="text-align:center;">TYPE</div>
+                    <div style="text-align:center;">THC</div>
+                    <div style="text-align:center;">CBD</div>
+                    <div style="text-align:right;">PRICE</div>
+                </div>
+                ${sodas.length > 0 ? `
+                    <div class="subhead" style="color:#38bdf8; margin: 3px 0 1px; font-size:11.5px; font-weight:800;"><span>🥤 Craft Sodas & Colas</span> <span style="font-size:10px; color:#888;">${sodas.length} SKUs</span></div>
+                    ${sodas.map(it => renderSoftRow(it)).join('')}
+                ` : ''}
+                ${seltzers.length > 0 ? `
+                    <div class="subhead" style="color:#2dd4bf; margin: 5px 0 1px; font-size:11.5px; font-weight:800;"><span>🍋 Seltzers, Teas & Lemonades</span> <span style="font-size:10px; color:#888;">${seltzers.length} SKUs</span></div>
+                    ${seltzers.map(it => renderSoftRow(it)).join('')}
+                ` : ''}
+            </div>
+        `;
+    }
+
     return `
         <div class="soft-card card-${sec.color || 'gold'}">
             <div class="card-head-title">${sec.title} <span class="title-count">(${count})</span></div>
