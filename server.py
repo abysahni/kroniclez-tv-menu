@@ -111,6 +111,12 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
         elif path == "/api/health" or path == "/healthz":
             self._send_json({"status": "ok", "service": "kroniclez-tv-menu", "store": config.STORE_NAME})
 
+        elif path in ["/api/audit", "/audit"]:
+            from audit_inventory_agent import InventoryAuditAgent
+            agent = InventoryAuditAgent()
+            results = agent.run_full_audit()
+            self._send_json({"success": True, **results})
+
         elif path == "/api/debug":
             raw = inventory_service.fetch_tendy_raw_inventory()
             feed1 = inventory_service.fetch_teamhub_screen_feed(1)
