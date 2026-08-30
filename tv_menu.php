@@ -1254,9 +1254,31 @@ body {
     color: #cbd5e1;
 }
 
+/* Ambient Particle Background Canvas */
+.ambient-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.tv-top-header,
+#menuMount,
+.tv-floating-nav,
+.tv-ticker-bar {
+    position: relative;
+    z-index: 1;
+}
+
     </style>
 </head>
 <body>
+    <!-- Ambient Luxury Floating Particles Canvas Background -->
+    <canvas id="ambientCanvas" class="ambient-canvas"></canvas>
 
     <!-- TV Top Header Bar (Branding, Dynamic Happy Hour, QR Code, Sync Status) -->
     <header class="tv-top-header">
@@ -1669,6 +1691,80 @@ body {
             renderScreen(initialData);
             setInterval(pollLive, 25000);
         });
+
+        function initAmbientParticles() {
+            const canvas = document.getElementById('ambientCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            let width = (canvas.width = window.innerWidth);
+            let height = (canvas.height = window.innerHeight);
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const particleCount = 38;
+
+            const colors = [
+                'rgba(250, 204, 21, ',
+                'rgba(234, 179, 8, ',
+                'rgba(74, 222, 128, ',
+                'rgba(245, 158, 11, '
+            ];
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 2.2 + 0.8,
+                    baseAlpha: Math.random() * 0.35 + 0.12,
+                    speedY: -(Math.random() * 0.32 + 0.1),
+                    speedX: (Math.random() - 0.5) * 0.22,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    pulseOffset: Math.random() * Math.PI * 2
+                });
+            }
+
+            let tick = 0;
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                tick += 0.018;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const p = particles[i];
+                    p.y += p.speedY;
+                    p.x += p.speedX + Math.sin(tick + p.pulseOffset) * 0.15;
+
+                    if (p.y < -10) {
+                        p.y = height + 10;
+                        p.x = Math.random() * width;
+                    }
+                    if (p.x < -10) p.x = width + 10;
+                    if (p.x > width + 10) p.x = -10;
+
+                    const alpha = p.baseAlpha + Math.sin(tick * 1.5 + p.pulseOffset) * 0.08;
+
+                    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2.6);
+                    grad.addColorStop(0, p.color + Math.max(0, Math.min(1, alpha * 1.5)) + ')');
+                    grad.addColorStop(0.5, p.color + Math.max(0, Math.min(1, alpha * 0.5)) + ')');
+                    grad.addColorStop(1, p.color + '0)');
+
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius * 2.6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
     </script>
 </body>
 </html>

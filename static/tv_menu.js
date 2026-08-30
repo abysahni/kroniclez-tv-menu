@@ -574,6 +574,7 @@ window.addEventListener('DOMContentLoaded', () => {
     currentStoreId = params.store;
 
     showNav();
+    initAmbientParticles();
 
     // 1. Render immediately if pre-injected data exists
     if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.success && window.__INITIAL_MENU_DATA__.screen === currentScreenId && window.__INITIAL_MENU_DATA__.total_in_stock > 0) {
@@ -598,3 +599,82 @@ window.addEventListener('DOMContentLoaded', () => {
         fetchLiveMenu(currentScreenId, currentStoreId);
     }, 25000);
 });
+
+// ==========================================================================
+// AMBIENT LUXURY FLOATING GOLD & EMERALD PARTICLES (CANVAS BACKGROUND)
+// ==========================================================================
+function initAmbientParticles() {
+    const canvas = document.getElementById('ambientCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const particleCount = 38;
+
+    // Palette: Gold embers, soft emerald cannabis accents, warm amber
+    const colors = [
+        'rgba(250, 204, 21, ',  // Bright Gold
+        'rgba(234, 179, 8, ',   // Warm Gold
+        'rgba(74, 222, 128, ',  // Emerald Green
+        'rgba(245, 158, 11, '   // Amber
+    ];
+
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 2.2 + 0.8,
+            baseAlpha: Math.random() * 0.35 + 0.12,
+            speedY: -(Math.random() * 0.32 + 0.1),
+            speedX: (Math.random() - 0.5) * 0.22,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            pulseOffset: Math.random() * Math.PI * 2
+        });
+    }
+
+    let tick = 0;
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        tick += 0.018;
+
+        for (let i = 0; i < particleCount; i++) {
+            const p = particles[i];
+            p.y += p.speedY;
+            p.x += p.speedX + Math.sin(tick + p.pulseOffset) * 0.15;
+
+            // Wrap around screen boundaries
+            if (p.y < -10) {
+                p.y = height + 10;
+                p.x = Math.random() * width;
+            }
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+
+            const alpha = p.baseAlpha + Math.sin(tick * 1.5 + p.pulseOffset) * 0.08;
+
+            // Draw glowing ember particle
+            const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2.6);
+            grad.addColorStop(0, p.color + Math.max(0, Math.min(1, alpha * 1.5)) + ')');
+            grad.addColorStop(0.5, p.color + Math.max(0, Math.min(1, alpha * 0.5)) + ')');
+            grad.addColorStop(1, p.color + '0)');
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius * 2.6, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+}
