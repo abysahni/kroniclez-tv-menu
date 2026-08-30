@@ -1692,7 +1692,56 @@ body {
             setInterval(pollLive, 25000);
         });
 
-        function initAmbientParticles() {
+        const SEASONAL_THEMES = {
+            emerald: { name: '🌿 4/20 Emerald Cannabis', colors: ['rgba(34, 197, 94, ', 'rgba(74, 222, 128, ', 'rgba(16, 185, 129, ', 'rgba(250, 204, 21, '] },
+            summer: { name: '☀️ Summer Gold & Sunset', colors: ['rgba(250, 204, 21, ', 'rgba(234, 179, 8, ', 'rgba(245, 158, 11, ', 'rgba(74, 222, 128, '] },
+            halloween: { name: '🎃 Autumn Ember & Firefly', colors: ['rgba(249, 115, 22, ', 'rgba(234, 88, 12, ', 'rgba(245, 158, 11, ', 'rgba(239, 68, 68, '] },
+            winter: { name: '❄️ Winter Crystal & Frost', colors: ['rgba(56, 189, 248, ', 'rgba(147, 197, 253, ', 'rgba(224, 242, 254, ', 'rgba(192, 132, 252, '] },
+            velvet: { name: '🌹 Velvet Crimson Lounge', colors: ['rgba(239, 68, 68, ', 'rgba(244, 63, 94, ', 'rgba(250, 204, 21, ', 'rgba(168, 85, 247, '] }
+        };
+
+        function getAutoSeasonTheme() {
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            if (month === 4) return 'emerald';
+            if (month >= 5 && month <= 8) return 'summer';
+            if (month >= 9 && month <= 10) return 'halloween';
+            if (month >= 11 || month === 1) return 'winter';
+            if (month === 2) return 'velvet';
+            if (month === 3) return 'emerald';
+            return 'summer';
+        }
+
+        let currentThemeKey = 'auto';
+        let ambientCanvasEngine = null;
+
+        function setAmbientTheme(themeKey, showToast = true) {
+            currentThemeKey = themeKey;
+            const resolvedKey = (themeKey === 'auto' || !SEASONAL_THEMES[themeKey]) ? getAutoSeasonTheme() : themeKey;
+            const themeConfig = SEASONAL_THEMES[resolvedKey];
+            if (ambientCanvasEngine && ambientCanvasEngine.updateTheme) {
+                ambientCanvasEngine.updateTheme(themeConfig);
+            }
+            if (showToast) {
+                showThemeToast(themeConfig.name + (themeKey === 'auto' ? ' (Auto Calendar)' : ' (Manual)'));
+            }
+        }
+
+        function showThemeToast(themeName) {
+            let toast = document.getElementById('themeToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'themeToast';
+                toast.style.cssText = 'position:fixed; top:42px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.88); border:1px solid rgba(250,204,21,0.5); color:#facc15; padding:4px 14px; border-radius:999px; font-size:11px; font-weight:800; z-index:9999; pointer-events:none; transition:opacity 0.3s; box-shadow:0 4px 16px rgba(0,0,0,0.8);';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = `🎨 Ambiance: ${themeName}`;
+            toast.style.opacity = '1';
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 2400);
+        }
+
+        function initAmbientParticles(initialTheme = 'auto') {
             const canvas = document.getElementById('ambientCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -1706,15 +1755,11 @@ body {
                 height = canvas.height = window.innerHeight;
             });
 
+            let currentResolved = (initialTheme === 'auto' || !SEASONAL_THEMES[initialTheme]) ? getAutoSeasonTheme() : initialTheme;
+            let activeColors = SEASONAL_THEMES[currentResolved].colors;
+
             const particles = [];
             const particleCount = 38;
-
-            const colors = [
-                'rgba(250, 204, 21, ',
-                'rgba(234, 179, 8, ',
-                'rgba(74, 222, 128, ',
-                'rgba(245, 158, 11, '
-            ];
 
             for (let i = 0; i < particleCount; i++) {
                 particles.push({
@@ -1724,10 +1769,19 @@ body {
                     baseAlpha: Math.random() * 0.35 + 0.12,
                     speedY: -(Math.random() * 0.32 + 0.1),
                     speedX: (Math.random() - 0.5) * 0.22,
-                    color: colors[Math.floor(Math.random() * colors.length)],
+                    color: activeColors[Math.floor(Math.random() * activeColors.length)],
                     pulseOffset: Math.random() * Math.PI * 2
                 });
             }
+
+            ambientCanvasEngine = {
+                updateTheme: (themeConfig) => {
+                    activeColors = themeConfig.colors;
+                    for (let i = 0; i < particles.length; i++) {
+                        particles[i].color = activeColors[Math.floor(Math.random() * activeColors.length)];
+                    }
+                }
+            };
 
             let tick = 0;
             function animate() {
@@ -1739,10 +1793,7 @@ body {
                     p.y += p.speedY;
                     p.x += p.speedX + Math.sin(tick + p.pulseOffset) * 0.15;
 
-                    if (p.y < -10) {
-                        p.y = height + 10;
-                        p.x = Math.random() * width;
-                    }
+                    if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
                     if (p.x < -10) p.x = width + 10;
                     if (p.x > width + 10) p.x = -10;
 
