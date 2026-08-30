@@ -696,21 +696,21 @@ body {
 .p-row.row-featured .p-name, 
 .soft-row.row-featured .p-name,
 .container-prerolls .p-row.row-featured .p-name {
-    font-weight: 900 !important;
+    font-weight: 850 !important;
     color: #ffffff !important;
-    text-shadow: 0 0 8px rgba(239, 68, 68, 0.35);
-    letter-spacing: -0.15px;
+    text-shadow: 0 0 6px rgba(239, 68, 68, 0.35);
+    letter-spacing: -0.1px;
 }
 
 .p-row.row-featured .p-thc,
 .soft-row.row-featured .p-thc {
-    font-weight: 900 !important;
+    font-weight: 850 !important;
     color: #fca5a5 !important;
 }
 
 .p-row.row-featured .p-price .sale,
 .p-row.row-featured .p-price .regular {
-    font-weight: 950 !important;
+    font-weight: 900 !important;
 }
 
 /* Gold Row Tint & Solid Gold Accent Bar for Staff Pick Items */
@@ -726,25 +726,25 @@ body {
 .p-row.row-staff-pick .p-name, 
 .soft-row.row-staff-pick .p-name,
 .container-prerolls .p-row.row-staff-pick .p-name {
-    font-weight: 900 !important;
+    font-weight: 850 !important;
     color: #ffffff !important;
-    text-shadow: 0 0 8px rgba(250, 204, 21, 0.35);
-    letter-spacing: -0.15px;
+    text-shadow: 0 0 6px rgba(250, 204, 21, 0.35);
+    letter-spacing: -0.1px;
 }
 
 .p-row.row-staff-pick .p-thc,
 .soft-row.row-staff-pick .p-thc {
-    font-weight: 900 !important;
+    font-weight: 850 !important;
     color: #fde047 !important;
 }
 
 .p-row.row-staff-pick .p-price .regular,
 .p-row.row-staff-pick .p-price .sale {
-    font-weight: 950 !important;
+    font-weight: 900 !important;
     color: #fde047 !important;
 }
 
-/* Amber / Gold Row Tint & Accent Bar for Limited Stock Items */
+/* Amber / Gold Row Tint & Accent Bar for Limited Stock Items (Only Few Left) */
 .p-row.row-low-stock, .soft-row.row-low-stock {
     background: linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.04) 100%) !important;
     border-left: 3.5px solid #f59e0b !important;
@@ -752,6 +752,27 @@ body {
     padding-left: 4px !important;
     margin: 1px 0;
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.16);
+}
+
+.p-row.row-low-stock .p-name, 
+.soft-row.row-low-stock .p-name,
+.container-prerolls .p-row.row-low-stock .p-name {
+    font-weight: 850 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.35);
+    letter-spacing: -0.1px;
+}
+
+.p-row.row-low-stock .p-thc,
+.soft-row.row-low-stock .p-thc {
+    font-weight: 850 !important;
+    color: #fde047 !important;
+}
+
+.p-row.row-low-stock .p-price .regular,
+.p-row.row-low-stock .p-price .sale {
+    font-weight: 900 !important;
+    color: #fde047 !important;
 }
 
 /* Price Styling */
