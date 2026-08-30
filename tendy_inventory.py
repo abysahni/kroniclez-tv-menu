@@ -178,6 +178,8 @@ STRAIN_DATABASE_PREROLL = {
     "sour chem": "SATIVA",
     "plg #7": "SATIVA",
     "pink lemon gas": "SATIVA",
+    "double dutchies": "SATIVA",
+    "double up": "SATIVA",
 
     # HYBRID & BLENDS
     "liquid imagination": "HYBRID",
@@ -189,7 +191,6 @@ STRAIN_DATABASE_PREROLL = {
     "junior j": "HYBRID",
     "animal mintz": "HYBRID",
     "animal rntz": "HYBRID",
-    "double dutchies": "HYBRID",
     "grape diamonds": "HYBRID",
     "fruit punch slims": "HYBRID",
     "rolls pre-roll": "HYBRID"

@@ -240,6 +240,7 @@ function isHappyHourActive() {
 
 function classifyStrain($name, $brand) {
     $full = strtolower("$brand $name");
+    if (strpos($full, "double up") !== false || strpos($full, "double dutchies") !== false) return "SATIVA";
     if (strpos($full, "dutchy") !== false) return "INDICA";
     if (strpos($full, "pineapple nuken") !== false) return "SATIVA";
     $full = strtolower("$brand $name");
