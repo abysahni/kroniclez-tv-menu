@@ -240,12 +240,35 @@ function isHappyHourActive() {
 
 function classifyStrain($name, $brand) {
     $full = strtolower("$brand $name");
+    
+    // Explicit Sativa overrides
+    if (strpos($full, "blueberry dream") !== false) return "SATIVA";
+    if (strpos($full, "pink rozay") !== false) return "SATIVA";
+    if (strpos($full, "cherry boat") !== false) return "SATIVA";
+    if (strpos($full, "juicy blunt") !== false) return "SATIVA";
+    if (strpos($full, "fruit punch") !== false) return "SATIVA";
     if (strpos($full, "double up") !== false || strpos($full, "double dutchies") !== false) return "SATIVA";
-    if (strpos($full, "dutchy") !== false) return "INDICA";
     if (strpos($full, "pineapple nuken") !== false) return "SATIVA";
-    $full = strtolower("$brand $name");
-    if (preg_replace('/\b(sativa|lemon|sour|haze|diesel|tangie|mango|sunshine|cough|acapulco|jack|linx|grapefruit|shockwave|sticky)\b/', '', $full) !== $full) return 'SATIVA';
-    if (preg_replace('/\b(indica|kush|pink|purple|bubba|berry|og|punch|sleep|lights|zello|venom|freeze|tiger|cherry)\b/', '', $full) !== $full) return 'INDICA';
+
+    // Explicit Hybrid overrides
+    if (strpos($full, "10th planet") !== false) return "HYBRID";
+    if (strpos($full, "sour kush") !== false) return "HYBRID";
+    if (strpos($full, "blue magic") !== false) return "HYBRID";
+    if (strpos($full, "panama gold") !== false) return "HYBRID";
+    if (strpos($full, "peggys puff") !== false) return "HYBRID";
+    if (strpos($full, "sgt. pineapple") !== false || strpos($full, "sgt pineapple") !== false) return "HYBRID";
+    if (strpos($full, "plg #7") !== false || strpos($full, "pink lemon gas") !== false) return "HYBRID";
+
+    // Explicit Indica overrides
+    if (strpos($full, "junior j") !== false) return "INDICA";
+    if (strpos($full, "animal rntz") !== false) return "INDICA";
+    if (strpos($full, "diesel pocket puffs") !== false) return "INDICA";
+    if (strpos($full, "bahama berry") !== false) return "INDICA";
+    if (strpos($full, "dutchy") !== false) return "INDICA";
+
+    // Generic keyword fallback
+    if (preg_replace('/(sativa|lemon|sour|haze|diesel|tangie|mango|sunshine|cough|acapulco|jack|linx|grapefruit|shockwave|sticky)/', '', $full) !== $full) return 'SATIVA';
+    if (preg_replace('/(indica|kush|pink|purple|bubba|berry|og|punch|sleep|lights|zello|venom|freeze|tiger|cherry)/', '', $full) !== $full) return 'INDICA';
     return 'HYBRID';
 }
 
