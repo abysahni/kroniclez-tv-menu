@@ -21,7 +21,7 @@
     <header class="tv-top-header">
         <div class="brand-block">
             <div class="brand-title"><i class="bi bi-fire" style="color:#ef4444;"></i> KRONICLEZ</div>
-            <div class="brand-loc">KITCHENER</div>
+            <div class="brand-loc" id="headerStoreLoc">WATERLOO</div>
         </div>
 
         <!-- Dynamic Happy Hour Banner -->
@@ -33,15 +33,15 @@
             <!-- Free Store Wi-Fi Pill -->
             <div class="wifi-pill" title="Guest Wi-Fi: KRONICKLUB | Pass: Kroniclub">
                 <i class="bi bi-wifi" style="color:#38bdf8;"></i>
-                <span><strong>Wi-Fi:</strong> KRONICKLUB <span style="color:#64748b; margin: 0 2px;">•</span> <strong>Pass:</strong> Kroniclub</span>
+                <span id="headerWifiText"><strong>Wi-Fi:</strong> KRONICKLUB <span style="color:#64748b; margin: 0 2px;">•</span> <strong>Pass:</strong> Kroniclub</span>
             </div>
 
             <!-- Express Pickup Mobile QR Code -->
             <div class="qr-header-card">
-                <img src="/static/qr_code.svg" class="qr-img" alt="Scan to Order">
+                <img src="/static/qr_code_waterloo.svg" id="headerQrImg" class="qr-img" alt="Scan to Order">
                 <div class="qr-text">
-                    <span class="qr-title">📱 EXPRESS PICKUP</span>
-                    <span class="qr-sub">Scan to Order on Phone</span>
+                    <span class="qr-title" id="headerQrTitle">📱 WATERLOO PICKUP</span>
+                    <span class="qr-sub" id="headerQrSub">62 Balsam St • Scan to Order</span>
                 </div>
             </div>
 
@@ -63,7 +63,14 @@
 
     <!-- Floating TV Navigation Dock (Auto-hides on idle) -->
     <nav id="floatingNav" class="tv-floating-nav">
-        <span style="font-size: 10px; font-weight: 900; color: #777; letter-spacing: 0.5px;">DEDICATED TV:</span>
+        <span style="font-size: 10px; font-weight: 900; color: #777; letter-spacing: 0.5px;">STORE:</span>
+        <button type="button" id="nav-btn-loc-waterloo" class="nav-link-btn active" onclick="switchStore('waterloo')">
+            <i class="bi bi-geo-alt-fill" style="color:#38bdf8;"></i> Waterloo
+        </button>
+        <button type="button" id="nav-btn-loc-kitchener" class="nav-link-btn" onclick="switchStore('kitchener')">
+            <i class="bi bi-geo-alt-fill" style="color:#facc15;"></i> Kitchener
+        </button>
+        <span style="font-size: 10px; font-weight: 900; color: #777; letter-spacing: 0.5px; margin-left:6px;">DEDICATED TV:</span>
         <button type="button" id="nav-btn-screen1" class="nav-link-btn" onclick="switchScreen(1)">
             <i class="bi bi-fire"></i> TV 1: Pre-Rolls
         </button>

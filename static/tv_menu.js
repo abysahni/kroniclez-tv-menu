@@ -9,12 +9,17 @@ function getUrlParams() {
     const path = window.location.pathname;
     
     let screen = parseInt(window.__INITIAL_SCREEN_ID__ || 1);
-    if (path === '/tv1' || path === '/screen1') screen = 1;
-    else if (path === '/tv2' || path === '/screen2') screen = 2;
-    else if (path === '/tv3' || path === '/screen3') screen = 3;
+    if (path.endsWith('/tv1') || path.endsWith('/screen1')) screen = 1;
+    else if (path.endsWith('/tv2') || path.endsWith('/screen2')) screen = 2;
+    else if (path.endsWith('/tv3') || path.endsWith('/screen3')) screen = 3;
     else if (params.has('screen')) screen = parseInt(params.get('screen') || 1);
 
-    const store = parseInt(params.get('store') || 1);
+    let store = 'waterloo';
+    if (path.includes('kitchener') || params.get('store') === 'kitchener' || params.get('store') === '1') {
+        store = 'kitchener';
+    } else if (params.has('store')) {
+        store = params.get('store');
+    }
     return { screen, store };
 }
 
@@ -528,6 +533,41 @@ function updateNavPills(screen) {
     if (btn3) btn3.className = `nav-link-btn ${screen === 3 ? 'active' : ''}`;
 }
 
+// Switch Store Location (Waterloo vs Kitchener)
+function switchStore(storeName) {
+    currentStoreId = storeName;
+    const url = new URL(window.location.href);
+    url.searchParams.set('store', storeName);
+    window.history.pushState({}, '', url.toString());
+    updateStoreBranding(storeName);
+    fetchLiveMenu(currentScreenId, storeName);
+}
+
+function updateStoreBranding(storeName) {
+    const locEl = document.getElementById('headerStoreLoc');
+    const qrImg = document.getElementById('headerQrImg');
+    const qrTitle = document.getElementById('headerQrTitle');
+    const qrSub = document.getElementById('headerQrSub');
+    const btnWat = document.getElementById('nav-btn-loc-waterloo');
+    const btnKit = document.getElementById('nav-btn-loc-kitchener');
+
+    if (storeName === 'kitchener') {
+        if (locEl) locEl.textContent = 'KITCHENER';
+        if (qrImg) qrImg.src = '/static/qr_code.svg';
+        if (qrTitle) qrTitle.textContent = '📱 EXPRESS PICKUP';
+        if (qrSub) qrSub.textContent = 'Scan to Order on Phone';
+        if (btnWat) btnWat.className = 'nav-link-btn';
+        if (btnKit) btnKit.className = 'nav-link-btn active';
+    } else {
+        if (locEl) locEl.textContent = 'WATERLOO';
+        if (qrImg) qrImg.src = '/static/qr_code_waterloo.svg';
+        if (qrTitle) qrTitle.textContent = '📱 WATERLOO PICKUP';
+        if (qrSub) qrSub.textContent = '62 Balsam St • Scan to Order';
+        if (btnWat) btnWat.className = 'nav-link-btn active';
+        if (btnKit) btnKit.className = 'nav-link-btn';
+    }
+}
+
 function updateSyncStatus(timestamp) {
     const el = document.getElementById('tv-sync-time');
     if (el && timestamp) {
@@ -579,6 +619,7 @@ window.addEventListener('DOMContentLoaded', () => {
     currentStoreId = params.store;
 
     showNav();
+    updateStoreBranding(currentStoreId);
     initAmbientParticles(params.theme || 'auto');
 
     // 1. Render immediately if pre-injected data exists

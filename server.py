@@ -95,9 +95,10 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
         # 1. API Endpoints
         if path == "/api/tv-menu" or path == "/api/tv_menu_feed.php":
             screen_id = int(query.get("screen", [1])[0])
-            store_id = query.get("store", ["1"])[0]
-
-            loc_id = config.TENDY_LOCATION_ID
+            store_param = str(query.get("store", ["waterloo"])[0]).lower()
+            store_key = "kitchener" if store_param in ["kitchener", "1"] else "waterloo"
+            store_info = config.STORES.get(store_key, config.STORES["waterloo"])
+            loc_id = store_info["location_id"]
 
             if screen_id == 1:
                 data = inventory_service.get_screen_1_prerolls(location_id=loc_id)
@@ -105,6 +106,12 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 data = inventory_service.get_screen_2_flower_vapes(location_id=loc_id)
             else:
                 data = inventory_service.get_screen_3_edibles_drinks(location_id=loc_id)
+
+            data["store"] = store_info["name"]
+            data["store_id"] = store_info["id"]
+            data["store_header"] = store_info["header_title"]
+            data["qr_svg"] = store_info["qr_svg"]
+            data["qr_order_url"] = store_info["qr_order_url"]
 
             self._send_json({"success": True, **data})
 
@@ -144,7 +151,7 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 "tax_rate_hst": config.TAX_RATE_HST
             })
 
-        # 2. Main TV Menu Frontend Pages (Dedicated TV endpoints)
+                # 2. Main TV Menu Frontend Pages (Dedicated TV endpoints)
         elif path in ["/", "/index.html", "/tv_menu.php"]:
             self._send_injected_index(query)
         elif path in ["/tv1", "/screen1"]:
@@ -155,6 +162,34 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             self._send_injected_index(query)
         elif path in ["/tv3", "/screen3"]:
             query["screen"] = ["3"]
+            self._send_injected_index(query)
+
+        # Dedicated Waterloo Routes
+        elif path in ["/waterloo", "/waterloo/tv1", "/waterloo/screen1", "/waterloo/1"]:
+            query["screen"] = ["1"]
+            query["store"] = ["waterloo"]
+            self._send_injected_index(query)
+        elif path in ["/waterloo/tv2", "/waterloo/screen2", "/waterloo/2"]:
+            query["screen"] = ["2"]
+            query["store"] = ["waterloo"]
+            self._send_injected_index(query)
+        elif path in ["/waterloo/tv3", "/waterloo/screen3", "/waterloo/3"]:
+            query["screen"] = ["3"]
+            query["store"] = ["waterloo"]
+            self._send_injected_index(query)
+
+        # Dedicated Kitchener Routes
+        elif path in ["/kitchener", "/kitchener/tv1", "/kitchener/screen1", "/kitchener/1"]:
+            query["screen"] = ["1"]
+            query["store"] = ["kitchener"]
+            self._send_injected_index(query)
+        elif path in ["/kitchener/tv2", "/kitchener/screen2", "/kitchener/2"]:
+            query["screen"] = ["2"]
+            query["store"] = ["kitchener"]
+            self._send_injected_index(query)
+        elif path in ["/kitchener/tv3", "/kitchener/screen3", "/kitchener/3"]:
+            query["screen"] = ["3"]
+            query["store"] = ["kitchener"]
             self._send_injected_index(query)
 
         elif path.startswith("/static/"):
@@ -178,17 +213,28 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             html_content = f.read()
 
         screen_id = int(query.get("screen", [1])[0]) if query else 1
+        store_param = str(query.get("store", ["waterloo"])[0]).lower() if query else "waterloo"
+        store_key = "kitchener" if store_param in ["kitchener", "1"] else "waterloo"
+        store_info = config.STORES.get(store_key, config.STORES["waterloo"])
+        loc_id = store_info["location_id"]
         
         try:
             if screen_id == 1:
-                initial_screen_data = inventory_service.get_screen_1_prerolls()
+                initial_screen_data = inventory_service.get_screen_1_prerolls(location_id=loc_id)
             elif screen_id == 2:
-                initial_screen_data = inventory_service.get_screen_2_flower_vapes()
+                initial_screen_data = inventory_service.get_screen_2_flower_vapes(location_id=loc_id)
             else:
-                initial_screen_data = inventory_service.get_screen_3_edibles_drinks()
+                initial_screen_data = inventory_service.get_screen_3_edibles_drinks(location_id=loc_id)
+
+            initial_screen_data["store"] = store_info["name"]
+            initial_screen_data["store_id"] = store_info["id"]
+            initial_screen_data["store_header"] = store_info["header_title"]
+            initial_screen_data["qr_svg"] = store_info["qr_svg"]
+            initial_screen_data["qr_order_url"] = store_info["qr_order_url"]
 
             script_tag = f"""<script id="tv-preloaded-data">
 window.__INITIAL_SCREEN_ID__ = {screen_id};
+window.__INITIAL_STORE_ID__ = "{store_key}";
 window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, **initial_screen_data}, default=str)};
 </script>"""
             html_content = html_content.replace("</head>", f"{script_tag}\n</head>")
