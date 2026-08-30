@@ -31,6 +31,138 @@ body {
 }
 
 /* ========================================================================== */
+/* TOP HEADER BAR (BRANDING, HAPPY HOUR BANNER, QR CODE & LIVE SYNC)         */
+/* ========================================================================== */
+
+.tv-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1px 4px 5px 4px;
+    width: 100%;
+    min-height: 32px;
+}
+
+.brand-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: #4ade80;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.brand-loc {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+/* Dynamic Happy Hour Banner */
+.happy-hour-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2.5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+.happy-hour-pill.active {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.15));
+    border: 1px solid rgba(239, 68, 68, 0.7);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    animation: happy-hour-glow 2s ease-in-out infinite;
+}
+
+.happy-hour-pill.active strong {
+    color: #fca5a5;
+    font-weight: 900;
+}
+
+.happy-hour-pill.idle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+}
+
+.happy-hour-pill.idle strong {
+    color: #facc15;
+    font-weight: 800;
+}
+
+@keyframes happy-hour-glow {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 16px rgba(239, 68, 68, 0.8);
+    }
+}
+
+.header-right-deck {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Express Pickup QR Card */
+.qr-header-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    padding: 2px 8px 2px 4px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.qr-img {
+    width: 24px;
+    height: 24px;
+    background: #ffffff;
+    padding: 1.5px;
+    border-radius: 3px;
+    display: block;
+}
+
+.qr-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.qr-title {
+    font-size: 9.5px;
+    font-weight: 900;
+    color: #facc15;
+    letter-spacing: 0.3px;
+}
+
+.qr-sub {
+    font-size: 8px;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+/* ========================================================================== */
 /* SCREEN CONTAINERS & GRID LAYOUTS                                           */
 /* ========================================================================== */
 

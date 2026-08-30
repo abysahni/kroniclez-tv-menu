@@ -427,6 +427,26 @@ function renderMenuData(res) {
 
     updateNavPills(screen);
     updateSyncStatus(res.updated_at);
+    updateHappyHourBanner();
+}
+
+// Dynamic Happy Hour Banner Evaluator (1:00 PM – 4:00 PM America/Toronto)
+function updateHappyHourBanner() {
+    const el = document.getElementById('happyHourBanner');
+    if (!el) return;
+    try {
+        const now = new Date();
+        const torontoHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Toronto', hour: 'numeric', hour12: false }).format(now), 10);
+        const isActive = (torontoHour >= 13 && torontoHour < 16);
+
+        if (isActive) {
+            el.className = 'happy-hour-pill active';
+            el.innerHTML = '<span style="color:#ef4444; font-size:12px;">⚡</span> <strong>HAPPY HOUR ACTIVE (1 PM – 4 PM)</strong> • SPECIAL PRICING IN EFFECT';
+        } else {
+            el.className = 'happy-hour-pill idle';
+            el.innerHTML = '<i class="bi bi-clock-history" style="color:#facc15;"></i> Daily Happy Hour: <strong>1:00 PM – 4:00 PM</strong>';
+        }
+    } catch (e) {}
 }
 
 // Fetch live menu from API strictly for current TV's dedicated screen

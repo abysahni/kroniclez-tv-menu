@@ -15,11 +15,35 @@
 </head>
 <body>
 
-    <!-- TV Sync Status Indicator (Top Right) -->
-    <div class="tv-sync-status">
-        <span class="pulse-dot"></span>
-        <span id="tv-sync-time">TENDY LIVE SYNC</span>
-    </div>
+    <!-- TV Top Header Bar (Branding, Dynamic Happy Hour, QR Code, Sync Status) -->
+    <header class="tv-top-header">
+        <div class="brand-block">
+            <div class="brand-title"><i class="bi bi-fire" style="color:#ef4444;"></i> KRONICLEZ</div>
+            <div class="brand-loc">KITCHENER</div>
+        </div>
+
+        <!-- Dynamic Happy Hour Banner -->
+        <div id="happyHourBanner" class="happy-hour-pill idle">
+            <i class="bi bi-clock-history" style="color:#facc15;"></i> Daily Happy Hour: <strong>1:00 PM – 4:00 PM</strong>
+        </div>
+
+        <div class="header-right-deck">
+            <!-- Express Pickup Mobile QR Code -->
+            <div class="qr-header-card">
+                <img src="/static/qr_code.svg" class="qr-img" alt="Scan to Order">
+                <div class="qr-text">
+                    <span class="qr-title">📱 EXPRESS PICKUP</span>
+                    <span class="qr-sub">Scan to Order on Phone</span>
+                </div>
+            </div>
+
+            <!-- TV Live Sync Status -->
+            <div class="tv-sync-status" style="position:static;">
+                <span class="pulse-dot"></span>
+                <span id="tv-sync-time">TENDY LIVE SYNC</span>
+            </div>
+        </div>
+    </header>
 
     <!-- Main Dynamic TV Menu Mount -->
     <main id="menuMount">

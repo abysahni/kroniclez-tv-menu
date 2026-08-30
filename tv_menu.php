@@ -1090,15 +1090,167 @@ body {
 .ticker-badge.yellow { background: rgba(234, 179, 8, 0.25); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.6); }
 .ticker-badge.gray { background: rgba(148, 163, 184, 0.25); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.6); }
 
+/* ========================================================================== */
+/* TOP HEADER BAR (BRANDING, HAPPY HOUR BANNER, QR CODE & LIVE SYNC)         */
+/* ========================================================================== */
+
+.tv-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1px 4px 5px 4px;
+    width: 100%;
+    min-height: 32px;
+}
+
+.brand-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: #4ade80;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.brand-loc {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+/* Dynamic Happy Hour Banner */
+.happy-hour-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2.5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+.happy-hour-pill.active {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.15));
+    border: 1px solid rgba(239, 68, 68, 0.7);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    animation: happy-hour-glow 2s ease-in-out infinite;
+}
+
+.happy-hour-pill.active strong {
+    color: #fca5a5;
+    font-weight: 900;
+}
+
+.happy-hour-pill.idle {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+}
+
+.happy-hour-pill.idle strong {
+    color: #facc15;
+    font-weight: 800;
+}
+
+@keyframes happy-hour-glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.8); }
+}
+
+.header-right-deck {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Express Pickup QR Card */
+.qr-header-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    padding: 2px 8px 2px 4px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.qr-img {
+    width: 24px;
+    height: 24px;
+    background: #ffffff;
+    padding: 1.5px;
+    border-radius: 3px;
+    display: block;
+}
+
+.qr-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.qr-title {
+    font-size: 9.5px;
+    font-weight: 900;
+    color: #facc15;
+    letter-spacing: 0.3px;
+}
+
+.qr-sub {
+    font-size: 8px;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
     </style>
 </head>
 <body>
 
-    <!-- TV Sync Status Indicator -->
-    <div class="tv-sync-status">
-        <span class="pulse-dot"></span>
-        <span id="tv-sync-time">TENDY LIVE SYNC</span>
-    </div>
+    <!-- TV Top Header Bar (Branding, Dynamic Happy Hour, QR Code, Sync Status) -->
+    <header class="tv-top-header">
+        <div class="brand-block">
+            <div class="brand-title"><i class="bi bi-fire" style="color:#ef4444;"></i> KRONICLEZ</div>
+            <div class="brand-loc">KITCHENER</div>
+        </div>
+
+        <!-- Dynamic Happy Hour Banner -->
+        <div id="happyHourBanner" class="happy-hour-pill idle">
+            <i class="bi bi-clock-history" style="color:#facc15;"></i> Daily Happy Hour: <strong>1:00 PM – 4:00 PM</strong>
+        </div>
+
+        <div class="header-right-deck">
+            <!-- Express Pickup Mobile QR Code -->
+            <div class="qr-header-card">
+                <svg class="qr-img" version="1.1" viewBox="0 0 27 27" xmlns="http://www.w3.org/2000/svg"><path d="M1,1H2V2H1zM2,1H3V2H2zM3,1H4V2H3zM4,1H5V2H4zM5,1H6V2H5zM6,1H7V2H6zM7,1H8V2H7zM9,1H10V2H9zM11,1H12V2H11zM13,1H14V2H13zM15,1H16V2H15zM17,1H18V2H17zM19,1H20V2H19zM20,1H21V2H20zM21,1H22V2H21zM22,1H23V2H22zM23,1H24V2H23zM24,1H25V2H24zM25,1H26V2H25zM1,2H2V3H1zM7,2H8V3H7zM11,2H12V3H11zM13,2H14V3H13zM14,2H15V3H14zM15,2H16V3H15zM19,2H20V3H19zM25,2H26V3H25zM1,3H2V4H1zM3,3H4V4H3zM4,3H5V4H4zM5,3H6V4H5zM7,3H8V4H7zM9,3H10V4H9zM10,3H11V4H10zM11,3H12V4H11zM14,3H15V4H14zM15,3H16V4H15zM17,3H18V4H17zM19,3H20V4H19zM21,3H22V4H21zM22,3H23V4H22zM23,3H24V4H23zM25,3H26V4H25zM1,4H2V5H1zM3,4H4V5H3zM4,4H5V5H4zM5,4H6V5H5zM7,4H8V5H7zM10,4H11V5H10zM11,4H12V5H11zM12,4H13V5H12zM14,4H15V5H14zM15,4H16V5H15zM16,4H17V5H16zM17,4H18V5H17zM19,4H20V5H19zM21,4H22V5H21zM22,4H23V5H22zM23,4H24V5H23zM25,4H26V5H25zM1,5H2V6H1zM3,5H4V6H3zM4,5H5V6H4zM5,5H6V6H5zM7,5H8V6H7zM10,5H11V6H10zM12,5H13V6H12zM14,5H15V6H14zM15,5H16V6H15zM19,5H20V6H19zM21,5H22V6H21zM22,5H23V6H22zM23,5H24V6H23zM25,5H26V6H25zM1,6H2V7H1zM7,6H8V7H7zM9,6H10V7H9zM10,6H11V7H10zM11,6H12V7H11zM12,6H13V7H12zM14,6H15V7H14zM17,6H18V7H17zM19,6H20V7H19zM25,6H26V7H25zM1,7H2V8H1zM2,7H3V8H2zM3,7H4V8H3zM4,7H5V8H4zM5,7H6V8H5zM6,7H7V8H6zM7,7H8V8H7zM9,7H10V8H9zM11,7H12V8H11zM13,7H14V8H13zM15,7H16V8H15zM17,7H18V8H17zM19,7H20V8H19zM20,7H21V8H20zM21,7H22V8H21zM22,7H23V8H22zM23,7H24V8H23zM24,7H25V8H24zM25,7H26V8H25zM10,8H11V9H10zM11,8H12V9H11zM12,8H13V9H12zM15,8H16V9H15zM17,8H18V9H17zM1,9H2V10H1zM3,9H4V10H3zM7,9H8V10H7zM8,9H9V10H8zM11,9H12V10H11zM13,9H14V10H13zM16,9H17V10H16zM17,9H18V10H17zM20,9H21V10H20zM23,9H24V10H23zM25,9H26V10H25zM1,10H2V11H1zM2,10H3V11H2zM3,10H4V11H3zM4,10H5V11H4zM8,10H9V11H8zM11,10H12V11H11zM12,10H13V11H12zM13,10H14V11H13zM14,10H15V11H14zM16,10H17V11H16zM17,10H18V11H17zM18,10H19V11H18zM19,10H20V11H19zM20,10H21V11H20zM22,10H23V11H22zM24,10H25V11H24zM25,10H26V11H25zM1,11H2V12H1zM2,11H3V12H2zM4,11H5V12H4zM5,11H6V12H5zM6,11H7V12H6zM7,11H8V12H7zM8,11H9V12H8zM9,11H10V12H9zM11,11H12V12H11zM12,11H13V12H12zM16,11H17V12H16zM17,11H18V12H17zM18,11H19V12H18zM19,11H20V12H19zM22,11H23V12H22zM23,11H24V12H23zM25,11H26V12H25zM1,12H2V13H1zM3,12H4V13H3zM4,12H5V13H4zM6,12H7V13H6zM10,12H11V13H10zM11,12H12V13H11zM15,12H16V13H15zM17,12H18V13H17zM19,12H20V13H19zM21,12H22V13H21zM22,12H23V13H22zM1,13H2V14H1zM4,13H5V14H4zM5,13H6V14H5zM6,13H7V14H6zM7,13H8V14H7zM8,13H9V14H8zM10,13H11V14H10zM13,13H14V14H13zM17,13H18V14H17zM19,13H20V14H19zM20,13H21V14H20zM25,13H26V14H25zM3,14H4V15H3zM4,14H5V15H4zM5,14H6V15H5zM9,14H10V15H9zM10,14H11V15H10zM14,14H15V15H14zM16,14H17V15H16zM17,14H18V15H17zM19,14H20V15H19zM20,14H21V15H20zM24,14H25V15H24zM25,14H26V15H25zM1,15H2V16H1zM2,15H3V16H2zM3,15H4V16H3zM7,15H8V16H7zM8,15H9V16H8zM12,15H13V16H12zM14,15H15V16H14zM16,15H17V16H16zM22,15H23V16H22zM23,15H24V16H23zM25,15H26V16H25zM4,16H5V17H4zM6,16H7V17H6zM13,16H14V17H13zM15,16H16V17H15zM16,16H17V17H16zM18,16H19V17H18zM19,16H20V17H19zM20,16H21V17H20zM21,16H22V17H21zM22,16H23V17H22zM1,17H2V18H1zM2,17H3V18H2zM4,17H5V18H4zM6,17H7V18H6zM7,17H8V18H7zM9,17H10V18H9zM12,17H13V18H12zM15,17H16V18H15zM16,17H17V18H16zM17,17H18V18H17zM18,17H19V18H18zM19,17H20V18H19zM20,17H21V18H20zM21,17H22V18H21zM24,17H25V18H24zM9,18H10V19H9zM11,18H12V19H11zM12,18H13V19H12zM13,18H14V19H13zM14,18H15V19H14zM17,18H18V19H17zM21,18H22V19H21zM25,18H26V19H25zM1,19H2V20H1zM2,19H3V20H2zM3,19H4V20H3zM4,19H5V20H4zM5,19H6V20H5zM6,19H7V20H6zM7,19H8V20H7zM9,19H10V20H9zM10,19H11V20H10zM11,19H12V20H11zM12,19H13V20H12zM13,19H14V20H13zM17,19H18V20H17zM19,19H20V20H19zM21,19H22V20H21zM25,19H26V20H25zM1,20H2V21H1zM7,20H8V21H7zM10,20H11V21H10zM12,20H13V21H12zM13,20H14V21H13zM15,20H16V21H15zM16,20H17V21H16zM17,20H18V21H17zM21,20H22V21H21zM25,20H26V21H25zM1,21H2V22H1zM3,21H4V22H3zM4,21H5V22H4zM5,21H6V22H5zM7,21H8V22H7zM11,21H12V22H11zM13,21H14V22H13zM16,21H17V22H16zM17,21H18V22H17zM18,21H19V22H18zM19,21H20V22H19zM20,21H21V22H20zM21,21H22V22H21zM24,21H25V22H24zM1,22H2V23H1zM3,22H4V23H3zM4,22H5V23H4zM5,22H6V23H5zM7,22H8V23H7zM10,22H11V23H10zM12,22H13V23H12zM13,22H14V23H13zM14,22H15V23H14zM16,22H17V23H16zM18,22H19V23H18zM21,22H22V23H21zM23,22H24V23H23zM24,22H25V23H24zM1,23H2V24H1zM3,23H4V24H3zM4,23H5V24H4zM5,23H6V24H5zM7,23H8V24H7zM9,23H10V24H9zM11,23H12V24H11zM12,23H13V24H12zM14,23H15V24H14zM16,23H17V24H16zM18,23H19V24H18zM20,23H21V24H20zM21,23H22V24H21zM22,23H23V24H22zM24,23H25V24H24zM25,23H26V24H25zM1,24H2V25H1zM7,24H8V25H7zM11,24H12V25H11zM13,24H14V25H13zM15,24H16V25H15zM17,24H18V25H17zM18,24H19V25H18zM19,24H20V25H19zM20,24H21V25H20zM21,24H22V25H21zM1,25H2V26H1zM2,25H3V26H2zM3,25H4V26H3zM4,25H5V26H4zM5,25H6V26H5zM6,25H7V26H6zM7,25H8V26H7zM9,25H10V26H9zM10,25H11V26H10zM11,25H12V26H11zM12,25H13V26H12zM13,25H14V26H13zM17,25H18V26H17zM18,25H19V26H18zM22,25H23V26H22zM25,25H26V26H25z" id="qr-path" fill="#000000" fill-opacity="1" fill-rule="nonzero" stroke="none" /></svg>
+                <div class="qr-text">
+                    <span class="qr-title">📱 EXPRESS PICKUP</span>
+                    <span class="qr-sub">Scan to Order on Phone</span>
+                </div>
+            </div>
+
+            <!-- TV Live Sync Status -->
+            <div class="tv-sync-status" style="position:static;">
+                <span class="pulse-dot"></span>
+                <span id="tv-sync-time">TENDY LIVE SYNC</span>
+            </div>
+        </div>
+    </header>
 
     <!-- Main TV Screen Mount -->
     <main id="menuMount"></main>
@@ -1431,6 +1583,26 @@ body {
             }
 
             document.getElementById('tv-sync-time').textContent = `TENDY LIVE • ${res.updated_at || ''}`;
+            updateHappyHourBanner();
+        }
+
+
+        function updateHappyHourBanner() {
+            const el = document.getElementById('happyHourBanner');
+            if (!el) return;
+            try {
+                const now = new Date();
+                const torontoHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Toronto', hour: 'numeric', hour12: false }).format(now), 10);
+                const isActive = (torontoHour >= 13 && torontoHour < 16);
+
+                if (isActive) {
+                    el.className = 'happy-hour-pill active';
+                    el.innerHTML = '<span style="color:#ef4444; font-size:12px;">⚡</span> <strong>HAPPY HOUR ACTIVE (1 PM – 4 PM)</strong> • SPECIAL PRICING IN EFFECT';
+                } else {
+                    el.className = 'happy-hour-pill idle';
+                    el.innerHTML = '<i class="bi bi-clock-history" style="color:#facc15;"></i> Daily Happy Hour: <strong>1:00 PM – 4:00 PM</strong>';
+                }
+            } catch (e) {}
         }
 
         function pollLive() {
