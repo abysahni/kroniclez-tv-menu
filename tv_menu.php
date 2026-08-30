@@ -1308,9 +1308,9 @@ body {
 
         <div class="header-right-deck">
             <!-- Free Store Wi-Fi Pill -->
-            <div class="wifi-pill" title="Free Store Wi-Fi: Kroniclez-Guest">
+            <div class="wifi-pill" title="Guest Wi-Fi: KRONICKLUB | Pass: Kroniclub">
                 <i class="bi bi-wifi" style="color:#38bdf8;"></i>
-                <span><strong>Wi-Fi:</strong> Kroniclez-Guest</span>
+                <span><strong>Wi-Fi:</strong> KRONICKLUB <span style="color:#64748b; margin: 0 2px;">•</span> <strong>Pass:</strong> Kroniclub</span>
             </div>
             <!-- Express Pickup Mobile QR Code -->
             <div class="qr-header-card">
