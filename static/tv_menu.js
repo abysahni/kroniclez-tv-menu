@@ -24,6 +24,31 @@ function formatCAD(val) {
     return `$${num.toFixed(2)}`;
 }
 
+// Multi-Pack & Bulk Size Micro-Badge Helper (Option 3)
+function getSizeBadge(productName, variantName) {
+    const text = `${productName || ''} ${variantName || ''}`.toLowerCase();
+    
+    if (text.includes('28g') || text.includes('30g') || text.includes('1 oz') || text.includes('ounce')) {
+        return '<span class="badge-size size-oz">1 OZ (28g)</span>';
+    }
+    if (text.includes('14g') || text.includes('15g') || text.includes('half oz') || text.includes('1/2 oz')) {
+        return '<span class="badge-size size-halfoz">1/2 OZ (14g)</span>';
+    }
+    if (text.includes('10x') || text.includes('10 pack') || text.includes('10-pack') || text.includes('10pk')) {
+        return '<span class="badge-size size-10pk">10-PK</span>';
+    }
+    if (text.includes('5x') || text.includes('5 pack') || text.includes('5-pack') || text.includes('5pk')) {
+        return '<span class="badge-size size-5pk">5-PK</span>';
+    }
+    if (text.includes('4x') || text.includes('3x') || text.includes('variety pack') || text.includes('multi pack') || text.includes('multipack')) {
+        return '<span class="badge-size size-multipk">MULTI-PK</span>';
+    }
+    if (text.includes('2x') || text.includes('2 pack') || text.includes('2-pack') || text.includes('2pk') || text.includes('double up') || text.includes('twofer')) {
+        return '<span class="badge-size size-2pk">2-PK</span>';
+    }
+    return '';
+}
+
 // Standard Row Renderer (Screens 1 & 2)
 function renderRowHtml(it, showStrainBadge = false) {
     let badge = '';
@@ -50,6 +75,8 @@ function renderRowHtml(it, showStrainBadge = false) {
         stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
     }
 
+    const sizeBadge = getSizeBadge(it.product_name, it.variant);
+
     let priceHtml = '';
     if (it.is_sale && it.old_price) {
         priceHtml = `
@@ -71,7 +98,7 @@ function renderRowHtml(it, showStrainBadge = false) {
 
     return `
         <div class="p-row ${rowClass}">
-            <div class="p-name">${badge}${pName}${tagBadge}${stockBadge}</div>
+            <div class="p-name">${badge}${pName}${sizeBadge}${tagBadge}${stockBadge}</div>
             <div class="p-thc">${thc}</div>
             <div class="p-price">${priceHtml}</div>
         </div>
@@ -98,6 +125,8 @@ function renderSoftRow(it) {
     if (stockNum > 0 && stockNum <= 3) {
         stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
     }
+
+    const sizeBadge = getSizeBadge(it.product_name, it.variant);
 
     // Functional Cannabinoid Badge (Option 2)
     let funcBadge = '';
@@ -133,7 +162,7 @@ function renderSoftRow(it) {
 
     return `
         <div class="soft-row ${rowClass}">
-            <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
+            <div class="soft-name">${it.product_name}${sizeBadge}${funcBadge}${tagBadge}${stockBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>
             <div class="soft-cbd">${it.cbd || '—'}</div>

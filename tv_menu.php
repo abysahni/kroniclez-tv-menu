@@ -911,6 +911,24 @@ body {
 .b-hybrid { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.5); }
 .b-sativa { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
+.badge-size {
+    font-size: 7.5px;
+    font-weight: 850;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.size-10pk { background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
+.size-5pk { background: rgba(168, 85, 247, 0.22); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.5); }
+.size-2pk { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.45); }
+.size-oz { background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.6); font-weight: 900; }
+.size-halfoz { background: rgba(34, 197, 94, 0.22); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.55); font-weight: 900; }
+.size-multipk { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
+
 .badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
 .badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
 .p-row.row-featured, .soft-row.row-featured { background: linear-gradient(90deg, rgba(239, 68, 68, 0.20) 0%, rgba(185, 28, 28, 0.05) 100%) !important; border-left: 3.5px solid #ef4444 !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(239, 68, 68, 0.18); }
@@ -921,6 +939,24 @@ body {
 .badge-cbd { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.5); display: inline-block; vertical-align: middle; }
 .badge-balance { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.5); display: inline-block; vertical-align: middle; }
 .badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
+.badge-size {
+    font-size: 7.5px;
+    font-weight: 850;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.size-10pk { background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
+.size-5pk { background: rgba(168, 85, 247, 0.22); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.5); }
+.size-2pk { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.45); }
+.size-oz { background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.6); font-weight: 900; }
+.size-halfoz { background: rgba(34, 197, 94, 0.22); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.55); font-weight: 900; }
+.size-multipk { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
+
 .badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
 .badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
 .p-row.row-featured, .soft-row.row-featured { background: linear-gradient(90deg, rgba(239, 68, 68, 0.20) 0%, rgba(185, 28, 28, 0.05) 100%) !important; border-left: 3.5px solid #ef4444 !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(239, 68, 68, 0.18); }
@@ -1331,7 +1367,8 @@ body {
 
             return `
                 <div class="soft-row ${rowClass}">
-                    <div class="soft-name">${it.product_name}${funcBadge}${tagBadge}${stockBadge}</div>
+                    const sizeBadge = getSizeBadge(it.product_name, it.variant);
+            return `<div class="soft-row ${rowClass}"><div class="soft-name">${it.product_name}${sizeBadge}${funcBadge}${tagBadge}${stockBadge}</div>
                     <div class="soft-meta ${metaClass}">${metaText}</div>
                     <div class="soft-thc">${it.thc || '10mg'}</div>
                     <div class="soft-cbd">${it.cbd || '—'}</div>
