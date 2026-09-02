@@ -197,6 +197,8 @@ STRAIN_DATABASE_PREROLL = {
     "lil buddy indica": "INDICA",
     "dutchy blunt": "INDICA",
     "dutchy": "INDICA",
+    "fire breath": "INDICA",
+    "backpackers fire breath": "INDICA",
 }
 
 def classify_preroll(name: str, brand: str = "") -> str:
@@ -221,6 +223,10 @@ STRAIN_DATABASE_FLOWER = {
     "pure milled indica": "INDICA",
     "pop n’ pour blue raspberry": "INDICA",
     "pop n pour blue raspberry": "INDICA",
+    "pink kush": "INDICA",
+    "gasberry kush": "INDICA",
+    "gasberry": "INDICA",
+    "fire breath": "INDICA",
 
     # SATIVA
     "cosmic lemonade": "SATIVA",
@@ -517,6 +523,10 @@ PRODUCT_POTENCY_DATABASE = {
     "sunset sherb": {"thc": "95.0%", "cbd": "1.0%"},
 
     # SCREEN 2: DRIED & MILLED FLOWER
+    "pink kush": {"thc": "26.0%", "cbd": "0.1%"},
+    "gasberry kush": {"thc": "27.0%", "cbd": "0.5%"},
+    "gasberry": {"thc": "27.0%", "cbd": "0.5%"},
+    "fire breath": {"thc": "30.0%", "cbd": "0.5%"},
     "blueberry muffinz": {"thc": "29.0%", "cbd": "0.15%"},
     "gmo cookies": {"thc": "27.3%", "cbd": "0.5%"},
     "purple cherry punch": {"thc": "32.0%", "cbd": "1.0%"},

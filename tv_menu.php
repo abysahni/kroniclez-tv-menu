@@ -265,6 +265,9 @@ function classifyStrain($name, $brand) {
     if (strpos($full, "diesel pocket puffs") !== false) return "INDICA";
     if (strpos($full, "bahama berry") !== false) return "INDICA";
     if (strpos($full, "dutchy") !== false) return "INDICA";
+    if (strpos($full, "fire breath") !== false) return "INDICA";
+    if (strpos($full, "pink kush") !== false) return "INDICA";
+    if (strpos($full, "gasberry") !== false) return "INDICA";
 
     // Generic keyword fallback
     if (preg_replace('/\b(sativa|lemon|sour|haze|diesel|tangie|mango|sunshine|cough|acapulco|jack|linx|grapefruit|shockwave|sticky)\b/', '', $full) !== $full) return 'SATIVA';
