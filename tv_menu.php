@@ -1082,7 +1082,7 @@ body {
 
 
 /* ========================================================================== */
-/* CONTINUOUS LIVE FOOTER TICKER                                              */
+/* CONTINUOUS LIVE FOOTER TICKER (60FPS HARDWARE-ACCELERATED)                 */
 /* ========================================================================== */
 
 .tv-ticker-bar {
@@ -1099,12 +1099,24 @@ body {
     overflow: hidden;
     z-index: 999;
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    contain: layout paint;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .ticker-track {
     display: flex;
     width: max-content;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
     animation: ticker-scroll 34s linear infinite;
+    -webkit-animation: ticker-scroll 34s linear infinite;
 }
 
 .ticker-content {
@@ -1116,8 +1128,23 @@ body {
 }
 
 @keyframes ticker-scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-50%, 0, 0);
+        -webkit-transform: translate3d(-50%, 0, 0);
+    }
+}
+
+@-webkit-keyframes ticker-scroll {
+    0% {
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    100% {
+        -webkit-transform: translate3d(-50%, 0, 0);
+    }
 }
 
 .ticker-item {
@@ -1128,6 +1155,9 @@ body {
     align-items: center;
     gap: 7px;
     letter-spacing: 0.3px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .ticker-item strong { color: #fde047; font-weight: 900; }
