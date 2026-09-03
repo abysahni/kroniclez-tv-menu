@@ -249,6 +249,9 @@ function classifyStrain($name, $brand) {
     if (strpos($full, "fruit punch") !== false) return "SATIVA";
     if (strpos($full, "double up") !== false || strpos($full, "double dutchies") !== false) return "SATIVA";
     if (strpos($full, "pineapple nuken") !== false) return "SATIVA";
+    if (strpos($full, "dragon cake") !== false) return "SATIVA";
+    if (strpos($full, "strawnana") !== false) return "SATIVA";
+    if (strpos($full, "pop n pour strawnana") !== false || strpos($full, "pop'n'pour strawnana") !== false) return "SATIVA";
 
     // Explicit Hybrid overrides
     if (strpos($full, "10th planet") !== false) return "HYBRID";

@@ -229,6 +229,12 @@ STRAIN_DATABASE_FLOWER = {
     "fire breath": "INDICA",
 
     # SATIVA
+    "dragon cake": "SATIVA",
+    "strawnana": "SATIVA",
+    "pop'n'pour strawnana": "SATIVA",
+    "pop 'n' pour strawnana": "SATIVA",
+    "pop n’ pour strawnana": "SATIVA",
+    "pop n pour strawnana": "SATIVA",
     "cosmic lemonade": "SATIVA",
     "frosted lemons": "SATIVA",
     "ripped sativa": "SATIVA",
@@ -241,8 +247,6 @@ STRAIN_DATABASE_FLOWER = {
     "maui wowie": "SATIVA",
     "pure milled - sativa": "SATIVA",
     "pure milled sativa": "SATIVA",
-    "pop n’ pour strawnana": "SATIVA",
-    "pop n pour strawnana": "SATIVA",
 
     # HYBRID
     "chromatica": "HYBRID",
@@ -255,8 +259,7 @@ STRAIN_DATABASE_FLOWER = {
     "the goods": "HYBRID",
     "the handy harvest": "HYBRID",
     "do-si-dos": "HYBRID",
-    "sgt. pineapple": "HYBRID",
-    "dragon cake": "HYBRID"
+    "sgt. pineapple": "HYBRID"
 }
 
 def classify_flower(name: str, brand: str = "") -> str:
@@ -552,9 +555,11 @@ PRODUCT_POTENCY_DATABASE = {
     "strawberry cheezequake": {"thc": "28.0%", "cbd": "1.0%"},
     "tutti frutti crunchy puff": {"thc": "29.0%", "cbd": "1.0%"},
     "citrus sweet 'n sour": {"thc": "30.0%", "cbd": "1.0%"},
-    "lemon pave milled": {"thc": "28.0%", "cbd": "1.0%"},
-    "maui wowie milled": {"thc": "29.0%", "cbd": "1.0%"},
+    "dragon cake": {"thc": "28.5%", "cbd": "1.0%"},
+    "strawnana": {"thc": "28.0%", "cbd": "0.5%"},
+    "pop'n'pour strawnana": {"thc": "28.0%", "cbd": "0.5%"},
     "pop n' pour strawnana": {"thc": "28.0%", "cbd": "0.5%"},
+    "pop n pour strawnana": {"thc": "28.0%", "cbd": "0.5%"},
     "pure milled sativa": {"thc": "28.0%", "cbd": "2.0%"},
 
     # SCREEN 3: CONCENTRATES, BEVERAGES, EDIBLES & WELLNESS
