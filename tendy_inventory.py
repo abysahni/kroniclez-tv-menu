@@ -179,9 +179,35 @@ def is_accessory(it: Dict[str, Any]) -> bool:
         return True
 
 def clean_product_title(name: str, brand: str = "", variant: str = "", screen_id: int = 1) -> str:
-    """Format and clean product title cleanly for TV display."""
-    t = (name or "").strip()
-    return t
+    """Format and clean product title cleanly with brand, name, and size (e.g. BRAND • Strain Name 1x0.5g)."""
+    b = (brand or "").strip().upper()
+    n = (name or "").strip()
+    v = (variant or "").strip()
+
+    # Clean redundant category keywords
+    n = re.sub(r'\s+Pre-Rolls?', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+510 Thread Cartridge', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+510 Thread', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+510 Cartridge', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+510 Vape Cart', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+All-in-One Vape', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+All-in-One', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+Disposable', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s+Dried Flower', '', n, flags=re.IGNORECASE)
+    n = re.sub(r'\s*-\s*', ' ', n)
+
+    if b and n.upper().startswith(f"{b} ") and len(n) > len(b) + 3 and not any(k in n.lower() for k in ["lil buddy indica", "lil buddy sativa"]):
+        n = n[len(b):].strip(" -:•")
+
+    if v:
+        if v.lower() not in n.lower():
+            final = f"{b} • {n} {v}" if b else f"{n} {v}"
+        else:
+            final = f"{b} • {n}" if b else n
+    else:
+        final = f"{b} • {n}" if b else n
+
+    return re.sub(r'\s+', ' ', final).strip(" -:•")
         
 STRAIN_DATABASE_PREROLL = {
     # SPECIFIC SATIVA OVERRIDES (Checked first)
