@@ -10,7 +10,7 @@ from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
 import config
-from tendy_inventory import inventory_service
+from tendy_inventory import inventory_service, load_product_overrides, save_product_overrides
 
 class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
     """Production HTTP Handler for Kroniclez Digital TV Menu Board."""
@@ -117,6 +117,30 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             results = agent.run_full_audit()
             self._send_json({"success": True, **results})
 
+        # Admin & Budtender Override Portal Routes
+        elif path in ["/admin", "/portal", "/override", "/overrides"]:
+            self._send_file(config.STATIC_DIR / "admin.html")
+            return
+
+        elif path == "/api/admin/inventory":
+            pin = query.get("pin", [""])[0] if query else ""
+            if pin != config.ADMIN_PIN:
+                self._send_json({"success": False, "message": "Unauthorized: Invalid Staff PIN"}, status_code=401)
+                return
+            items = inventory_service.get_admin_inventory()
+            overrides = load_product_overrides()
+            self._send_json({"success": True, "items": items, "overrides": overrides})
+            return
+
+        elif path == "/api/admin/overrides":
+            pin = query.get("pin", [""])[0] if query else ""
+            if pin != config.ADMIN_PIN:
+                self._send_json({"success": False, "message": "Unauthorized: Invalid Staff PIN"}, status_code=401)
+                return
+            overrides = load_product_overrides()
+            self._send_json({"success": True, "overrides": overrides})
+            return
+
         elif path in ["/api/promotions", "/promotions"]:
             from promotion_engine import promotion_engine, get_toronto_now
             now = get_toronto_now()
@@ -178,8 +202,67 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             potential_file = config.STATIC_DIR / path.lstrip("/")
             if potential_file.exists() and potential_file.is_file():
                 self._send_file(potential_file)
-            else:
-                self._send_injected_index(query)
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+
+        if path == "/api/admin/override":
+            content_len = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
+            try:
+                data = json.loads(body)
+            except Exception:
+                self._send_json({"success": False, "message": "Invalid JSON payload"}, status_code=400)
+                return
+
+            pin = str(data.get("pin", "")).strip()
+            if pin != config.ADMIN_PIN:
+                self._send_json({"success": False, "message": "Unauthorized: Invalid Staff PIN"}, status_code=401)
+                return
+
+            action = data.get("action", "")
+            pattern = str(data.get("pattern", "")).strip().lower()
+            val = str(data.get("value", "")).strip().upper()
+            ov = load_product_overrides()
+
+            if action == "set_species":
+                if not pattern:
+                    self._send_json({"success": False, "message": "Missing product pattern"}, status_code=400)
+                    return
+                ov.setdefault("species_overrides", {})[pattern] = val
+                save_product_overrides(ov)
+                self._send_json({"success": True, "message": f"Updated species for '{pattern}' to {val}"})
+                return
+
+            elif action == "set_highlight":
+                if not pattern:
+                    self._send_json({"success": False, "message": "Missing product pattern"}, status_code=400)
+                    return
+                if val in ["NONE", "REGULAR", "STANDARD"]:
+                    ov.setdefault("highlight_overrides", {}).pop(pattern, None)
+                else:
+                    ov.setdefault("highlight_overrides", {})[pattern] = val
+                save_product_overrides(ov)
+                self._send_json({"success": True, "message": f"Updated highlight for '{pattern}' to {val}"})
+                return
+
+            elif action == "delete_all_for_pattern":
+                ov.setdefault("species_overrides", {}).pop(pattern, None)
+                ov.setdefault("highlight_overrides", {}).pop(pattern, None)
+                ov.setdefault("thc_overrides", {}).pop(pattern, None)
+                save_product_overrides(ov)
+                self._send_json({"success": True, "message": f"Reverted all overrides for '{pattern}'"})
+                return
+
+            elif action == "flush_cache":
+                inventory_service.clear_cache()
+                self._send_json({"success": True, "message": "TV Menu Cache Flushed successfully"})
+                return
+
+            self._send_json({"success": False, "message": f"Unknown action: {action}"}, status_code=400)
+            return
+
+        self.send_error(404, "Endpoint not found")
 
     def _send_injected_index(self, query: dict):
         """Serve index.html with instant pre-injected state for zero-latency TV boot."""

@@ -1,0 +1,32 @@
+{
+  "species_overrides": {
+    "dragon cake": "SATIVA",
+    "pop n pour strawnana": "SATIVA",
+    "strawnana": "SATIVA",
+    "backpackers fire breath": "INDICA",
+    "fire breath": "INDICA",
+    "pink kush": "INDICA",
+    "gasberry kush": "INDICA",
+    "blueberry dream": "SATIVA",
+    "pink rozay": "SATIVA",
+    "cherry boat": "SATIVA",
+    "juicy blunt": "SATIVA",
+    "fruit punch": "SATIVA",
+    "10th planet": "HYBRID",
+    "sour kush": "HYBRID",
+    "blue magic": "HYBRID",
+    "panama gold": "HYBRID",
+    "peggys puff": "HYBRID",
+    "sgt. pineapple": "HYBRID",
+    "plg #7": "HYBRID",
+    "junior j": "INDICA",
+    "animal rntz": "INDICA",
+    "diesel pocket puffs": "INDICA",
+    "bahama berry": "INDICA"
+  },
+  "highlight_overrides": {
+    "zombie kush": "FEATURED"
+  },
+  "thc_overrides": {},
+  "last_updated": "2026-09-03T16:59:01.391023+00:00"
+}

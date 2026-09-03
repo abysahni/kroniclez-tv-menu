@@ -38,6 +38,28 @@ def load_regular_prices_registry() -> Dict[str, Any]:
         print(f"⚠️ Error loading regular prices: {e}")
     return {}
 
+
+def load_product_overrides() -> Dict[str, Any]:
+    if config.OVERRIDES_FILE.exists():
+        try:
+            with open(config.OVERRIDES_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {"species_overrides": {}, "highlight_overrides": {}, "thc_overrides": {}}
+
+def save_product_overrides(data: Dict[str, Any]) -> bool:
+    try:
+        data["last_updated"] = datetime.now(timezone.utc).isoformat()
+        with open(config.OVERRIDES_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        # Flush in-memory cache so next request picks it up immediately
+        inventory_service.clear_cache()
+        return True
+    except Exception as e:
+        print(f"Error saving overrides: {e}")
+        return False
+
 def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, Any]:
     """
     Computes active price and original price.
@@ -52,6 +74,36 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
     barcode = str(it.get("barcode") or "")
     sku = str(it.get("sku") or "")
     name_low = name.lower()
+
+    # 0. Check custom Highlight Overrides first from Admin Portal
+    overrides_db = load_product_overrides()
+    highlight_ov = overrides_db.get("highlight_overrides", {})
+    for pattern, hl_type in highlight_ov.items():
+        if pattern and (pattern in name_low or pattern in f"{brand} {name}".lower()):
+            if hl_type == "FEATURED":
+                return {
+                    "price": sale_p,
+                    "old_price": round(sale_p * 1.15, 2),
+                    "is_sale": True,
+                    "tag": "FEATURED",
+                    "promo_name": "Featured Special"
+                }
+            elif hl_type == "STAFF_PICK" or hl_type == "STAFF PICK":
+                return {
+                    "price": sale_p,
+                    "old_price": None,
+                    "is_sale": False,
+                    "tag": "STAFF PICK",
+                    "promo_name": "Staff Pick"
+                }
+            elif hl_type == "NONE" or hl_type == "REGULAR":
+                return {
+                    "price": sale_p,
+                    "old_price": None,
+                    "is_sale": False,
+                    "tag": None,
+                    "promo_name": None
+                }
 
     # 1. Check direct Regular Price Registry (e.g. Pineapple Nuken $22.99 regular vs $19.98 sale)
     reg_registry = load_regular_prices_registry()
@@ -125,6 +177,11 @@ def is_accessory(it: Dict[str, Any]) -> bool:
         "grinder", "rolling tray", "bong", "pipe", "cleaning swab", "iso-shine"
     ]):
         return True
+
+def clean_product_title(name: str, brand: str = "", variant: str = "", screen_id: int = 1) -> str:
+    """Format and clean product title cleanly for TV display."""
+    t = (name or "").strip()
+    return t
         
 STRAIN_DATABASE_PREROLL = {
     # SPECIFIC SATIVA OVERRIDES (Checked first)
@@ -203,11 +260,17 @@ STRAIN_DATABASE_PREROLL = {
 
 def classify_preroll(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    overrides = load_product_overrides().get("species_overrides", {})
+    for pattern, species in overrides.items():
+        if pattern and pattern in full:
+            return species
     for pattern, species in STRAIN_DATABASE_PREROLL.items():
         if pattern in full:
             return species
     if "sativa" in full: return "SATIVA"
     if "indica" in full: return "INDICA"
+    return "HYBRID" 
+
 STRAIN_DATABASE_FLOWER = {
     # INDICA
     "blueberry muffinz": "INDICA",
@@ -264,12 +327,16 @@ STRAIN_DATABASE_FLOWER = {
 
 def classify_flower(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    overrides = load_product_overrides().get("species_overrides", {})
+    for pattern, species in overrides.items():
+        if pattern and pattern in full:
+            return species
     for pattern, species in STRAIN_DATABASE_FLOWER.items():
         if pattern in full:
             return species
     if "sativa" in full: return "SATIVA"
     if "indica" in full: return "INDICA"
-    return "HYBRID"
+    return "HYBRID" 
 
 STRAIN_DATABASE_VAPE = {
     # INDICA
@@ -322,39 +389,16 @@ STRAIN_DATABASE_VAPE = {
 
 def classify_vape(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    overrides = load_product_overrides().get("species_overrides", {})
+    for pattern, species in overrides.items():
+        if pattern and pattern in full:
+            return species
     for pattern, species in STRAIN_DATABASE_VAPE.items():
         if pattern in full:
             return species
     if "sativa" in full: return "SATIVA"
     if "indica" in full: return "INDICA"
-    return "HYBRID"
-def clean_product_title(name: str, brand: str = "", variant: str = "", screen_id: int = 1) -> str:
-    """Format clean, luxury dispensary menu title without redundant category keywords."""
-    b = brand.strip().upper() if brand else ""
-    n = name.strip()
-    v = variant.strip()
-    
-    n = re.sub(r'(?i)\s+Pre-Rolls?', '', n)
-    n = re.sub(r'(?i)\s+510 Thread Cartridge', '', n)
-    n = re.sub(r'(?i)\s+510 Thread', '', n)
-    n = re.sub(r'(?i)\s+510 Cartridge', '', n)
-    n = re.sub(r'(?i)\s+510 Vape Cart', '', n)
-    n = re.sub(r'(?i)\s+All-in-One Vape', '', n)
-    n = re.sub(r'(?i)\s+All-In-One Vape', '', n)
-    n = re.sub(r'(?i)\s+All-in-One', '', n)
-    n = re.sub(r'(?i)\s+Disposable', '', n)
-    n = re.sub(r'(?i)\s+Dried Flower', '', n)
-    n = re.sub(r'\s*-\s*', ' ', n)
-    
-    if v:
-        if v in n:
-            n = n.replace(f"({v})", "").replace(f"- {v}", "").replace(v, "").strip()
-        final_str = f"{b} • {n} {v}" if b else f"{n} {v}"
-    else:
-        final_str = f"{b} • {n}" if b else n
-        
-    final_str = re.sub(r'\s+', ' ', final_str).strip()
-    return final_str
+    return "HYBRID" 
 
 # =========================================================================
 # KRONICLEZ AUTHENTIC LAB-TESTED THC & CBD POTENCY DATABASE
@@ -611,7 +655,15 @@ def lookup_authentic_potency(product_name: str, brand: str = "", screen_id: int 
     """Matches product against authentic laboratory potency database."""
     clean_target = f"{brand} {product_name}".lower()
     
+    # 0. Check custom THC overrides first
+    overrides = load_product_overrides().get("thc_overrides", {})
+    for pattern, custom_thc in overrides.items():
+        if pattern and (pattern in clean_target or pattern in product_name.lower()):
+            return {"thc": custom_thc, "cbd": "<1.0%"}
+
     for pattern, spec in PRODUCT_POTENCY_DATABASE.items():
+        if pattern in clean_target or pattern in product_name.lower():
+            return spec
         if pattern in clean_target or pattern in product_name.lower():
             return spec
 
@@ -643,6 +695,66 @@ class TendyInventoryService:
             self.ssl_context = ssl.create_default_context()
             self.ssl_context.check_hostname = False
             self.ssl_context.verify_mode = ssl.CERT_NONE
+
+    def clear_cache(self):
+        self._cache = {}
+        self._cache_timestamps = {}
+        self._raw_inventory_cache = []
+        self._raw_cache_time = 0
+
+    def get_admin_inventory(self) -> List[Dict[str, Any]]:
+        raw = self.fetch_tendy_raw_inventory()
+        items = []
+        overrides = load_product_overrides()
+        species_ov = overrides.get("species_overrides", {})
+        highlight_ov = overrides.get("highlight_overrides", {})
+        thc_ov = overrides.get("thc_overrides", {})
+
+        for it in raw:
+            if is_accessory(it):
+                continue
+            name = (it.get("product_name") or it.get("name") or "").strip()
+            brand = ((it.get("brand") or {}).get("name") if isinstance(it.get("brand"), dict) else str(it.get("brand") or "")).strip()
+            cat = ((it.get("category") or {}).get("name") if isinstance(it.get("category"), dict) else str(it.get("category") or "")).strip()
+            pricing = it.get("productPricing") or {}
+            sale_p = float(pricing.get("sale_price") or 0.0)
+            full_name = f"{brand} {name}".strip()
+            clean_t = full_name.lower()
+
+            screen = 1 if any(k in cat.lower() for k in ["pre-roll", "preroll", "pre roll", "blunt"]) else (2 if any(k in cat.lower() for k in ["flower", "vape", "cartridge", "disposable"]) else 3)
+            
+            if screen == 1:
+                cur_species = classify_preroll(name, brand)
+            elif screen == 2:
+                cur_species = classify_flower(name, brand) if "flower" in cat.lower() else classify_vape(name, brand)
+            else:
+                cur_species = "HYBRID"
+
+            potency = lookup_authentic_potency(name, brand, screen)
+            pricing_calc = compute_item_pricing(it, screen)
+
+            matched_sp_key = next((k for k in species_ov if k in clean_t), None)
+            matched_hl_key = next((k for k in highlight_ov if k in clean_t), None)
+            matched_thc_key = next((k for k in thc_ov if k in clean_t), None)
+
+            items.append({
+                "id": str(it.get("id") or it.get("sku") or it.get("barcode") or name),
+                "name": name,
+                "brand": brand,
+                "full_name": full_name,
+                "category": cat,
+                "screen": screen,
+                "species": cur_species,
+                "thc": potency.get("thc", "N/A"),
+                "price": pricing_calc.get("price", sale_p),
+                "tag": pricing_calc.get("tag"),
+                "is_sale": pricing_calc.get("is_sale", False),
+                "has_override": bool(matched_sp_key or matched_hl_key or matched_thc_key),
+                "override_species_key": matched_sp_key,
+                "override_highlight_key": matched_hl_key,
+                "override_thc_key": matched_thc_key
+            })
+        return sorted(items, key=lambda x: (x["screen"], x["category"], x["name"]))
 
     def _authenticate_tendy(self) -> Optional[str]:
         """Authenticate with Tendy POS auth API and return scoped JWT token."""

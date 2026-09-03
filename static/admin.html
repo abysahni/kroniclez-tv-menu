@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kroniclez Budtender Menu Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg-main: #090a0f;
+            --bg-card: rgba(18, 22, 31, 0.85);
+            --bg-card-hover: rgba(26, 32, 44, 0.95);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(250, 204, 21, 0.35);
+            --indica-color: #4ade80;
+            --hybrid-color: #facc15;
+            --sativa-color: #f87171;
+            --featured-color: #ef4444;
+            --staff-color: #eab308;
+            --cyan-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        .portal-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(9, 10, 15, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand-deck {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(250, 204, 21, 0.4);
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand-title span {
+            color: #facc15;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
+            color: #e2e8f0;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-action.sync-btn {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+        }
+
+        .btn-action.sync-btn:hover {
+            background: rgba(56, 189, 248, 0.25);
+        }
+
+        .btn-action.overrides-btn {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.4);
+            color: #c084fc;
+        }
+
+        /* Container & Search */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .search-panel {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-box-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(18, 22, 31, 0.9);
+            border: 1.5px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 12px 14px 12px 42px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: #facc15;
+            box-shadow: 0 0 16px rgba(250, 204, 21, 0.2);
+        }
+
+        /* Filter Pills */
+        .filter-pills {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .filter-pills::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 750;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pill.active {
+            background: #facc15;
+            color: #000000;
+            border-color: #facc15;
+            font-weight: 900;
+        }
+
+        /* Product Cards Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .products-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.16);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .product-card.has-override {
+            border-left: 4px solid #c084fc;
+        }
+
+        .p-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .p-category-tag {
+            font-size: 10px;
+            font-weight: 850;
+            text-transform: uppercase;
+            padding: 2.5px 7px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #cbd5e1;
+            letter-spacing: 0.4px;
+        }
+
+        .p-screen-badge {
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .p-title-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .p-title {
+            font-size: 14.5px;
+            font-weight: 850;
+            color: #ffffff;
+            line-height: 1.25;
+        }
+
+        .p-brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
+        .p-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .p-meta .thc {
+            color: #facc15;
+        }
+
+        .p-meta .price {
+            color: #4ade80;
+            font-weight: 900;
+        }
+
+        /* Control Buttons Group */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 10px;
+        }
+
+        .control-label {
+            font-size: 10px;
+            font-weight: 850;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-group-species {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+
+        .btn-species {
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #94a3b8;
+            font-size: 11.5px;
+            font-weight: 850;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-species.indica.active {
+            background: rgba(74, 222, 128, 0.22);
+            border-color: var(--indica-color);
+            color: var(--indica-color);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.25);
+        }
+
+        .btn-species.hybrid.active {
+            background: rgba(250, 204, 21, 0.22);
+            border-color: var(--hybrid-color);
+            color: var(--hybrid-color);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.25);
+        }
+
+        .btn-species.sativa.active {
+            background: rgba(248, 113, 113, 0.22);
+            border-color: var(--sativa-color);
+            color: var(--sativa-color);
+            box-shadow: 0 0 10px rgba(248, 113, 113, 0.25);
+        }
+
+        .btn-group-highlight {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+
+        .btn-highlight {
+            padding: 6px 4px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-highlight.featured.active {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: var(--featured-color);
+            color: #fca5a5;
+        }
+
+        .btn-highlight.staff.active {
+            background: rgba(234, 179, 8, 0.25);
+            border-color: var(--staff-color);
+            color: #fde047;
+        }
+
+        .btn-highlight.none.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Active Override Footer Banner on Card */
+        .card-override-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #d8b4fe;
+            margin-top: 4px;
+        }
+
+        .btn-revert {
+            background: transparent;
+            border: none;
+            color: #f87171;
+            font-size: 10px;
+            font-weight: 850;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* PIN Modal */
+        .pin-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .pin-card {
+            background: #121620;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 24px rgba(250, 204, 21, 0.15);
+            border-radius: 16px;
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .pin-icon {
+            font-size: 32px;
+            color: #facc15;
+        }
+
+        .pin-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffffff;
+        }
+
+        .pin-sub {
+            font-size: 12.5px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .pin-input {
+            width: 100%;
+            background: #090a0f;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 24px;
+            font-weight: 900;
+            color: #facc15;
+            text-align: center;
+            letter-spacing: 8px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .pin-input:focus {
+            border-color: #facc15;
+            box-shadow: 0 0 16px rgba(250, 204, 21, 0.3);
+        }
+
+        .btn-unlock {
+            background: #facc15;
+            border: none;
+            color: #000000;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-unlock:hover {
+            background: #fde047;
+            transform: scale(1.02);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(18, 22, 31, 0.95);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Overrides Modal Drawer */
+        .drawer-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(16px);
+            z-index: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .drawer-modal.open {
+            display: flex;
+        }
+
+        .drawer-card {
+            background: #121620;
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 48px rgba(0,0,0,0.9);
+        }
+
+        .drawer-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drawer-header h3 {
+            font-size: 16px;
+            font-weight: 900;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-close-drawer {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .drawer-body {
+            padding: 16px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .override-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+        }
+
+        .override-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .override-name {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .override-val {
+            font-size: 11px;
+            font-weight: 850;
+            color: #facc15;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PIN Authentication Modal -->
+    <div id="pinModal" class="pin-modal-overlay">
+        <div class="pin-card">
+            <i class="bi bi-shield-lock-fill pin-icon"></i>
+            <div>
+                <h2 class="pin-title">Budtender Authorization</h2>
+                <p class="pin-sub">Enter your 4-digit staff PIN to manage menu categories & highlights</p>
+            </div>
+            <input type="password" id="pinInput" class="pin-input" maxlength="6" placeholder="••••" autofocus>
+            <button type="button" class="btn-unlock" onclick="unlockPortal()">
+                <i class="bi bi-unlock-fill"></i> Unlock Menu Portal
+            </button>
+        </div>
+    </div>
+
+    <!-- Active Overrides Drawer Modal -->
+    <div id="overridesDrawer" class="drawer-modal">
+        <div class="drawer-card">
+            <div class="drawer-header">
+                <h3><i class="bi bi-lightning-charge-fill" style="color: #c084fc;"></i> Active Custom Overrides</h3>
+                <button type="button" class="btn-close-drawer" onclick="toggleOverridesDrawer(false)">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div id="drawerBody" class="drawer-body">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="portal-header">
+        <div class="brand-deck">
+            <img src="/static/kroniclez_logo.jpg" alt="Logo" class="brand-logo">
+            <h1 class="brand-title">KRONICLEZ <span>PORTAL</span></h1>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="btn-action sync-btn" onclick="triggerSync()" title="Force update TVs">
+                <i class="bi bi-arrow-repeat"></i> <span class="hide-mobile">Sync TVs</span>
+            </button>
+            <button type="button" class="btn-action overrides-btn" onclick="toggleOverridesDrawer(true)">
+                <i class="bi bi-lightning-charge"></i> <span id="overridesCountBadge">0</span>
+            </button>
+            <button type="button" class="btn-action" onclick="lockPortal()" title="Lock session">
+                <i class="bi bi-lock-fill"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        
+        <!-- Search & Filter Controls -->
+        <div class="search-panel">
+            <div class="search-box-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search strain, brand, or SKU (e.g. Dragon Cake, Fire Breath)..." oninput="filterProducts()">
+            </div>
+            <div class="filter-pills">
+                <button type="button" class="pill active" onclick="setScreenFilter('all', this)">All Items (<span id="totalCount">0</span>)</button>
+                <button type="button" class="pill" onclick="setScreenFilter('1', this)">📺 TV 1: Pre-Rolls</button>
+                <button type="button" class="pill" onclick="setScreenFilter('2', this)">📺 TV 2: Flower & Vapes</button>
+                <button type="button" class="pill" onclick="setScreenFilter('3', this)">📺 TV 3: Edibles & Drinks</button>
+                <button type="button" class="pill" onclick="setScreenFilter('overrides', this)">⚡ Active Overrides</button>
+            </div>
+        </div>
+
+        <!-- Products List -->
+        <div id="productsGrid" class="products-grid">
+            <div style="text-align: center; padding: 40px; color: #94a3b8; font-weight: 700;">
+                <i class="bi bi-hourglass-split" style="font-size: 24px; color: #facc15; display: block; margin-bottom: 8px;"></i>
+                Loading live Tendy POS inventory...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg">Override saved successfully!</span>
+    </div>
+
+    <script>
+        let allProducts = [];
+        let activeOverrides = { species_overrides: {}, highlight_overrides: {}, thc_overrides: {} };
+        let currentScreenFilter = 'all';
+        let authPin = sessionStorage.getItem('kroniclez_admin_pin') || '';
+
+        // Initialize Portal
+        window.addEventListener('DOMContentLoaded', () => {
+            if (authPin) {
+                document.getElementById('pinModal').style.display = 'none';
+                loadInventory();
+            } else {
+                document.getElementById('pinInput').focus();
+            }
+        });
+
+        // Keypad Enter
+        document.getElementById('pinInput').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') unlockPortal();
+        });
+
+        function unlockPortal() {
+            const input = document.getElementById('pinInput').value.trim();
+            if (!input) return;
+            authPin = input;
+            sessionStorage.setItem('kroniclez_admin_pin', authPin);
+            document.getElementById('pinModal').style.display = 'none';
+            loadInventory();
+        }
+
+        function lockPortal() {
+            sessionStorage.removeItem('kroniclez_admin_pin');
+            authPin = '';
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinModal').style.display = 'flex';
+        }
+
+        async function loadInventory() {
+            try {
+                const res = await fetch(`/api/admin/inventory?pin=${encodeURIComponent(authPin)}`);
+                if (res.status === 401) {
+                    showToast("❌ Invalid Staff PIN. Please try again.", true);
+                    lockPortal();
+                    return;
+                }
+                const data = await res.json();
+                allProducts = data.items || [];
+                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {} };
+                updateOverridesBadge();
+                renderProducts();
+            } catch (e) {
+                console.error("Error loading inventory:", e);
+                showToast("⚠️ Could not load Tendy inventory.", true);
+            }
+        }
+
+        function updateOverridesBadge() {
+            const spCount = Object.keys(activeOverrides.species_overrides || {}).length;
+            const hlCount = Object.keys(activeOverrides.highlight_overrides || {}).length;
+            document.getElementById('overridesCountBadge').innerText = `${spCount + hlCount} Overrides`;
+            document.getElementById('totalCount').innerText = allProducts.length;
+        }
+
+        function setScreenFilter(filter, btn) {
+            currentScreenFilter = filter;
+            document.querySelectorAll('.filter-pills .pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = allProducts.filter(p => {
+                const matchQuery = !query || p.full_name.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query));
+                if (!matchQuery) return false;
+
+                if (currentScreenFilter === 'all') return true;
+                if (currentScreenFilter === 'overrides') return p.has_override;
+                return String(p.screen) === currentScreenFilter;
+            });
+            renderProducts(filtered);
+        }
+
+        function renderProducts(list = allProducts) {
+            const container = document.getElementById('productsGrid');
+            if (!list.length) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8; font-weight: 700;">No products found matching your search.</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(p => {
+                const isIndica = p.species === 'INDICA';
+                const isHybrid = p.species === 'HYBRID';
+                const isSativa = p.species === 'SATIVA';
+
+                const isFeatured = p.tag === 'FEATURED';
+                const isStaff = p.tag === 'STAFF PICK';
+                const isNone = !isFeatured && !isStaff;
+
+                const cleanPattern = p.name.toLowerCase().replace(/['"’]/g, '');
+
+                return `
+                <div class="product-card ${p.has_override ? 'has-override' : ''}">
+                    <div>
+                        <div class="p-top-row">
+                            <span class="p-category-tag">${p.category || 'Cannabis'}</span>
+                            <span class="p-screen-badge">TV ${p.screen}</span>
+                        </div>
+                        <div class="p-title-brand" style="margin-top: 6px;">
+                            <h3 class="p-title">${p.name}</h3>
+                            <span class="p-brand">${p.brand || 'Craft Selection'}</span>
+                        </div>
+                        <div class="p-meta" style="margin-top: 8px;">
+                            <span class="thc"><i class="bi bi-fire"></i> ${p.thc} THC</span>
+                            <span class="price">$${p.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div class="controls-section">
+                        <div class="control-label">Species Classification:</div>
+                        <div class="btn-group-species">
+                            <button type="button" class="btn-species indica ${isIndica ? 'active' : ''}" onclick="applySpeciesOverride('${escapeQuotes(p.name)}', 'INDICA')">
+                                🌿 INDICA
+                            </button>
+                            <button type="button" class="btn-species hybrid ${isHybrid ? 'active' : ''}" onclick="applySpeciesOverride('${escapeQuotes(p.name)}', 'HYBRID')">
+                                ⚖️ HYBRID
+                            </button>
+                            <button type="button" class="btn-species sativa ${isSativa ? 'active' : ''}" onclick="applySpeciesOverride('${escapeQuotes(p.name)}', 'SATIVA')">
+                                ⚡ SATIVA
+                            </button>
+                        </div>
+
+                        <div class="control-label" style="margin-top: 4px;">Display Highlight:</div>
+                        <div class="btn-group-highlight">
+                            <button type="button" class="btn-highlight featured ${isFeatured ? 'active' : ''}" onclick="applyHighlightOverride('${escapeQuotes(p.name)}', 'FEATURED')">
+                                ⭐ Featured
+                            </button>
+                            <button type="button" class="btn-highlight staff ${isStaff ? 'active' : ''}" onclick="applyHighlightOverride('${escapeQuotes(p.name)}', 'STAFF_PICK')">
+                                👑 Staff Pick
+                            </button>
+                            <button type="button" class="btn-highlight none ${isNone ? 'active' : ''}" onclick="applyHighlightOverride('${escapeQuotes(p.name)}', 'NONE')">
+                                Standard
+                            </button>
+                        </div>
+
+                        ${p.has_override ? `
+                        <div class="card-override-badge">
+                            <span><i class="bi bi-lightning-fill"></i> Custom Override Active</span>
+                            <button type="button" class="btn-revert" onclick="revertOverride('${escapeQuotes(p.name)}')">↺ Revert</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function escapeQuotes(str) {
+            return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        async function applySpeciesOverride(productName, species) {
+            try {
+                const res = await fetch('/api/admin/override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'set_species',
+                        pattern: productName.toLowerCase().trim(),
+                        value: species
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`✅ "${productName}" is now set to ${species}!`);
+                    loadInventory();
+                } else {
+                    showToast(data.message || 'Error updating override', true);
+                }
+            } catch (e) {
+                showToast('⚠️ Network error saving override', true);
+            }
+        }
+
+        async function applyHighlightOverride(productName, highlight) {
+            try {
+                const res = await fetch('/api/admin/override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'set_highlight',
+                        pattern: productName.toLowerCase().trim(),
+                        value: highlight
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`✅ Highlight updated for "${productName}"!`);
+                    loadInventory();
+                } else {
+                    showToast(data.message || 'Error updating highlight', true);
+                }
+            } catch (e) {
+                showToast('⚠️ Network error saving highlight', true);
+            }
+        }
+
+        async function revertOverride(productName) {
+            try {
+                const res = await fetch('/api/admin/override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'delete_all_for_pattern',
+                        pattern: productName.toLowerCase().trim()
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`↺ Reverted "${productName}" to default POS category.`);
+                    loadInventory();
+                }
+            } catch (e) {
+                showToast('⚠️ Network error reverting override', true);
+            }
+        }
+
+        async function triggerSync() {
+            try {
+                const res = await fetch('/api/admin/override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({ action: 'flush_cache' })
+                });
+                showToast('⚡ TV Menu Cache Flushed! All TV screens are updating.');
+                loadInventory();
+            } catch (e) {
+                showToast('⚠️ Sync error', true);
+            }
+        }
+
+        function jsonStringifyWithPin(obj) {
+            obj.pin = authPin;
+            return JSON.stringify(obj);
+        }
+
+        function toggleOverridesDrawer(open) {
+            const drawer = document.getElementById('overridesDrawer');
+            if (open) {
+                renderDrawerOverrides();
+                drawer.classList.add('open');
+            } else {
+                drawer.classList.remove('open');
+            }
+        }
+
+        function renderDrawerOverrides() {
+            const body = document.getElementById('drawerBody');
+            const species = activeOverrides.species_overrides || {};
+            const highlights = activeOverrides.highlight_overrides || {};
+
+            const spKeys = Object.keys(species);
+            const hlKeys = Object.keys(highlights);
+
+            if (!spKeys.length && !hlKeys.length) {
+                body.innerHTML = `<div style="text-align: center; padding: 30px; color: #94a3b8; font-weight: 700;">No active custom overrides. All products are using default POS classifications.</div>`;
+                return;
+            }
+
+            let html = '';
+            spKeys.forEach(k => {
+                html += `
+                <div class="override-row">
+                    <div class="override-info">
+                        <span class="override-name">${k}</span>
+                        <span class="override-val" style="color: ${species[k] === 'INDICA' ? 'var(--indica-color)' : (species[k] === 'SATIVA' ? 'var(--sativa-color)' : 'var(--hybrid-color)')};">
+                            Species: ${species[k]}
+                        </span>
+                    </div>
+                    <button type="button" class="btn-revert" onclick="revertOverride('${k}')">Delete Override</button>
+                </div>`;
+            });
+
+            hlKeys.forEach(k => {
+                html += `
+                <div class="override-row">
+                    <div class="override-info">
+                        <span class="override-name">${k}</span>
+                        <span class="override-val" style="color: #facc15;">
+                            Highlight: ${highlights[k]}
+                        </span>
+                    </div>
+                    <button type="button" class="btn-revert" onclick="revertOverride('${k}')">Delete Override</button>
+                </div>`;
+            });
+
+            body.innerHTML = html;
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.style.borderColor = isError ? '#f87171' : '#4ade80';
+            toast.style.color = isError ? '#f87171' : '#4ade80';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -33,39 +33,10 @@ TENDY_LOCATION_ID = os.getenv("TENDY_LOCATION_ID", "dc9449a7-953b-47a1-9dcc-ffe3
 TENDY_PRODUCT_API_TOKEN = os.getenv("TENDY_PRODUCT_API_TOKEN", "laymXDAzvJ8lW24jNxZKivmkTFnZBi42")
 TENDY_LOGIN_API_TOKEN = os.getenv("TENDY_LOGIN_API_TOKEN", "E0ddzJllAvPu0po9g2ieJm5q5zPl01iP")
 
-STORE_NAME = os.getenv("STORE_NAME", "Kroniclez - Waterloo")
+STORE_NAME = os.getenv("STORE_NAME", "Kroniclez - Kitchener")
 TAX_RATE_HST = float(os.getenv("TAX_RATE_HST", "0.13"))
 PORT = int(os.getenv("PORT", "5070"))
 HOST = os.getenv("HOST", "0.0.0.0")
 INVENTORY_CACHE_TTL_SECONDS = int(os.getenv("INVENTORY_CACHE_TTL_SECONDS", "25"))
-
-STORES = {
-    "kitchener": {
-        "id": "kitchener",
-        "name": "Kroniclez - Kitchener",
-        "short_name": "Kitchener",
-        "header_title": "🔥 KRONICLEZ • KITCHENER",
-        "address": "124 Seabrook Dr, Unit 107, Kitchener, ON",
-        "phone": "(519) 208-8884",
-        "instagram": "@kroniclez.seabrook",
-        "qr_order_url": "https://kroniclez.com/menu",
-        "qr_svg": "/static/qr_code.svg",
-        "wifi_ssid": "KRONICKLUB",
-        "wifi_pass": "Kroniclub",
-        "location_id": os.getenv("TENDY_LOCATION_ID_KITCHENER", "dc9449a7-953b-47a1-9dcc-ffe3c64be8c9"),
-    },
-    "waterloo": {
-        "id": "waterloo",
-        "name": "Kroniclez - Waterloo",
-        "short_name": "Waterloo",
-        "header_title": "🔥 KRONICLEZ • WATERLOO",
-        "address": "62 Balsam St, Unit B104, Waterloo, ON",
-        "phone": "(519) 747-0485",
-        "instagram": "@kroniclezwaterloo",
-        "qr_order_url": "https://kroniclez.com/weed-in-waterloo",
-        "qr_svg": "/static/qr_code_waterloo.svg",
-        "wifi_ssid": "KRONICKLUB",
-        "wifi_pass": "Kroniclub",
-        "location_id": os.getenv("TENDY_LOCATION_ID_WATERLOO", "dc9449a7-953b-47a1-9dcc-ffe3c64be8c9"),
-    }
-}
+ADMIN_PIN = os.getenv("ADMIN_PIN", "4200")
+OVERRIDES_FILE = BASE_DIR / "product_overrides.json"
