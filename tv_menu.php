@@ -1471,13 +1471,13 @@ body {
         <button type="button" class="nav-link-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)"><i class="bi bi-fullscreen"></i></button>
     </nav>
 
-    <!-- Local Reputation & Google Rating Ticker Crest (Option 2) -->
-    <div class="ticker-crest" title="Google Local Reputation: 4.9 Stars (48 Reviews)">
+    <!-- Local Reputation & Google Rating Ticker Crest -->
+    <div class="ticker-crest" title="Google Local Reputation: 4.9 Stars (17 Reviews)">
         <span class="crest-badge-gold"><i class="bi bi-star-fill"></i> 4.9 ★</span>
         <span class="crest-title">LOCAL REPUTATION</span>
         <span class="crest-dot">•</span>
-        <span class="crest-count">48 Google Reviews</span>
-        <span class="crest-growth">+12 this month</span>
+        <span class="crest-count">17 Google Reviews</span>
+        <span class="crest-growth">5-Star Rated</span>
         <span class="crest-dot">•</span>
         <span class="crest-sub">Top: Staff Friendliness & Service</span>
     </div>
