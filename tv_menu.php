@@ -1182,9 +1182,79 @@ body {
 .ticker-badge.green { background: rgba(74, 222, 128, 0.25); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.6); }
 .ticker-badge.red { background: rgba(239, 68, 68, 0.3); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.6); }
 .ticker-badge.cyan { background: rgba(56, 189, 248, 0.25); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.6); }
-.ticker-badge.purple { background: rgba(192, 132, 252, 0.25); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.6); }
-.ticker-badge.yellow { background: rgba(234, 179, 8, 0.25); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.6); }
 .ticker-badge.gray { background: rgba(148, 163, 184, 0.25); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.6); }
+
+/* LOCAL REPUTATION & GOOGLE RATING TICKER CREST */
+.ticker-crest {
+    position: fixed;
+    bottom: 29px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(10, 12, 18, 0.94);
+    border: 1px solid rgba(250, 204, 21, 0.55);
+    border-bottom: 2px solid rgba(10, 12, 18, 0.98);
+    border-radius: 7px 7px 0 0;
+    padding: 3px 14px 2px 10px;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.8), 0 0 14px rgba(250, 204, 21, 0.15);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    pointer-events: none;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.crest-badge-gold {
+    background: rgba(250, 204, 21, 0.22);
+    border: 1px solid rgba(250, 204, 21, 0.6);
+    color: #fde047;
+    font-size: 10.5px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3.5px;
+    letter-spacing: 0.2px;
+}
+
+.crest-title {
+    font-size: 9.5px;
+    font-weight: 900;
+    color: #cbd5e1;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.crest-count {
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.crest-growth {
+    font-size: 9.5px;
+    font-weight: 850;
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    padding: 1px 5px;
+    border-radius: 3px;
+}
+
+.crest-dot {
+    color: rgba(250, 204, 21, 0.45);
+    font-size: 8px;
+}
+
+.crest-sub {
+    font-size: 9.5px;
+    font-weight: 750;
+    color: #94a3b8;
+}
 
 /* ========================================================================== */
 /* TOP HEADER BAR (BRANDING, HAPPY HOUR BANNER, QR CODE & LIVE SYNC)         */
@@ -1400,6 +1470,59 @@ body {
         <a href="?screen=3" id="nav-btn-screen3" class="nav-link-btn <?= $screen === 3 ? 'active' : '' ?>"><i class="bi bi-cup-straw"></i> TV 3: Edibles & Drinks</a>
         <button type="button" class="nav-link-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)"><i class="bi bi-fullscreen"></i></button>
     </nav>
+
+    <!-- Local Reputation & Google Rating Ticker Crest (Option 2) -->
+    <div class="ticker-crest" title="Google Local Reputation: 4.9 Stars (48 Reviews)">
+        <span class="crest-badge-gold"><i class="bi bi-star-fill"></i> 4.9 ★</span>
+        <span class="crest-title">LOCAL REPUTATION</span>
+        <span class="crest-dot">•</span>
+        <span class="crest-count">48 Google Reviews</span>
+        <span class="crest-growth">+12 this month</span>
+        <span class="crest-dot">•</span>
+        <span class="crest-sub">Top: Staff Friendliness & Service</span>
+    </div>
+
+    <!-- Continuous Live Footer Ticker -->
+    <footer class="tv-ticker-bar">
+        <div class="ticker-track">
+            <div class="ticker-content">
+                <span class="ticker-item"><span class="ticker-badge cyan"><i class="bi bi-wifi"></i> FREE GUEST WI-FI</span> Network: <strong>"KRONICKLUB"</strong> • Password: <strong>"Kroniclub"</strong></span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge gold"><i class="bi bi-instagram"></i> INSTAGRAM</span> Follow us <strong>@kroniclez.seabrook</strong></span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge green"><i class="bi bi-star-fill"></i> 5-STAR REVIEW</span> Leave a 5-Star Google Review for an Instant Discount!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge red"><i class="bi bi-fire"></i> FEATURED DEALS</span> Check out today's ⭐ FEATURED specials on screen!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge cyan"><i class="bi bi-receipt"></i> TAX NOTICE</span> All displayed menu prices exclude applicable taxes (HST)</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge purple"><i class="bi bi-clock-history"></i> HAPPY HOUR</span> Daily Promotions active from 1:00 PM – 4:00 PM</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge yellow"><i class="bi bi-chat-quote-fill"></i> BUDTENDER TIP</span> Ask your Budtender for personalized recommendations!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge gray"><i class="bi bi-shield-check"></i> 19+ ONLY</span> Valid Government Photo ID required</span>
+                <span class="ticker-dot">✦</span>
+            </div>
+            <div class="ticker-content" aria-hidden="true">
+                <span class="ticker-item"><span class="ticker-badge cyan"><i class="bi bi-wifi"></i> FREE GUEST WI-FI</span> Network: <strong>"KRONICKLUB"</strong> • Password: <strong>"Kroniclub"</strong></span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge gold"><i class="bi bi-instagram"></i> INSTAGRAM</span> Follow us <strong>@kroniclez.seabrook</strong></span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge green"><i class="bi bi-star-fill"></i> 5-STAR REVIEW</span> Leave a 5-Star Google Review for an Instant Discount!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge red"><i class="bi bi-fire"></i> FEATURED DEALS</span> Check out today's ⭐ FEATURED specials on screen!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge cyan"><i class="bi bi-receipt"></i> TAX NOTICE</span> All displayed menu prices exclude applicable taxes (HST)</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge purple"><i class="bi bi-clock-history"></i> HAPPY HOUR</span> Daily Promotions active from 1:00 PM – 4:00 PM</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge yellow"><i class="bi bi-chat-quote-fill"></i> BUDTENDER TIP</span> Ask your Budtender for personalized recommendations!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge gray"><i class="bi bi-shield-check"></i> 19+ ONLY</span> Valid Government Photo ID required</span>
+                <span class="ticker-dot">✦</span>
+            </div>
+        </div>
+    </footer>
 
     <script>
         const initialData = <?= $json_injected ?>;
