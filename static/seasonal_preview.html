@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kroniclez TV Menu — 12-Month Seasonal Calendar Mockup & Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/static/tv_menu.css?v=51">
+    <style>
+        /* Mockup Controller Header */
+        .mockup-controller {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            background: rgba(10, 13, 20, 0.94);
+            border-bottom: 1.5px solid rgba(250, 204, 21, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+            padding: 10px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .controller-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .controller-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        .controller-title span {
+            color: #facc15;
+        }
+
+        .pill-badge {
+            background: rgba(250, 204, 21, 0.15);
+            border: 1px solid rgba(250, 204, 21, 0.4);
+            color: #fde047;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .theme-buttons-deck {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+
+        .theme-buttons-deck::-webkit-scrollbar { display: none; }
+
+        .btn-theme-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #94a3b8;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-theme-select:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-theme-select.active {
+            background: #facc15;
+            color: #000000;
+            border-color: #facc15;
+            box-shadow: 0 0 14px rgba(250, 204, 21, 0.45);
+            font-weight: 900;
+        }
+
+        .theme-meta-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94a3b8;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .meta-dates {
+            color: #38bdf8;
+            font-weight: 750;
+        }
+
+        .meta-physics {
+            color: #4ade80;
+            font-weight: 750;
+        }
+
+        /* Adjust Body for controller bar */
+        body {
+            padding-top: 104px !important;
+            min-height: 100vh;
+        }
+
+        /* Festive Seasonal Logo Accent in Header */
+        .seasonal-logo-flair {
+            display: inline-block;
+            margin-left: 4px;
+            font-size: 13px;
+            animation: subtle-pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes subtle-pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(250,204,21,0.4)); }
+            50% { transform: scale(1.18); filter: drop-shadow(0 0 8px rgba(250,204,21,0.8)); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Interactive Mockup Controller -->
+    <div class="mockup-controller">
+        <div class="controller-top-row">
+            <div class="controller-title">
+                <i class="bi bi-calendar-event-fill" style="color: #facc15; font-size: 16px;"></i>
+                <span>12-Month Automated Holiday Calendar</span> • Live Visual Mockup
+                <span class="pill-badge" id="activeCalendarPill">Auto: October Active</span>
+            </div>
+            <div style="font-size: 11.5px; color: #cbd5e1; font-weight: 700;">
+                Click any season below to test background atmosphere & particle physics in real-time:
+            </div>
+        </div>
+
+        <div class="theme-buttons-deck">
+            <button type="button" class="btn-theme-select active" onclick="applyMockupTheme('halloween', this)">
+                🎃 Oct: Halloween & Fall Embers
+            </button>
+            <button type="button" class="btn-theme-select" onclick="applyMockupTheme('winter', this)">
+                ❄️ Dec: Christmas & Gentle Snowfall
+            </button>
+            <button type="button" class="btn-theme-select" onclick="applyMockupTheme('newyear', this)">
+                🍾 Dec 31: New Year's Gold Sparkle
+            </button>
+            <button type="button" class="btn-theme-select" onclick="applyMockupTheme('velvet', this)">
+                🌹 Feb: Velvet Crimson Lounge
+            </button>
+            <button type="button" class="btn-theme-select" onclick="applyMockupTheme('emerald', this)">
+                🌿 Apr: 4/20 Emerald Cannabis
+            </button>
+            <button type="button" class="btn-theme-select" onclick="applyMockupTheme('summer', this)">
+                ☀️ May–Aug: Summer Sunset Gold
+            </button>
+        </div>
+
+        <div class="theme-meta-panel">
+            <div>
+                <strong>Active Season:</strong> <span id="metaThemeName" style="color: #fde047;">Autumn Harvest & Halloween</span>
+                <span style="color: #64748b; margin: 0 6px;">•</span>
+                <strong>Calendar Window:</strong> <span id="metaDates" class="meta-dates">September 1 – October 31</span>
+            </div>
+            <div>
+                <strong>Canvas Physics:</strong> <span id="metaPhysics" class="meta-physics">Upward Fire Thermal Lift (speedY: -0.28) • Cauldron Ember Pulsing</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ambient Luxury Floating Particles Canvas Background -->
+    <canvas id="ambientCanvas" class="ambient-canvas"></canvas>
+
+    <!-- TV Top Header Bar -->
+    <header class="tv-top-header">
+        <div class="brand-block">
+            <div class="brand-title">
+                <i class="bi bi-fire" style="color:#ef4444;"></i> KRONICLEZ 
+                <span id="seasonalFlair" class="seasonal-logo-flair">🎃</span>
+            </div>
+            <div class="brand-loc">KITCHENER</div>
+        </div>
+
+        <!-- Dynamic Happy Hour Banner -->
+        <div class="happy-hour-pill idle">
+            <i class="bi bi-clock-history" style="color:#facc15;"></i> Daily Happy Hour: <strong>1:00 PM – 4:00 PM</strong>
+        </div>
+
+        <div class="header-right-deck">
+            <!-- Free Store Wi-Fi Pill -->
+            <div class="wifi-pill" title="Guest Wi-Fi: KRONICKLUB | Pass: Kroniclub">
+                <i class="bi bi-wifi" style="color:#38bdf8;"></i>
+                <span><strong>Wi-Fi:</strong> KRONICKLUB <span style="color:#64748b; margin: 0 2px;">•</span> <strong>Pass:</strong> Kroniclub</span>
+            </div>
+            <!-- Express Pickup Mobile QR Code -->
+            <div class="qr-header-card">
+                <svg class="qr-img" version="1.1" viewBox="0 0 27 27" xmlns="http://www.w3.org/2000/svg"><path d="M1,1H2V2H1zM2,1H3V2H2zM3,1H4V2H3zM4,1H5V2H4zM5,1H6V2H5zM6,1H7V2H6zM7,1H8V2H7zM9,1H10V2H9zM11,1H12V2H11zM13,1H14V2H13zM15,1H16V2H15zM17,1H18V2H17zM19,1H20V2H19zM20,1H21V2H20zM21,1H22V2H21zM22,1H23V2H22zM23,1H24V2H23zM24,1H25V2H24zM25,1H26V2H25zM1,2H2V3H1zM7,2H8V3H7zM11,2H12V3H11zM13,2H14V3H13zM14,2H15V3H14zM15,2H16V3H15zM19,2H20V3H19zM25,2H26V3H25zM1,3H2V4H1zM3,3H4V4H3zM4,3H5V4H4zM5,3H6V4H5zM7,3H8V4H7zM9,3H10V4H9zM10,3H11V4H10zM11,3H12V4H11zM14,3H15V4H14zM15,3H16V4H15zM17,3H18V4H17zM19,3H20V4H19zM21,3H22V4H21zM22,3H23V4H22zM23,3H24V4H23zM25,3H26V4H25z" fill="#000000"/></svg>
+                <div class="qr-text">
+                    <span class="qr-title">📱 EXPRESS PICKUP</span>
+                    <span class="qr-sub">Scan to Order on Phone</span>
+                </div>
+            </div>
+
+            <!-- TV Live Sync Status -->
+            <div class="tv-sync-status" style="position:static;">
+                <span class="pulse-dot"></span>
+                <span>TENDY LIVE • AUTO-SEASONAL</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main TV Screen Mount (Sample Real TV 1 Pre-Rolls Menu) -->
+    <main id="menuMount">
+        <div class="container-screen1">
+            <!-- Column 1: Indica -->
+            <div class="col-screen1 col-indica">
+                <div class="col-header">
+                    <h2>INDICA PRE-ROLLS (26)</h2>
+                </div>
+                <div class="table-head">
+                    <div class="th-name">STRAIN / PRODUCT</div>
+                    <div class="th-thc">THC</div>
+                    <div class="th-price">PRICE</div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">BUDDY BLOOMS • Lil Buddy Indica 1x0.5g</div>
+                    <div class="p-thc">28.0%</div>
+                    <div class="p-price"><span class="regular">$4.25</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">PIFF • Cali Kush 10x0.5g <span class="badge-size size-10pk">10-PK</span></div>
+                    <div class="p-thc">31.0%</div>
+                    <div class="p-price"><span class="regular">$8.85</span></div>
+                </div>
+                <div class="p-row row-featured">
+                    <div class="p-name">PIFF • Dutchy Blunt 1x1g <span class="badge-featured">⭐ FEATURED</span></div>
+                    <div class="p-thc">29.2%</div>
+                    <div class="p-price"><span class="sale">$6.62</span><span class="old">$7.35</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">DIME BAG • Diesel Pocket Puffs 4x0.5g <span class="badge-size size-multipk">MULTI-PK</span></div>
+                    <div class="p-thc">29.0%</div>
+                    <div class="p-price"><span class="regular">$9.99</span></div>
+                </div>
+                <div class="p-row row-featured">
+                    <div class="p-name">ROYAL CANNABIS • Zombie Kush 1x0.5g <span class="badge-featured">⭐ FEATURED</span></div>
+                    <div class="p-thc">32.0%</div>
+                    <div class="p-price"><span class="sale">$5.99</span><span class="old">$6.89</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">BACK FORTY • Backpackers Fire Breath 10x0.75g <span class="badge-size size-10pk">10-PK</span></div>
+                    <div class="p-thc">30.0%</div>
+                    <div class="p-price"><span class="regular">$40.49</span></div>
+                </div>
+            </div>
+
+            <!-- Column 2: Hybrid -->
+            <div class="col-screen1 col-hybrid">
+                <div class="col-header">
+                    <h2>HYBRID & BLENDS PRE-ROLLS (16)</h2>
+                </div>
+                <div class="table-head">
+                    <div class="th-name">STRAIN / PRODUCT</div>
+                    <div class="th-thc">THC</div>
+                    <div class="th-price">PRICE</div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">BACK FORTY • Liquid Imagination 10x0.35g <span class="badge-size size-10pk">10-PK</span></div>
+                    <div class="p-thc">30.0%</div>
+                    <div class="p-price"><span class="regular">$19.66</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">PIFF • Billy Blunt 1x1g</div>
+                    <div class="p-thc">29.0%</div>
+                    <div class="p-price"><span class="regular">$6.62</span></div>
+                </div>
+                <div class="p-row row-featured">
+                    <div class="p-name">THE LOUD PLUG • Grape Diamonds 10x0.5g <span class="badge-size size-10pk">10-PK</span> <span class="badge-featured">⭐ FEATURED</span></div>
+                    <div class="p-thc">28.0%</div>
+                    <div class="p-price"><span class="sale">$5.97</span><span class="old">$6.63</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">BACK FORTY • Backpackers Blue Magic 10x0.75g <span class="badge-size size-10pk">10-PK</span></div>
+                    <div class="p-thc">28.0%</div>
+                    <div class="p-price"><span class="regular">$40.78</span></div>
+                </div>
+            </div>
+
+            <!-- Column 3: Sativa -->
+            <div class="col-screen1 col-sativa">
+                <div class="col-header">
+                    <h2>SATIVA PRE-ROLLS (27)</h2>
+                </div>
+                <div class="table-head">
+                    <div class="th-name">STRAIN / PRODUCT</div>
+                    <div class="th-thc">THC</div>
+                    <div class="th-price">PRICE</div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">STATION HOUSE • Maui Wowie 1x0.5g</div>
+                    <div class="p-thc">31.5%</div>
+                    <div class="p-price"><span class="regular">$4.29</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">PIFF • Juicy Blunt 1x1g</div>
+                    <div class="p-thc">29.0%</div>
+                    <div class="p-price"><span class="regular">$6.99</span></div>
+                </div>
+                <div class="p-row">
+                    <div class="p-name">BIG BAG O' BUDS • Blueberry Dream 10x0.5g <span class="badge-size size-10pk">10-PK</span></div>
+                    <div class="p-thc">26.0%</div>
+                    <div class="p-price"><span class="regular">$24.82</span></div>
+                </div>
+                <div class="p-row row-staff-pick">
+                    <div class="p-name">BACK FORTY • Backpackers Lemon Diesel 10x0.75g <span class="badge-size size-10pk">10-PK</span> <span class="badge-staff-pick">👑 STAFF PICK</span></div>
+                    <div class="p-thc">31.0%</div>
+                    <div class="p-price"><span class="regular">$40.78</span></div>
+                </div>
+            </div>
+
+            <!-- Column 4: Infused Pre-Rolls -->
+            <div class="col-screen1 col-infused">
+                <div class="col-header">
+                    <h2>INFUSED PRE-ROLLS (21)</h2>
+                </div>
+                <div class="table-head">
+                    <div class="th-name">STRAIN / PRODUCT</div>
+                    <div class="th-thc">THC</div>
+                    <div class="th-price">PRICE</div>
+                </div>
+                <div class="p-row row-featured">
+                    <div class="p-name"><span class="badge-strain b-indica">IND</span> CLAYBOURNE • Flyers Infused Blunt Watermelon Z <span class="badge-featured">⭐ FEATURED</span></div>
+                    <div class="p-thc">50.5%</div>
+                    <div class="p-price"><span class="sale">$18.81</span><span class="old">$20.90</span></div>
+                </div>
+                <div class="p-row row-featured">
+                    <div class="p-name"><span class="badge-strain b-indica">IND</span> JEETER • Baby Jeeter Berry White 5x0.5g <span class="badge-size size-5pk">5-PK</span> <span class="badge-featured">⭐ FEATURED</span></div>
+                    <div class="p-thc">40.0%</div>
+                    <div class="p-price"><span class="sale">$24.25</span><span class="old">$26.94</span></div>
+                </div>
+                <div class="p-row row-staff-pick">
+                    <div class="p-name"><span class="badge-strain b-hybrid">HYB</span> DAB BODS • Red Jasper Diamond Infused Rose Blunts <span class="badge-staff-pick">👑 STAFF PICK</span></div>
+                    <div class="p-thc">40.5%</div>
+                    <div class="p-price"><span class="regular">$26.99</span></div>
+                </div>
+                <div class="p-row row-featured">
+                    <div class="p-name"><span class="badge-strain b-sativa">SAT</span> CLAYBOURNE • Flyers Frosted Strawberry Cough <span class="badge-featured">⭐ FEATURED</span></div>
+                    <div class="p-thc">38.5%</div>
+                    <div class="p-price"><span class="sale">$24.26</span><span class="old">$26.96</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Local Reputation & Google Rating Ticker Crest -->
+    <div class="ticker-crest" title="Google Local Reputation: 4.9 Stars (17 Reviews)">
+        <span class="crest-badge-gold"><i class="bi bi-star-fill"></i> 4.9 ★</span>
+        <span class="crest-title">LOCAL REPUTATION</span>
+        <span class="crest-dot">•</span>
+        <span class="crest-count">17 Google Reviews</span>
+        <span class="crest-growth">5-Star Rated</span>
+        <span class="crest-dot">•</span>
+        <span class="crest-sub">Top: Staff Friendliness & Service</span>
+    </div>
+
+    <!-- Continuous Live Footer Ticker -->
+    <footer class="tv-ticker-bar">
+        <div class="ticker-track">
+            <div class="ticker-content">
+                <span class="ticker-item"><span class="ticker-badge cyan"><i class="bi bi-wifi"></i> FREE GUEST WI-FI</span> Network: <strong>"KRONICKLUB"</strong> • Password: <strong>"Kroniclub"</strong></span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item" id="tickerSeasonalPromo"><span class="ticker-badge red"><i class="bi bi-fire"></i> 🎃 HALLOWEEN SPECIALS</span> Check out today's spooky ⭐ FEATURED specials on screen!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge green"><i class="bi bi-star-fill"></i> 5-STAR REVIEW</span> Leave a 5-Star Google Review for an Instant Discount!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge purple"><i class="bi bi-clock-history"></i> HAPPY HOUR</span> Daily Promotions active from 1:00 PM – 4:00 PM</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge gold"><i class="bi bi-instagram"></i> INSTAGRAM</span> Follow us <strong>@kroniclez.seabrook</strong></span>
+                <span class="ticker-dot">✦</span>
+            </div>
+            <div class="ticker-content" aria-hidden="true">
+                <span class="ticker-item"><span class="ticker-badge cyan"><i class="bi bi-wifi"></i> FREE GUEST WI-FI</span> Network: <strong>"KRONICKLUB"</strong> • Password: <strong>"Kroniclub"</strong></span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge red"><i class="bi bi-fire"></i> 🎃 HALLOWEEN SPECIALS</span> Check out today's spooky ⭐ FEATURED specials on screen!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge green"><i class="bi bi-star-fill"></i> 5-STAR REVIEW</span> Leave a 5-Star Google Review for an Instant Discount!</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge purple"><i class="bi bi-clock-history"></i> HAPPY HOUR</span> Daily Promotions active from 1:00 PM – 4:00 PM</span>
+                <span class="ticker-dot">✦</span>
+                <span class="ticker-item"><span class="ticker-badge gold"><i class="bi bi-instagram"></i> INSTAGRAM</span> Follow us <strong>@kroniclez.seabrook</strong></span>
+                <span class="ticker-dot">✦</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Simulation Script -->
+    <script>
+        // THE COMPLETE 12-MONTH CALENDAR THEMES CONFIGURATION
+        const THEME_CONFIGS = {
+            halloween: {
+                name: 'Autumn Harvest & Halloween',
+                flair: '🎃',
+                dates: 'September 1 – October 31',
+                physicsDesc: 'Upward Bonfire Lift (speedY: -0.28) • Flickering Pumpkin Amber Sparks',
+                direction: -1, // Upwards like fire embers
+                speedBase: 0.32,
+                colors: ['rgba(249, 115, 22, ', 'rgba(234, 88, 12, ', 'rgba(245, 158, 11, ', 'rgba(239, 68, 68, '],
+                tickerPromo: '<span class="ticker-badge red"><i class="bi bi-fire"></i> 🎃 HALLOWEEN SPECIALS</span> Spooky October Strain Drops & Featured Deals are Live!'
+            },
+            winter: {
+                name: 'Winter Wonderland & Christmas Snowfall',
+                flair: '❄️',
+                dates: 'November 15 – January 15',
+                physicsDesc: 'Downward Gentle Snowfall (speedY: +0.35) • Ice-Blue Diamond Crystals',
+                direction: 1, // Downwards like gentle falling snow!
+                speedBase: 0.28,
+                colors: ['rgba(56, 189, 248, ', 'rgba(147, 197, 253, ', 'rgba(224, 242, 254, ', 'rgba(255, 255, 255, '],
+                tickerPromo: '<span class="ticker-badge cyan"><i class="bi bi-snow"></i> ❄️ SEASON’S GREETINGS</span> Holiday Pre-Roll Bundles & Gift Packs available at the counter!'
+            },
+            newyear: {
+                name: 'New Year’s Eve Champagne Gold',
+                flair: '🍾',
+                dates: 'December 28 – January 3',
+                physicsDesc: 'Weightless Sparkler Burst • Champagne Gold & Luxury Diamond Dust',
+                direction: -1,
+                speedBase: 0.40,
+                colors: ['rgba(250, 204, 21, ', 'rgba(253, 224, 71, ', 'rgba(245, 158, 11, ', 'rgba(255, 255, 255, '],
+                tickerPromo: '<span class="ticker-badge gold"><i class="bi bi-stars"></i> 🍾 HAPPY NEW YEAR</span> Ring in the New Year with Kroniclez Craft Selections!'
+            },
+            velvet: {
+                name: 'Velvet Crimson Lounge (Valentine\'s & Late Winter)',
+                flair: '🌹',
+                dates: 'February 1 – February 28',
+                physicsDesc: 'Soft Ruby Embers • Slow Sensual Atmospheric Drift',
+                direction: -1,
+                speedBase: 0.22,
+                colors: ['rgba(239, 68, 68, ', 'rgba(244, 63, 94, ', 'rgba(250, 204, 21, ', 'rgba(168, 85, 247, '],
+                tickerPromo: '<span class="ticker-badge purple"><i class="bi bi-heart-fill"></i> 🌹 VELVET SPECIALS</span> Treat someone special with our Artisan Chocolates & Infused Blunts!'
+            },
+            emerald: {
+                name: 'Emerald 4/20 Cannabis Festival',
+                flair: '🌿',
+                dates: 'April 1 – April 30',
+                physicsDesc: 'Vibrant Trichome Wave Drift • Neon Lime & 4/20 Cannabis Pollen',
+                direction: -1,
+                speedBase: 0.35,
+                colors: ['rgba(34, 197, 94, ', 'rgba(74, 222, 128, ', 'rgba(16, 185, 129, ', 'rgba(250, 204, 21, '],
+                tickerPromo: '<span class="ticker-badge green"><i class="bi bi-flower1"></i> 🌿 HAPPY 4/20 FESTIVAL</span> Celebrating Canada\'s Biggest Cannabis Holiday all month!'
+            },
+            summer: {
+                name: 'Summer Twilight & Sunset Gold',
+                flair: '☀️',
+                dates: 'May 1 – August 31',
+                physicsDesc: 'Warm Sunset Dust • Slow Relaxed Twilight Atmosphere',
+                direction: -1,
+                speedBase: 0.24,
+                colors: ['rgba(250, 204, 21, ', 'rgba(234, 179, 8, ', 'rgba(245, 158, 11, ', 'rgba(74, 222, 128, '],
+                tickerPromo: '<span class="ticker-badge gold"><i class="bi bi-brightness-high"></i> ☀️ SUMMER SESSIONS</span> Chilled Cannabis Beverages & Refreshing Sativa Pre-Rolls!'
+            }
+        };
+
+        let currentActiveTheme = 'halloween';
+        let particles = [];
+        const particleCount = 42;
+        let canvas, ctx, width, height;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initSimulationCanvas();
+        });
+
+        function applyMockupTheme(key, btn) {
+            currentActiveTheme = key;
+            const cfg = THEME_CONFIGS[key];
+            if (!cfg) return;
+
+            // Update UI Button states
+            document.querySelectorAll('.btn-theme-select').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            // Update Metadata Readouts
+            document.getElementById('metaThemeName').innerText = cfg.name;
+            document.getElementById('metaDates').innerText = cfg.dates;
+            document.getElementById('metaPhysics').innerText = cfg.physicsDesc;
+            document.getElementById('seasonalFlair').innerText = cfg.flair;
+            document.getElementById('activeCalendarPill').innerText = `Simulating: ${cfg.flair} ${cfg.name.split(' ')[0]}`;
+
+            // Update Ticker Item
+            const promoEl = document.getElementById('tickerSeasonalPromo');
+            if (promoEl) promoEl.innerHTML = cfg.tickerPromo;
+
+            // Update Particle Physics & Colors in Real Time
+            particles.forEach(p => {
+                p.color = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
+                p.speedY = cfg.direction * (Math.random() * cfg.speedBase + 0.12);
+                p.radius = (key === 'winter') ? (Math.random() * 2.8 + 1.2) : (Math.random() * 2.2 + 0.8);
+            });
+        }
+
+        function initSimulationCanvas() {
+            canvas = document.getElementById('ambientCanvas');
+            if (!canvas) return;
+            ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const cfg = THEME_CONFIGS[currentActiveTheme];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 2.2 + 0.8,
+                    baseAlpha: Math.random() * 0.38 + 0.14,
+                    speedY: cfg.direction * (Math.random() * cfg.speedBase + 0.12),
+                    speedX: (Math.random() - 0.5) * 0.24,
+                    color: cfg.colors[Math.floor(Math.random() * cfg.colors.length)],
+                    pulseOffset: Math.random() * Math.PI * 2
+                });
+            }
+
+            let tick = 0;
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                tick += 0.018;
+
+                const cfg = THEME_CONFIGS[currentActiveTheme];
+
+                for (let i = 0; i < particleCount; i++) {
+                    const p = particles[i];
+                    p.y += p.speedY;
+                    p.x += p.speedX + Math.sin(tick + p.pulseOffset) * 0.18;
+
+                    // Re-spawning logic based on direction (Falling Snow vs Rising Embers)
+                    if (cfg.direction > 0) {
+                        // Falling downwards (Snow)
+                        if (p.y > height + 10) {
+                            p.y = -10;
+                            p.x = Math.random() * width;
+                        }
+                    } else {
+                        // Floating upwards (Embers / Trichomes)
+                        if (p.y < -10) {
+                            p.y = height + 10;
+                            p.x = Math.random() * width;
+                        }
+                    }
+
+                    if (p.x < -10) p.x = width + 10;
+                    if (p.x > width + 10) p.x = -10;
+
+                    const alpha = p.baseAlpha + Math.sin(tick * 1.5 + p.pulseOffset) * 0.08;
+
+                    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2.6);
+                    grad.addColorStop(0, p.color + Math.max(0, Math.min(1, alpha * 1.5)) + ')');
+                    grad.addColorStop(0.5, p.color + Math.max(0, Math.min(1, alpha * 0.5)) + ')');
+                    grad.addColorStop(1, p.color + '0)');
+
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius * 2.6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    </script>
+</body>
+</html>

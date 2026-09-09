@@ -122,6 +122,11 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             self._send_file(config.STATIC_DIR / "admin.html")
             return
 
+        # 12-Month Seasonal Calendar Mockup & Simulation Route
+        elif path in ["/preview", "/mockup", "/calendar", "/seasonal"]:
+            self._send_file(config.STATIC_DIR / "seasonal_preview.html")
+            return
+
         elif path == "/api/admin/inventory":
             pin = query.get("pin", [""])[0] if query else ""
             if pin != config.ADMIN_PIN:
