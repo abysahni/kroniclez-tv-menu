@@ -581,7 +581,7 @@ window.addEventListener('DOMContentLoaded', () => {
     showNav();
     initAmbientParticles(params.theme || 'auto');
 
-    // 1. Render immediately if pre-injected data exists
+    // 1. Render immediately if pre-injected data exists for zero-latency TV boot
     if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.success && window.__INITIAL_MENU_DATA__.screen === currentScreenId && window.__INITIAL_MENU_DATA__.total_in_stock > 0) {
         renderMenuData(window.__INITIAL_MENU_DATA__);
         try {
@@ -595,8 +595,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 renderMenuData(JSON.parse(cached));
             }
         } catch (e) {}
-        fetchLiveMenu(currentScreenId, currentStoreId);
     }
+
+    // 3. Always immediately verify live inventory and latest staff overrides from server
+    fetchLiveMenu(currentScreenId, currentStoreId);
 
     // Auto-poll Tendy inventory every 25 seconds strictly for this TV's dedicated screen
     if (pollTimer) clearInterval(pollTimer);

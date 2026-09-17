@@ -730,6 +730,18 @@
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
+            <div class="drawer-toolbar" style="padding: 10px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-glass); display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button type="button" onclick="exportOverridesJSON()" style="padding: 6px 12px; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-download"></i> Export JSON
+                </button>
+                <button type="button" onclick="document.getElementById('importFileInput').click()" style="padding: 6px 12px; background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); color: #4ade80; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-upload"></i> Import JSON
+                </button>
+                <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="handleImportFile(event)">
+                <button type="button" onclick="copyOverridesJSON()" style="padding: 6px 12px; background: rgba(192,132,252,0.15); border: 1px solid rgba(192,132,252,0.4); color: #c084fc; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-clipboard"></i> Copy JSON
+                </button>
+            </div>
             <div id="drawerBody" class="drawer-body">
                 <!-- Injected dynamically -->
             </div>
@@ -851,6 +863,12 @@
                 const data = await res.json();
                 allProducts = data.items || [];
                 activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {} };
+                const curCount = Object.keys(activeOverrides.species_overrides || {}).length + Object.keys(activeOverrides.highlight_overrides || {}).length + Object.keys(activeOverrides.category_overrides || {}).length;
+                if (curCount > 0) {
+                    try {
+                        localStorage.setItem('kroniclez_admin_overrides_backup', JSON.stringify(activeOverrides));
+                    } catch(e) {}
+                }
                 updateOverridesBadge();
                 renderProducts();
             } catch (e) {
@@ -1120,13 +1138,33 @@
             const spKeys = Object.keys(species);
             const hlKeys = Object.keys(highlights);
             const catKeys = Object.keys(categories);
+            const totalActive = spKeys.length + hlKeys.length + catKeys.length;
+
+            let backupCount = 0;
+            let backupObj = null;
+            try {
+                const savedStr = localStorage.getItem('kroniclez_admin_overrides_backup');
+                if (savedStr) {
+                    backupObj = JSON.parse(savedStr);
+                    backupCount = Object.keys(backupObj.species_overrides || {}).length + Object.keys(backupObj.highlight_overrides || {}).length + Object.keys(backupObj.category_overrides || {}).length;
+                }
+            } catch (e) {}
+
+            let html = '';
+
+            if (backupCount > totalActive && backupObj) {
+                html += `
+                <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #fde68a;">
+                    <span><i class="bi bi-shield-exclamation" style="color: #f59e0b; margin-right: 6px;"></i><strong>Local Backup Available:</strong> Browser has ${backupCount} saved overrides (${totalActive} active on server).</span>
+                    <button type="button" onclick="restoreFromLocalBackup()" style="background: #f59e0b; color: #000; border: none; padding: 5px 12px; border-radius: 5px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px;">Restore All</button>
+                </div>`;
+            }
 
             if (!spKeys.length && !hlKeys.length && !catKeys.length) {
-                body.innerHTML = `<div style="text-align: center; padding: 30px; color: #94a3b8; font-weight: 700;">No active custom overrides. All products are using default POS classifications.</div>`;
+                body.innerHTML = html + `<div style="text-align: center; padding: 30px; color: #94a3b8; font-weight: 700;">No active custom overrides. All products are using default POS classifications.</div>`;
                 return;
             }
 
-            let html = '';
             catKeys.forEach(k => {
                 html += `
                 <div class="override-row">
@@ -1167,6 +1205,76 @@
             });
 
             body.innerHTML = html;
+        }
+
+        function exportOverridesJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeOverrides, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `kroniclez_overrides_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("💾 Overrides backup downloaded successfully!");
+        }
+
+        function copyOverridesJSON() {
+            const str = JSON.stringify(activeOverrides, null, 2);
+            navigator.clipboard.writeText(str).then(() => {
+                showToast("📋 Overrides JSON copied to clipboard!");
+            }).catch(() => {
+                showToast("⚠️ Failed to copy to clipboard", true);
+            });
+        }
+
+        async function handleImportFile(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    await sendImportOverrides(parsed);
+                } catch (err) {
+                    showToast("❌ Invalid JSON file format", true);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        async function restoreFromLocalBackup() {
+            try {
+                const savedStr = localStorage.getItem('kroniclez_admin_overrides_backup');
+                if (!savedStr) return;
+                const parsed = JSON.parse(savedStr);
+                await sendImportOverrides(parsed);
+            } catch (e) {
+                showToast("⚠️ Could not restore from browser backup", true);
+            }
+        }
+
+        async function sendImportOverrides(importedObj) {
+            try {
+                const res = await fetch('/api/admin/override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'import_overrides',
+                        overrides: importedObj
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || "✅ Overrides successfully imported!");
+                    loadInventory();
+                    setTimeout(() => renderDrawerOverrides(), 400);
+                } else {
+                    showToast(data.message || "Error importing overrides", true);
+                }
+            } catch (e) {
+                showToast("⚠️ Network error importing overrides", true);
+            }
         }
 
         function showToast(msg, isError = false) {

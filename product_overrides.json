@@ -30,7 +30,7 @@
     "flyers frosted infused strawberry cough pre-rolls": "SATIVA",
     "flyers infused blunt watermelon z": "INDICA",
     "grapey grape infused pre-roll": "INDICA",
-    "northern lights 60+ diamonds & shatter infused blunt": "HYBRID",
+    "northern lights 60+ diamonds & shatter infused blunt": "INDICA",
     "peach og infused blunt": "SATIVA",
     "wes' coast kush blunt": "INDICA",
     "wes' coast kush": "INDICA",
@@ -44,12 +44,24 @@
     "drift mode": "HYBRID",
     "potluck pineapple express": "SATIVA",
     "potluck - pineapple express": "SATIVA",
-    "pineapple express pre-roll": "SATIVA"
+    "pineapple express pre-roll": "SATIVA",
+    "cuban linx ceramic tip pre-roll": "SATIVA",
+    "pink gas infused pre-roll": "INDICA",
+    "purple punch distillate infused pre-roll": "INDICA",
+    "red hawaiian distillate infused pre-roll": "SATIVA",
+    "shark attack heavies diamond & disty infused pre-roll": "SATIVA",
+    "titanimal bubble infused pre-roll": "INDICA",
+    "double dutchies: double down pre-roll": "INDICA",
+    "gmo cookies pre-roll": "INDICA",
+    "wedding cake pre-roll": "HYBRID"
   },
   "highlight_overrides": {
-    "zombie kush": "FEATURED"
+    "zombie kush": "FEATURED",
+    "wes' coast kush blunt": "FEATURED",
+    "sgt. pineapple slims pre-roll (+ matches)": "FEATURED",
+    "fuego - galactic fire sativa pre-roll - 2x1g": "FEATURED"
   },
   "thc_overrides": {},
   "category_overrides": {},
-  "last_updated": "2026-09-17T18:21:27.563826+00:00"
+  "last_updated": "2026-09-17T19:37:50.761054+00:00"
 }

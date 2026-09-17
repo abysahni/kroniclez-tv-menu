@@ -5,7 +5,8 @@ import ssl
 import time
 import urllib.request
 import urllib.parse
-import urllib.error
+import base64
+import threading
 import hashlib
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Any, Optional
@@ -131,6 +132,57 @@ def get_item_target_section(it: Dict[str, Any]) -> str:
 
     return "UNKNOWN"
 
+def _sync_overrides_to_github_worker(data: Dict[str, Any]):
+    token = os.getenv("GITHUB_TOKEN")
+    if not token:
+        return
+    repo = os.getenv("GITHUB_REPO", "abysahni/kroniclez-tv-menu")
+    path = "product_overrides.json"
+    branch = os.getenv("GITHUB_BRANCH", "main")
+    url = f"https://api.github.com/repos/{repo}/contents/{path}?ref={branch}"
+    try:
+        req = urllib.request.Request(url, headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Kroniclez-Menu-Sync"
+        })
+        sha = None
+        try:
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                info = json.loads(resp.read().decode("utf-8"))
+                sha = info.get("sha")
+        except Exception:
+            pass
+
+        json_str = json.dumps(data, indent=2)
+        b64 = base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+        payload = {
+            "message": f"Auto-sync overrides from Staff Portal [{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}]",
+            "content": b64,
+            "branch": branch
+        }
+        if sha:
+            payload["sha"] = sha
+
+        put_url = f"https://api.github.com/repos/{repo}/contents/{path}"
+        put_req = urllib.request.Request(
+            put_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+                "Content-Type": "application/json",
+                "User-Agent": "Kroniclez-Menu-Sync"
+            },
+            method="PUT"
+        )
+        with urllib.request.urlopen(put_req, timeout=12) as put_resp:
+            print(f"✅ [GitHub Sync] Overrides pushed successfully to {repo} (HTTP {put_resp.status})")
+    except Exception as e:
+        print(f"⚠️ [GitHub Sync] Error syncing to GitHub: {e}")
+
 def save_product_overrides(data: Dict[str, Any]) -> bool:
     try:
         data["last_updated"] = datetime.now(timezone.utc).isoformat()
@@ -138,6 +190,9 @@ def save_product_overrides(data: Dict[str, Any]) -> bool:
             json.dump(data, f, indent=2)
         # Flush in-memory cache so next request picks it up immediately
         inventory_service.clear_cache()
+        # Auto-sync to GitHub repo in background if GITHUB_TOKEN configured
+        if os.getenv("GITHUB_TOKEN"):
+            threading.Thread(target=_sync_overrides_to_github_worker, args=(data,), daemon=True).start()
         return True
     except Exception as e:
         print(f"Error saving overrides: {e}")
@@ -873,10 +928,10 @@ class TendyInventoryService:
             potency = lookup_authentic_potency(name, brand, screen)
             pricing_calc = compute_item_pricing(it, screen)
 
-            matched_sp_key = next((k for k in species_ov if k in clean_t or k in name_t), None)
-            matched_hl_key = next((k for k in highlight_ov if k in clean_t or k in name_t), None)
-            matched_thc_key = next((k for k in thc_ov if k in clean_t or k in name_t), None)
-            matched_cat_key = next((k for k in cat_ov if k in clean_t or k in name_t), None)
+            matched_sp_key = next((k for k in species_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
+            matched_hl_key = next((k for k in highlight_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
+            matched_thc_key = next((k for k in thc_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
+            matched_cat_key = next((k for k in cat_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
 
             items.append({
                 "id": str(it.get("id") or it.get("sku") or it.get("barcode") or name),

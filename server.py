@@ -288,6 +288,19 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 self._send_json({"success": True, "message": "TV Menu Cache Flushed successfully"})
                 return
 
+            elif action == "import_overrides":
+                raw_ov = data.get("overrides", {})
+                if not isinstance(raw_ov, dict):
+                    self._send_json({"success": False, "message": "Invalid JSON payload for overrides"}, status_code=400)
+                    return
+                ov = load_product_overrides()
+                for key in ["species_overrides", "highlight_overrides", "thc_overrides", "category_overrides"]:
+                    if key in raw_ov and isinstance(raw_ov[key], dict):
+                        ov[key].update(raw_ov[key])
+                save_product_overrides(ov)
+                self._send_json({"success": True, "message": f"Successfully imported and synced {len(ov.get('species_overrides', {}))} species, {len(ov.get('highlight_overrides', {}))} highlights, and {len(ov.get('category_overrides', {}))} category overrides!", "overrides": ov})
+                return
+
             self._send_json({"success": False, "message": f"Unknown action: {action}"}, status_code=400)
             return
 
@@ -326,6 +339,9 @@ window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, **initial_screen_da
 
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
         if is_gzipped:
             self.send_header("Content-Encoding", "gzip")
         self.send_header("Content-Length", str(len(body)))
@@ -337,6 +353,7 @@ def background_keepalive_worker():
     from promotion_engine import get_toronto_now
     public_url = os.getenv("PUBLIC_URL", "https://kroniclez-tv-menu-1.onrender.com/api/health")
     while True:
+        is_store_hours = False
         try:
             now = get_toronto_now()
             # Store open hours: Keep warm between 8:30 AM and 11:15 PM
@@ -352,7 +369,7 @@ def background_keepalive_worker():
                     pass
             except Exception:
                 pass
-        time.sleep(180)
+        time.sleep(60 if is_store_hours else 300)
 
 def background_audit_worker():
     """Autonomous audit agent worker: runs on startup and every 15 minutes."""
