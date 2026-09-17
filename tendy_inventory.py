@@ -376,9 +376,10 @@ def classify_preroll(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
     name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
-    for pattern, species in overrides.items():
+    sorted_overrides = sorted(overrides.items(), key=lambda x: len(x[0]), reverse=True)
+    for pattern, species in sorted_overrides:
         p_low = pattern.lower().strip()
-        if p_low and (p_low in full or p_low in name_low or full in p_low or name_low in p_low):
+        if p_low and (p_low in full or p_low in name_low):
             return species
     for pattern, species in STRAIN_DATABASE_PREROLL.items():
         if pattern in full or pattern in name_low:
@@ -445,9 +446,10 @@ def classify_flower(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
     name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
-    for pattern, species in overrides.items():
+    sorted_overrides = sorted(overrides.items(), key=lambda x: len(x[0]), reverse=True)
+    for pattern, species in sorted_overrides:
         p_low = pattern.lower().strip()
-        if p_low and (p_low in full or p_low in name_low or full in p_low or name_low in p_low):
+        if p_low and (p_low in full or p_low in name_low):
             return species
     for pattern, species in STRAIN_DATABASE_FLOWER.items():
         if pattern in full or pattern in name_low:
@@ -512,9 +514,10 @@ def classify_vape(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
     name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
-    for pattern, species in overrides.items():
+    sorted_overrides = sorted(overrides.items(), key=lambda x: len(x[0]), reverse=True)
+    for pattern, species in sorted_overrides:
         p_low = pattern.lower().strip()
-        if p_low and (p_low in full or p_low in name_low or full in p_low or name_low in p_low):
+        if p_low and (p_low in full or p_low in name_low):
             return species
     for pattern, species in STRAIN_DATABASE_VAPE.items():
         if pattern in full or pattern in name_low:
