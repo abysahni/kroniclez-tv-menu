@@ -283,6 +283,10 @@ STRAIN_DATABASE_PREROLL = {
     "dutchy": "INDICA",
     "fire breath": "INDICA",
     "backpackers fire breath": "INDICA",
+    "wes' coast kush": "INDICA",
+    "wes' coast kush blunt": "INDICA",
+    "bird watchers": "INDICA",
+    "bird watchers blunts": "INDICA",
 }
 
 def classify_preroll(name: str, brand: str = "") -> str:
@@ -399,6 +403,9 @@ STRAIN_DATABASE_VAPE = {
     "alien og": "HYBRID",
     "kush mint": "HYBRID",
     "lemonade classic": "HYBRID",
+    "drift mode": "HYBRID",
+    "fuel cell - drift mode": "HYBRID",
+    "fuel cell": "HYBRID",
 
     # SATIVA
     "acapulco gold": "SATIVA",
@@ -575,6 +582,9 @@ PRODUCT_POTENCY_DATABASE = {
     "kush mint": {"thc": "84.0%", "cbd": "1.0%"},
     "lemonade classic disposable": {"thc": "92.0%", "cbd": "1.0%"},
     "lemonade classic": {"thc": "92.0%", "cbd": "1.0%"},
+    "drift mode": {"thc": "50.0%", "cbd": "9.3%", "cbn": "24.0%"},
+    "fuel cell - drift mode": {"thc": "50.0%", "cbd": "9.3%", "cbn": "24.0%"},
+    "fuel cell drift mode": {"thc": "50.0%", "cbd": "9.3%", "cbn": "24.0%"},
 
     # SCREEN 2: SATIVA VAPES (510 & Disposables)
     "acapulco gold": {"thc": "90.0%", "cbd": "1.0%"},
@@ -1052,10 +1062,22 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
-            is_infused = "infused" in cat.lower() or "infused" in name.lower() or "blunt" in name.lower() or "blunts" in name.lower()
+            # Traditional non-infused blunts are pure flower in blunt wraps, routed to standard pre-rolls
+            name_low = name.lower()
+            cat_low = cat.lower()
+            non_infused_blunt_patterns = ["wes' coast kush", "bird watcher", "billy blunt", "juicy blunt", "dutchy blunt"]
+            is_non_infused_blunt = any(p in name_low for p in non_infused_blunt_patterns)
+
+            is_infused = not is_non_infused_blunt and (
+                "infused pre-rolls" in cat_low or
+                "infused" in name_low or
+                "diamond" in name_low or
+                "distillate" in name_low or
+                "hash joint" in name_low or
+                "hash infused" in name_low
+            )
             if is_infused:
                 spec = classify_preroll(name, brand)
-                name_low = name.lower()
                 full_low = f"{brand} {name}".lower()
                 overrides = load_product_overrides().get("species_overrides", {})
                 has_explicit_override = any(
@@ -1076,7 +1098,7 @@ class TendyInventoryService:
                     inf_hyb.append(entry)
                 inf_items.append(entry)
 
-            elif "pre-roll" in cat.lower() or "preroll" in cat.lower() or "pre roll" in cat.lower():
+            elif "pre-roll" in cat_low or "preroll" in cat_low or "pre roll" in cat_low or "blunt" in name_low:
                 spec = classify_preroll(name, brand)
                 entry["species"] = spec
                 if spec == "INDICA":
@@ -1257,7 +1279,7 @@ class TendyInventoryService:
                 else:
                     (hyb_mil if is_mil else hyb_dr).append(entry)
 
-            elif "510 Cartridges" in cat:
+            elif "510 Cartridges" in cat or ("vape" in cat.lower() and not any(k in name.lower() for k in ["disposable", "all-in-one", "aio"])):
                 spec = classify_vape(name, brand)
                 entry["species"] = spec
                 if spec == "SATIVA":
@@ -1267,7 +1289,7 @@ class TendyInventoryService:
                 else:
                     v510_hyb.append(entry)
 
-            elif "Disposable Vapes" in cat:
+            elif "Disposable Vapes" in cat or ("vape" in cat.lower() and any(k in name.lower() for k in ["disposable", "all-in-one", "aio"])):
                 spec = classify_vape(name, brand)
                 entry["species"] = spec
                 if spec == "SATIVA":
