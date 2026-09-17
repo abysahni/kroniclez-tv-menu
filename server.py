@@ -309,14 +309,18 @@ window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, **initial_screen_da
         self.wfile.write(body)
 
 def background_keepalive_worker():
-    """Ping health endpoint every 3 minutes to keep Render container warm and 100% awake."""
+    """Ping health endpoint during store hours (8:30 AM - 11:15 PM Toronto time) to keep Render warm, allowing it to sleep overnight to conserve free tier hours."""
+    from promotion_engine import get_toronto_now
+    public_url = os.getenv("PUBLIC_URL", "https://kroniclez-tv-menu-1.onrender.com/api/health")
     while True:
-        time.sleep(180)
-        target = "https://kroniclez-tv-menu.onrender.com/api/health"
         try:
-            req = urllib.request.Request(target, headers={"User-Agent": "KroniclezTVMenu-KeepAlive/2.0"})
-            with urllib.request.urlopen(req, timeout=12) as r:
-                pass
+            now = get_toronto_now()
+            # Store open hours: Keep warm between 8:30 AM and 11:15 PM
+            is_store_hours = (now.hour > 8 or (now.hour == 8 and now.minute >= 30)) and (now.hour < 23 or (now.hour == 23 and now.minute <= 15))
+            if is_store_hours:
+                req = urllib.request.Request(public_url, headers={"User-Agent": "KroniclezTVMenu-KeepAlive/2.0"})
+                with urllib.request.urlopen(req, timeout=12) as r:
+                    pass
         except Exception:
             try:
                 local_req = urllib.request.Request(f"http://127.0.0.1:{config.PORT}/api/health")
@@ -324,6 +328,7 @@ def background_keepalive_worker():
                     pass
             except Exception:
                 pass
+        time.sleep(180)
 
 def background_audit_worker():
     """Autonomous audit agent worker: runs on startup and every 15 minutes."""
