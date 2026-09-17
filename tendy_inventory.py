@@ -79,7 +79,8 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
     overrides_db = load_product_overrides()
     highlight_ov = overrides_db.get("highlight_overrides", {})
     for pattern, hl_type in highlight_ov.items():
-        if pattern and (pattern in name_low or pattern in f"{brand} {name}".lower()):
+        p_low = pattern.lower().strip()
+        if p_low and (p_low in name_low or p_low in f"{brand} {name}".lower() or name_low in p_low or f"{brand} {name}".lower() in p_low):
             if hl_type == "FEATURED":
                 return {
                     "price": sale_p,
@@ -286,12 +287,14 @@ STRAIN_DATABASE_PREROLL = {
 
 def classify_preroll(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
     for pattern, species in overrides.items():
-        if pattern and pattern in full:
+        p_low = pattern.lower().strip()
+        if p_low and (p_low in full or p_low in name_low or full in p_low or name_low in p_low):
             return species
     for pattern, species in STRAIN_DATABASE_PREROLL.items():
-        if pattern in full:
+        if pattern in full or pattern in name_low:
             return species
     if "sativa" in full: return "SATIVA"
     if "indica" in full: return "INDICA"
@@ -353,12 +356,14 @@ STRAIN_DATABASE_FLOWER = {
 
 def classify_flower(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
     for pattern, species in overrides.items():
-        if pattern and pattern in full:
+        p_low = pattern.lower().strip()
+        if p_low and (p_low in full or p_low in name_low or full in p_low or name_low in p_low):
             return species
     for pattern, species in STRAIN_DATABASE_FLOWER.items():
-        if pattern in full:
+        if pattern in full or pattern in name_low:
             return species
     if "sativa" in full: return "SATIVA"
     if "indica" in full: return "INDICA"
@@ -415,12 +420,14 @@ STRAIN_DATABASE_VAPE = {
 
 def classify_vape(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
+    name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
     for pattern, species in overrides.items():
-        if pattern and pattern in full:
+        p_low = pattern.lower().strip()
+        if p_low and (p_low in full or p_low in name_low or full in p_low or name_low in p_low):
             return species
     for pattern, species in STRAIN_DATABASE_VAPE.items():
-        if pattern in full:
+        if pattern in full or pattern in name_low:
             return species
     if "sativa" in full: return "SATIVA"
     if "indica" in full: return "INDICA"
@@ -1045,20 +1052,31 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
-            if "Infused Pre-Rolls" in cat or "infused" in name.lower():
+            is_infused = "infused" in cat.lower() or "infused" in name.lower() or "blunt" in name.lower() or "blunts" in name.lower()
+            if is_infused:
+                spec = classify_preroll(name, brand)
                 name_low = name.lower()
-                if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
-                    entry["species"] = "SATIVA"
+                full_low = f"{brand} {name}".lower()
+                overrides = load_product_overrides().get("species_overrides", {})
+                has_explicit_override = any(
+                    p.lower().strip() and (p.lower().strip() in full_low or p.lower().strip() in name_low or full_low in p.lower().strip() or name_low in p.lower().strip())
+                    for p in overrides
+                )
+                if not has_explicit_override and spec == "HYBRID":
+                    if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
+                        spec = "SATIVA"
+                    elif any(k in name_low for k in ["watermelon z", "berry white", "grapey grape", "northern lights", "pink gas", "purple punch", "titanimal"]):
+                        spec = "INDICA"
+                entry["species"] = spec
+                if spec == "SATIVA":
                     inf_sat.append(entry)
-                elif any(k in name_low for k in ["watermelon z", "berry white", "grapey grape", "northern lights", "pink gas", "purple punch", "titanimal"]):
-                    entry["species"] = "INDICA"
+                elif spec == "INDICA":
                     inf_ind.append(entry)
                 else:
-                    entry["species"] = "HYBRID"
                     inf_hyb.append(entry)
                 inf_items.append(entry)
 
-            elif "Pre-Rolls" in cat:
+            elif "pre-roll" in cat.lower() or "preroll" in cat.lower() or "pre roll" in cat.lower():
                 spec = classify_preroll(name, brand)
                 entry["species"] = spec
                 if spec == "INDICA":
@@ -1424,14 +1442,24 @@ class TendyInventoryService:
                 chocolates.append(entry)
 
             elif "soft chew" in cat_low or "gummy" in name_low or "gummies" in name_low or "chew" in name_low or "sourz" in full_low or "pearls" in full_low:
-                if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
-                    entry["species"] = "SATIVA"
+                spec = None
+                overrides = load_product_overrides().get("species_overrides", {})
+                for pattern, sp in overrides.items():
+                    p_low = pattern.lower().strip()
+                    if p_low and (p_low in full_low or p_low in name_low or full_low in p_low or name_low in p_low):
+                        spec = sp
+                        break
+                if not spec:
+                    if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
+                        spec = "SATIVA"
+                    elif "indica" in full_low or "blueberry" in name_low or "cbn" in name_low:
+                        spec = "INDICA"
+                    else:
+                        spec = "HYBRID"
+                entry["species"] = spec
+                if spec == "SATIVA":
                     g_sat.append(entry)
-                elif "indica" in full_low or "blueberry" in name_low or "cbn" in name_low:
-                    entry["species"] = "INDICA"
-                    g_ind_hyb.append(entry)
                 else:
-                    entry["species"] = "HYBRID"
                     g_ind_hyb.append(entry)
                 all_gummies.append(entry)
 

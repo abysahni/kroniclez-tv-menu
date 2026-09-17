@@ -252,9 +252,15 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 return
 
             elif action == "delete_all_for_pattern":
-                ov.setdefault("species_overrides", {}).pop(pattern, None)
-                ov.setdefault("highlight_overrides", {}).pop(pattern, None)
-                ov.setdefault("thc_overrides", {}).pop(pattern, None)
+                for k in list(ov.get("species_overrides", {}).keys()):
+                    if k == pattern or k in pattern or pattern in k:
+                        ov["species_overrides"].pop(k, None)
+                for k in list(ov.get("highlight_overrides", {}).keys()):
+                    if k == pattern or k in pattern or pattern in k:
+                        ov["highlight_overrides"].pop(k, None)
+                for k in list(ov.get("thc_overrides", {}).keys()):
+                    if k == pattern or k in pattern or pattern in k:
+                        ov["thc_overrides"].pop(k, None)
                 save_product_overrides(ov)
                 self._send_json({"success": True, "message": f"Reverted all overrides for '{pattern}'"})
                 return
