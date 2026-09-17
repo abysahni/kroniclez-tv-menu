@@ -63,7 +63,9 @@ function renderRowHtml(it, showStrainBadge = false) {
     const thc = it.thc || '28%';
     
     let tagBadge = '';
-    if (it.tag === 'STAFF PICK') {
+    if (it.tag === 'NEW DROP' || it.tag === 'NEW') {
+        tagBadge = '<span class="badge-new-drop">🔥 NEW DROP</span>';
+    } else if (it.tag === 'STAFF PICK') {
         tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
     } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
         tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
@@ -87,12 +89,14 @@ function renderRowHtml(it, showStrainBadge = false) {
         priceHtml = `<span class="regular">${formatCAD(it.price)}</span>`;
     }
 
+    const isNewDrop = (it.tag === 'NEW DROP' || it.tag === 'NEW');
     const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
     const isStaffPick = (it.tag === 'STAFF PICK');
-    const isLowStock = (!isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
+    const isLowStock = (!isNewDrop && !isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
 
     let rowClass = '';
-    if (isFeatured) rowClass = 'row-featured';
+    if (isNewDrop) rowClass = 'row-new-drop';
+    else if (isFeatured) rowClass = 'row-featured';
     else if (isStaffPick) rowClass = 'row-staff-pick';
     else if (isLowStock) rowClass = 'row-low-stock';
 
@@ -114,7 +118,9 @@ function renderSoftRow(it) {
     else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
 
     let tagBadge = '';
-    if (it.tag === 'STAFF PICK') {
+    if (it.tag === 'NEW DROP' || it.tag === 'NEW') {
+        tagBadge = '<span class="badge-new-drop">🔥 NEW DROP</span>';
+    } else if (it.tag === 'STAFF PICK') {
         tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
     } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
         tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
@@ -151,12 +157,14 @@ function renderSoftRow(it) {
         priceHtml = `<span class="regular">${formatCAD(it.price)}</span>`;
     }
 
+    const isNewDrop = (it.tag === 'NEW DROP' || it.tag === 'NEW');
     const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
     const isStaffPick = (it.tag === 'STAFF PICK');
-    const isLowStock = (!isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
+    const isLowStock = (!isNewDrop && !isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
 
     let rowClass = '';
-    if (isFeatured) rowClass = 'row-featured';
+    if (isNewDrop) rowClass = 'row-new-drop';
+    else if (isFeatured) rowClass = 'row-featured';
     else if (isStaffPick) rowClass = 'row-staff-pick';
     else if (isLowStock) rowClass = 'row-low-stock';
 

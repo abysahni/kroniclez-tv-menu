@@ -227,6 +227,14 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
                     "tag": "FEATURED",
                     "promo_name": "Featured Special"
                 }
+            elif hl_type in ["NEW", "NEW_DROP", "NEW DROP"]:
+                return {
+                    "price": sale_p,
+                    "old_price": None,
+                    "is_sale": False,
+                    "tag": "NEW DROP",
+                    "promo_name": "New Drop"
+                }
             elif hl_type == "STAFF_PICK" or hl_type == "STAFF PICK":
                 return {
                     "price": sale_p,
@@ -951,6 +959,7 @@ class TendyInventoryService:
                 "category_override_value": cat_ov.get(matched_cat_key) if matched_cat_key else None,
                 "override_species_key": matched_sp_key,
                 "override_highlight_key": matched_hl_key,
+                "highlight_value": highlight_ov.get(matched_hl_key) if matched_hl_key else None,
                 "override_thc_key": matched_thc_key,
                 "override_category_key": matched_cat_key
             })

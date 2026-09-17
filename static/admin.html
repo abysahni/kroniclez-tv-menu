@@ -369,23 +369,24 @@
 
         .btn-group-highlight {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 6px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
         }
 
         .btn-highlight {
-            padding: 6px 4px;
+            padding: 6px 3px;
             border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.03);
             color: #64748b;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
+            white-space: nowrap;
             transition: all 0.2s ease;
         }
 
@@ -393,12 +394,21 @@
             background: rgba(239, 68, 68, 0.25);
             border-color: var(--featured-color);
             color: #fca5a5;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-highlight.new-drop.active {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: #06b6d4;
+            color: #67e8f9;
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.35);
         }
 
         .btn-highlight.staff.active {
             background: rgba(234, 179, 8, 0.25);
             border-color: var(--staff-color);
             color: #fde047;
+            box-shadow: 0 0 8px rgba(234, 179, 8, 0.3);
         }
 
         .btn-highlight.none.active {
@@ -917,9 +927,10 @@
                 const isHybrid = p.species === 'HYBRID';
                 const isSativa = p.species === 'SATIVA';
 
-                const isFeatured = p.tag === 'FEATURED';
-                const isStaff = p.tag === 'STAFF PICK';
-                const isNone = !isFeatured && !isStaff;
+                const isFeatured = p.tag === 'FEATURED' || (p.highlight_value === 'FEATURED');
+                const isNewDrop = p.tag === 'NEW DROP' || p.tag === 'NEW' || (p.highlight_value === 'NEW_DROP') || (p.highlight_value === 'NEW');
+                const isStaff = p.tag === 'STAFF PICK' || (p.highlight_value === 'STAFF_PICK') || (p.highlight_value === 'STAFF PICK');
+                const isNone = !isFeatured && !isNewDrop && !isStaff;
 
                 const cleanPattern = p.name.toLowerCase().replace(/['"’]/g, '');
 
@@ -985,6 +996,9 @@
                         <div class="btn-group-highlight">
                             <button type="button" class="btn-highlight featured ${isFeatured ? 'active' : ''}" onclick="applyHighlightOverride('${escapeQuotes(p.name)}', 'FEATURED')">
                                 ⭐ Featured
+                            </button>
+                            <button type="button" class="btn-highlight new-drop ${isNewDrop ? 'active' : ''}" onclick="applyHighlightOverride('${escapeQuotes(p.name)}', 'NEW_DROP')">
+                                🔥 New Drop
                             </button>
                             <button type="button" class="btn-highlight staff ${isStaff ? 'active' : ''}" onclick="applyHighlightOverride('${escapeQuotes(p.name)}', 'STAFF_PICK')">
                                 👑 Staff Pick
@@ -1192,12 +1206,18 @@
             });
 
             hlKeys.forEach(k => {
+                const hlVal = highlights[k];
+                const isNewHl = (hlVal === 'NEW_DROP' || hlVal === 'NEW');
+                const isStaffHl = (hlVal === 'STAFF_PICK' || hlVal === 'STAFF PICK');
+                const hlText = isNewHl ? '🔥 NEW DROP' : (isStaffHl ? '👑 STAFF PICK' : '⭐ FEATURED');
+                const hlColor = isNewHl ? '#22d3ee' : (isStaffHl ? '#facc15' : '#f87171');
+
                 html += `
                 <div class="override-row">
                     <div class="override-info">
                         <span class="override-name">${k}</span>
-                        <span class="override-val" style="color: #facc15;">
-                            Highlight: ${highlights[k]}
+                        <span class="override-val" style="color: ${hlColor}; font-weight: 850;">
+                            Highlight: ${hlText}
                         </span>
                     </div>
                     <button type="button" class="btn-revert" onclick="revertOverride('${k}')">Delete Override</button>

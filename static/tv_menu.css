@@ -656,6 +656,20 @@ body {
     border: 1px solid rgba(59, 130, 246, 0.5);
 }
 
+.badge-new-drop {
+    font-size: 8px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    color: #ffffff;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    vertical-align: middle;
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.45);
+}
+
 .badge-staff-pick {
     font-size: 8px;
     font-weight: 900;
@@ -742,6 +756,37 @@ body {
 .p-row.row-staff-pick .p-price .sale {
     font-weight: 900 !important;
     color: #fde047 !important;
+}
+
+/* Electric Cyan Row Tint & Neon Cyan Accent Bar for New Drop Items */
+.p-row.row-new-drop, .soft-row.row-new-drop {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.20) 0%, rgba(8, 145, 178, 0.04) 100%) !important;
+    border-left: 3.5px solid #06b6d4 !important;
+    border-radius: 3px;
+    padding-left: 4px !important;
+    margin: 1px 0;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.22);
+}
+
+.p-row.row-new-drop .p-name, 
+.soft-row.row-new-drop .p-name,
+.container-prerolls .p-row.row-new-drop .p-name {
+    font-weight: 850 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 6px rgba(6, 182, 212, 0.40);
+    letter-spacing: -0.1px;
+}
+
+.p-row.row-new-drop .p-thc,
+.soft-row.row-new-drop .p-thc {
+    font-weight: 850 !important;
+    color: #67e8f9 !important;
+}
+
+.p-row.row-new-drop .p-price .regular,
+.p-row.row-new-drop .p-price .sale {
+    font-weight: 900 !important;
+    color: #67e8f9 !important;
 }
 
 /* Amber / Gold Row Tint & Accent Bar for Limited Stock Items (Only Few Left) */
