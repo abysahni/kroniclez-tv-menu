@@ -1040,6 +1040,19 @@ class TendyInventoryService:
         for it in raw_items:
             cat = (it.get("category") or {}).get("name", "")
             name = it.get("name", "")
+            cat_low = cat.lower()
+            name_low = name.lower()
+
+            # Strictly exclude other store departments from Screen 1: Vapes, Flower, Concentrates, Edibles, Beverages, Oils
+            if any(k in cat_low for k in ["cartridge", "vape", "disposable", "flower", "concentrate", "extract", "chocolate", "chew", "gummy", "beverage", "drink", "oil", "capsule", "topical"]):
+                continue
+            if any(k in name_low for k in ["cartridge", "510", "disposable", "battery", "vape"]):
+                continue
+
+            is_preroll_cat = any(k in cat_low for k in ["pre-roll", "preroll", "pre roll", "blunt"]) or any(k in name_low for k in ["pre-roll", "preroll", "joint", "blunt"])
+            if not is_preroll_cat:
+                continue
+
             pricing = it.get("productPricing") or {}
             price = pricing.get("sale_price", 0)
             stock = pricing.get("stock", 0)
@@ -1063,18 +1076,13 @@ class TendyInventoryService:
             }
 
             # Traditional non-infused blunts are pure flower in blunt wraps, routed to standard pre-rolls
-            name_low = name.lower()
-            cat_low = cat.lower()
             non_infused_blunt_patterns = ["wes' coast kush", "bird watcher", "billy blunt", "juicy blunt", "dutchy blunt"]
             is_non_infused_blunt = any(p in name_low for p in non_infused_blunt_patterns)
 
             is_infused = not is_non_infused_blunt and (
-                "infused pre-rolls" in cat_low or
+                "infused" in cat_low or
                 "infused" in name_low or
-                "diamond" in name_low or
-                "distillate" in name_low or
-                "hash joint" in name_low or
-                "hash infused" in name_low
+                "disty" in name_low
             )
             if is_infused:
                 spec = classify_preroll(name, brand)
