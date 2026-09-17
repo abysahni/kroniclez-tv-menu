@@ -251,6 +251,21 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 self._send_json({"success": True, "message": f"Updated highlight for '{pattern}' to {val}"})
                 return
 
+            elif action == "set_category":
+                if not pattern:
+                    self._send_json({"success": False, "message": "Missing product pattern"}, status_code=400)
+                    return
+                if val in ["DEFAULT", "RESET", "NONE"]:
+                    ov.setdefault("category_overrides", {}).pop(pattern, None)
+                    save_product_overrides(ov)
+                    self._send_json({"success": True, "message": f"Reset category for '{pattern}' to POS default"})
+                    return
+                else:
+                    ov.setdefault("category_overrides", {})[pattern] = val
+                    save_product_overrides(ov)
+                    self._send_json({"success": True, "message": f"Updated category for '{pattern}' to {val}"})
+                    return
+
             elif action == "delete_all_for_pattern":
                 for k in list(ov.get("species_overrides", {}).keys()):
                     if k == pattern or k in pattern or pattern in k:
@@ -261,6 +276,9 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 for k in list(ov.get("thc_overrides", {}).keys()):
                     if k == pattern or k in pattern or pattern in k:
                         ov["thc_overrides"].pop(k, None)
+                for k in list(ov.get("category_overrides", {}).keys()):
+                    if k == pattern or k in pattern or pattern in k:
+                        ov["category_overrides"].pop(k, None)
                 save_product_overrides(ov)
                 self._send_json({"success": True, "message": f"Reverted all overrides for '{pattern}'"})
                 return

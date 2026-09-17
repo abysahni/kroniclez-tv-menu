@@ -40,13 +40,96 @@ def load_regular_prices_registry() -> Dict[str, Any]:
 
 
 def load_product_overrides() -> Dict[str, Any]:
+    data = {"species_overrides": {}, "highlight_overrides": {}, "thc_overrides": {}, "category_overrides": {}}
     if config.OVERRIDES_FILE.exists():
         try:
             with open(config.OVERRIDES_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
+                loaded = json.load(f)
+                if isinstance(loaded, dict):
+                    data.update(loaded)
+                    data.setdefault("category_overrides", {})
+                    data.setdefault("species_overrides", {})
+                    data.setdefault("highlight_overrides", {})
+                    data.setdefault("thc_overrides", {})
+                    return data
         except Exception:
             pass
-    return {"species_overrides": {}, "highlight_overrides": {}, "thc_overrides": {}}
+    return data
+
+VALID_TARGET_SECTIONS = {
+    "PRE_ROLLS", "INFUSED_PREROLLS",
+    "FLOWER_DRIED", "FLOWER_MILLED", "VAPES_510", "VAPES_DISPOSABLE",
+    "GUMMIES", "BEVERAGES", "CHOCOLATES", "CONCENTRATES", "WELLNESS"
+}
+
+def get_item_target_section(it: Dict[str, Any]) -> str:
+    """
+    Determines which menu section an item belongs to across Screen 1, 2, and 3.
+    1. Checks budtender category overrides from product_overrides.json (highest priority).
+    2. Falls back to POS category metadata and product name patterns.
+    """
+    raw_name = it.get("product_name") or it.get("name") or ""
+    name_low = str(raw_name).lower().strip()
+    raw_cat = it.get("category") or it.get("category_name") or it.get("categoryName") or ""
+    cat_low = (raw_cat.get("name") if isinstance(raw_cat, dict) else str(raw_cat)).lower().strip()
+    raw_brand = it.get("brand") or ""
+    brand_low = (raw_brand.get("name") if isinstance(raw_brand, dict) else str(raw_brand)).lower().strip()
+    full_low = f"{brand_low} {name_low} {cat_low}".strip()
+
+    # 1. Check custom Category Overrides first
+    cat_overrides = load_product_overrides().get("category_overrides", {})
+    for pattern, target_sec in cat_overrides.items():
+        p_low = pattern.lower().strip()
+        if p_low and (p_low in full_low or p_low in name_low or full_low in p_low or name_low in p_low):
+            target_norm = str(target_sec).strip().upper()
+            if target_norm in VALID_TARGET_SECTIONS:
+                return target_norm
+
+    # 2. Fallback to POS categorization
+    non_infused_blunt_patterns = ["wes' coast kush", "bird watcher", "billy blunt", "juicy blunt", "dutchy blunt"]
+    is_non_infused_blunt = any(p in name_low for p in non_infused_blunt_patterns)
+
+    # Screen 1 candidates: Pre-rolls & Infused Pre-Rolls
+    if not any(k in cat_low for k in ["cartridge", "vape", "disposable", "flower", "concentrate", "extract", "chocolate", "chew", "gummy", "beverage", "drink", "oil", "capsule", "topical"]) \
+       and not any(k in name_low for k in ["cartridge", "510", "disposable", "battery", "vape"]):
+        if any(k in cat_low for k in ["pre-roll", "preroll", "pre roll", "blunt"]) or any(k in name_low for k in ["pre-roll", "preroll", "joint", "blunt"]):
+            if not is_non_infused_blunt and ("infused" in cat_low or "infused" in name_low or "disty" in name_low):
+                return "INFUSED_PREROLLS"
+            return "PRE_ROLLS"
+
+    # Screen 2 candidates: Flower & Vapes
+    if "flower" in cat_low or "dried" in cat_low or "milled" in cat_low:
+        if "milled" in cat_low or "milled" in name_low:
+            return "FLOWER_MILLED"
+        return "FLOWER_DRIED"
+
+    if "510 cartridge" in cat_low or "510" in name_low or ("vape" in cat_low and not any(k in name_low for k in ["disposable", "all-in-one", "aio"])):
+        return "VAPES_510"
+
+    if "disposable" in cat_low or ("vape" in cat_low and any(k in name_low for k in ["disposable", "all-in-one", "aio"])):
+        return "VAPES_DISPOSABLE"
+
+    # Screen 3 candidates: Edibles, Drinks, Concentrates, Wellness
+    if "chocolate" in cat_low or "chocolate" in name_low or "bhang" in full_low or "chowie" in full_low:
+        return "CHOCOLATES"
+
+    if "soft chew" in cat_low or "gummy" in name_low or "gummies" in name_low or "chew" in name_low or "sourz" in full_low or "pearls" in full_low:
+        return "GUMMIES"
+
+    if "beverage" in cat_low or "drink" in name_low or "tea" in name_low or "seltzer" in name_low or "soda" in name_low or "cola" in name_low:
+        return "BEVERAGES"
+
+    if "concentrate" in cat_low or "extract" in cat_low or "hash" in name_low or "shatter" in name_low or "wax" in name_low or "diamonds" in name_low:
+        return "CONCENTRATES"
+
+    if "oil" in cat_low or "drop" in cat_low or "topical" in cat_low or "capsule" in cat_low or "wellness" in cat_low or "moonrocks" in name_low:
+        return "WELLNESS"
+
+    # Default fallback
+    if any(k in cat_low for k in ["pre-roll", "preroll", "blunt"]) or any(k in name_low for k in ["joint", "blunt", "pre-roll"]):
+        return "PRE_ROLLS"
+
+    return "UNKNOWN"
 
 def save_product_overrides(data: Dict[str, Any]) -> bool:
     try:
@@ -752,6 +835,7 @@ class TendyInventoryService:
         species_ov = overrides.get("species_overrides", {})
         highlight_ov = overrides.get("highlight_overrides", {})
         thc_ov = overrides.get("thc_overrides", {})
+        cat_ov = overrides.get("category_overrides", {})
 
         for it in raw:
             if is_accessory(it):
@@ -763,22 +847,33 @@ class TendyInventoryService:
             sale_p = float(pricing.get("sale_price") or 0.0)
             full_name = f"{brand} {name}".strip()
             clean_t = full_name.lower()
+            name_t = name.lower()
 
-            screen = 1 if any(k in cat.lower() for k in ["pre-roll", "preroll", "pre roll", "blunt"]) else (2 if any(k in cat.lower() for k in ["flower", "vape", "cartridge", "disposable"]) else 3)
+            target_sec = get_item_target_section(it)
+
+            if target_sec in ["PRE_ROLLS", "INFUSED_PREROLLS"]:
+                screen = 1
+            elif target_sec in ["FLOWER_DRIED", "FLOWER_MILLED", "VAPES_510", "VAPES_DISPOSABLE"]:
+                screen = 2
+            elif target_sec in ["GUMMIES", "BEVERAGES", "CHOCOLATES", "CONCENTRATES", "WELLNESS"]:
+                screen = 3
+            else:
+                screen = 1 if any(k in cat.lower() for k in ["pre-roll", "preroll", "pre roll", "blunt"]) else (2 if any(k in cat.lower() for k in ["flower", "vape", "cartridge", "disposable"]) else 3)
             
             if screen == 1:
                 cur_species = classify_preroll(name, brand)
             elif screen == 2:
-                cur_species = classify_flower(name, brand) if "flower" in cat.lower() else classify_vape(name, brand)
+                cur_species = classify_flower(name, brand) if "FLOWER" in target_sec or "flower" in cat.lower() else classify_vape(name, brand)
             else:
                 cur_species = "HYBRID"
 
             potency = lookup_authentic_potency(name, brand, screen)
             pricing_calc = compute_item_pricing(it, screen)
 
-            matched_sp_key = next((k for k in species_ov if k in clean_t), None)
-            matched_hl_key = next((k for k in highlight_ov if k in clean_t), None)
-            matched_thc_key = next((k for k in thc_ov if k in clean_t), None)
+            matched_sp_key = next((k for k in species_ov if k in clean_t or k in name_t), None)
+            matched_hl_key = next((k for k in highlight_ov if k in clean_t or k in name_t), None)
+            matched_thc_key = next((k for k in thc_ov if k in clean_t or k in name_t), None)
+            matched_cat_key = next((k for k in cat_ov if k in clean_t or k in name_t), None)
 
             items.append({
                 "id": str(it.get("id") or it.get("sku") or it.get("barcode") or name),
@@ -787,15 +882,19 @@ class TendyInventoryService:
                 "full_name": full_name,
                 "category": cat,
                 "screen": screen,
+                "target_section": target_sec,
                 "species": cur_species,
                 "thc": potency.get("thc", "N/A"),
                 "price": pricing_calc.get("price", sale_p),
                 "tag": pricing_calc.get("tag"),
                 "is_sale": pricing_calc.get("is_sale", False),
-                "has_override": bool(matched_sp_key or matched_hl_key or matched_thc_key),
+                "has_override": bool(matched_sp_key or matched_hl_key or matched_thc_key or matched_cat_key),
+                "has_category_override": bool(matched_cat_key),
+                "category_override_value": cat_ov.get(matched_cat_key) if matched_cat_key else None,
                 "override_species_key": matched_sp_key,
                 "override_highlight_key": matched_hl_key,
-                "override_thc_key": matched_thc_key
+                "override_thc_key": matched_thc_key,
+                "override_category_key": matched_cat_key
             })
         return sorted(items, key=lambda x: (x["screen"], x["category"], x["name"]))
 
@@ -1038,20 +1137,16 @@ class TendyInventoryService:
         inf_ind, inf_hyb, inf_sat = [], [], []
 
         for it in raw_items:
+            if is_accessory(it):
+                continue
+            target_sec = get_item_target_section(it)
+            if target_sec not in ["PRE_ROLLS", "INFUSED_PREROLLS"]:
+                continue
+
             cat = (it.get("category") or {}).get("name", "")
             name = it.get("name", "")
             cat_low = cat.lower()
             name_low = name.lower()
-
-            # Strictly exclude other store departments from Screen 1: Vapes, Flower, Concentrates, Edibles, Beverages, Oils
-            if any(k in cat_low for k in ["cartridge", "vape", "disposable", "flower", "concentrate", "extract", "chocolate", "chew", "gummy", "beverage", "drink", "oil", "capsule", "topical"]):
-                continue
-            if any(k in name_low for k in ["cartridge", "510", "disposable", "battery", "vape"]):
-                continue
-
-            is_preroll_cat = any(k in cat_low for k in ["pre-roll", "preroll", "pre roll", "blunt"]) or any(k in name_low for k in ["pre-roll", "preroll", "joint", "blunt"])
-            if not is_preroll_cat:
-                continue
 
             pricing = it.get("productPricing") or {}
             price = pricing.get("sale_price", 0)
@@ -1075,16 +1170,7 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
-            # Traditional non-infused blunts are pure flower in blunt wraps, routed to standard pre-rolls
-            non_infused_blunt_patterns = ["wes' coast kush", "bird watcher", "billy blunt", "juicy blunt", "dutchy blunt"]
-            is_non_infused_blunt = any(p in name_low for p in non_infused_blunt_patterns)
-
-            is_infused = not is_non_infused_blunt and (
-                "infused" in cat_low or
-                "infused" in name_low or
-                "disty" in name_low
-            )
-            if is_infused:
+            if target_sec == "INFUSED_PREROLLS":
                 spec = classify_preroll(name, brand)
                 full_low = f"{brand} {name}".lower()
                 overrides = load_product_overrides().get("species_overrides", {})
@@ -1106,7 +1192,7 @@ class TendyInventoryService:
                     inf_hyb.append(entry)
                 inf_items.append(entry)
 
-            elif "pre-roll" in cat_low or "preroll" in cat_low or "pre roll" in cat_low or "blunt" in name_low:
+            else:  # PRE_ROLLS
                 spec = classify_preroll(name, brand)
                 entry["species"] = spec
                 if spec == "INDICA":
@@ -1251,7 +1337,12 @@ class TendyInventoryService:
         disp_ind, disp_hyb, disp_sat = [], [], []
 
         for it in raw_items:
-            cat = (it.get("category") or {}).get("name", "")
+            if is_accessory(it):
+                continue
+            target_sec = get_item_target_section(it)
+            if target_sec not in ["FLOWER_DRIED", "FLOWER_MILLED", "VAPES_510", "VAPES_DISPOSABLE"]:
+                continue
+
             name = it.get("name", "")
             pricing = it.get("productPricing") or {}
             price = pricing.get("sale_price", 0)
@@ -1275,19 +1366,27 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
-            if "Flower" in cat or "Dried" in cat or "Milled" in cat:
-                n_low = name.lower()
-                is_mil = "milled" in cat.lower() or "milled" in n_low
+            if target_sec == "FLOWER_DRIED":
                 spec = classify_flower(name, brand)
                 entry["species"] = spec
                 if spec == "SATIVA":
-                    (sat_mil if is_mil else sat_dr).append(entry)
+                    sat_dr.append(entry)
                 elif spec == "INDICA":
-                    (ind_mil if is_mil else ind_dr).append(entry)
+                    ind_dr.append(entry)
                 else:
-                    (hyb_mil if is_mil else hyb_dr).append(entry)
+                    hyb_dr.append(entry)
 
-            elif "510 Cartridges" in cat or ("vape" in cat.lower() and not any(k in name.lower() for k in ["disposable", "all-in-one", "aio"])):
+            elif target_sec == "FLOWER_MILLED":
+                spec = classify_flower(name, brand)
+                entry["species"] = spec
+                if spec == "SATIVA":
+                    sat_mil.append(entry)
+                elif spec == "INDICA":
+                    ind_mil.append(entry)
+                else:
+                    hyb_mil.append(entry)
+
+            elif target_sec == "VAPES_510":
                 spec = classify_vape(name, brand)
                 entry["species"] = spec
                 if spec == "SATIVA":
@@ -1297,7 +1396,7 @@ class TendyInventoryService:
                 else:
                     v510_hyb.append(entry)
 
-            elif "Disposable Vapes" in cat or ("vape" in cat.lower() and any(k in name.lower() for k in ["disposable", "all-in-one", "aio"])):
+            elif target_sec == "VAPES_DISPOSABLE":
                 spec = classify_vape(name, brand)
                 entry["species"] = spec
                 if spec == "SATIVA":
@@ -1433,6 +1532,12 @@ class TendyInventoryService:
         g_ind_hyb, g_sat = [], []
 
         for it in raw_items:
+            if is_accessory(it):
+                continue
+            target_sec = get_item_target_section(it)
+            if target_sec not in ["GUMMIES", "BEVERAGES", "CHOCOLATES", "CONCENTRATES", "WELLNESS"]:
+                continue
+
             cat = (it.get("category") or {}).get("name", "")
             name = it.get("name", "")
             pricing = it.get("productPricing") or {}
@@ -1444,12 +1549,6 @@ class TendyInventoryService:
             cat_low = cat.lower()
             name_low = name.lower()
             full_low = f"{brand} {name} {cat}".lower()
-
-            # Strictly exclude items that belong to Screen 1 or Screen 2
-            if any(k in cat_low for k in ["pre-roll", "cartridge", "disposable", "dried flower", "milled", "all-in-one", "flower"]):
-                continue
-            if any(k in name_low for k in ["joint", "blunt", "vape", "cartridge", "510 "]):
-                continue
 
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
@@ -1467,11 +1566,11 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
-            if "chocolate" in cat_low or "chocolate" in name_low or "bhang" in full_low or "chowie" in full_low:
+            if target_sec == "CHOCOLATES":
                 entry["species"] = "HYBRID"
                 chocolates.append(entry)
 
-            elif "soft chew" in cat_low or "gummy" in name_low or "gummies" in name_low or "chew" in name_low or "sourz" in full_low or "pearls" in full_low:
+            elif target_sec == "GUMMIES":
                 spec = None
                 overrides = load_product_overrides().get("species_overrides", {})
                 for pattern, sp in overrides.items():
@@ -1493,15 +1592,15 @@ class TendyInventoryService:
                     g_ind_hyb.append(entry)
                 all_gummies.append(entry)
 
-            elif "beverage" in cat_low or "drink" in name_low or "tea" in name_low or "seltzer" in name_low or "soda" in name_low or "cola" in name_low:
+            elif target_sec == "BEVERAGES":
                 entry["species"] = "HYBRID"
                 beverages.append(entry)
 
-            elif "concentrate" in cat_low or "extract" in cat_low or "hash" in name_low or "shatter" in name_low or "wax" in name_low or "diamonds" in name_low:
+            elif target_sec == "CONCENTRATES":
                 entry["species"] = "HYBRID"
                 concentrates.append(entry)
 
-            elif "oil" in cat_low or "drop" in cat_low or "topical" in cat_low or "capsule" in cat_low or "wellness" in cat_low or "moonrocks" in name_low:
+            elif target_sec == "WELLNESS":
                 entry["species"] = "HYBRID"
                 wellness.append(entry)
 

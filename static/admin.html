@@ -407,6 +407,69 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
+        /* Section Category Switcher */
+        .select-category-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-category {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 11.5px;
+            font-weight: 750;
+            padding: 8px 10px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 28px;
+        }
+
+        .select-category-wrap i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        .select-category:hover {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .select-category:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+        }
+
+        .select-category.has-override {
+            border-color: #c084fc;
+            background: rgba(168, 85, 247, 0.14);
+            color: #f3e8ff;
+            font-weight: 850;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+        }
+
+        .select-category option, .select-category optgroup {
+            background: #11141c;
+            color: #ffffff;
+            font-size: 12px;
+        }
+        
+        .select-category optgroup {
+            font-weight: 800;
+            color: #facc15;
+            padding: 4px 0;
+        }
+
         /* Active Override Footer Banner on Card */
         .card-override-badge {
             display: flex;
@@ -728,9 +791,23 @@
 
     <script>
         let allProducts = [];
-        let activeOverrides = { species_overrides: {}, highlight_overrides: {}, thc_overrides: {} };
+        let activeOverrides = { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {} };
         let currentScreenFilter = 'all';
         let authPin = sessionStorage.getItem('kroniclez_admin_pin') || '';
+
+        const SECTION_NAMES = {
+            'PRE_ROLLS': 'Pre-Rolls & Blunts (TV 1)',
+            'INFUSED_PREROLLS': 'Infused Pre-Rolls (TV 1)',
+            'FLOWER_DRIED': 'Dried Flower (TV 2)',
+            'FLOWER_MILLED': 'Milled Flower (TV 2)',
+            'VAPES_510': '510 Vape Cartridges (TV 2)',
+            'VAPES_DISPOSABLE': 'Disposable / AIO Vapes (TV 2)',
+            'GUMMIES': 'Soft Chews & Gummies (TV 3)',
+            'BEVERAGES': 'Infused Beverages (TV 3)',
+            'CHOCOLATES': 'Chocolates (TV 3)',
+            'CONCENTRATES': 'Concentrates & Extracts (TV 3)',
+            'WELLNESS': 'Oils, Drops & Wellness (TV 3)'
+        };
 
         // Initialize Portal
         window.addEventListener('DOMContentLoaded', () => {
@@ -773,7 +850,7 @@
                 }
                 const data = await res.json();
                 allProducts = data.items || [];
-                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {} };
+                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {} };
                 updateOverridesBadge();
                 renderProducts();
             } catch (e) {
@@ -785,7 +862,8 @@
         function updateOverridesBadge() {
             const spCount = Object.keys(activeOverrides.species_overrides || {}).length;
             const hlCount = Object.keys(activeOverrides.highlight_overrides || {}).length;
-            document.getElementById('overridesCountBadge').innerText = `${spCount + hlCount} Overrides`;
+            const catCount = Object.keys(activeOverrides.category_overrides || {}).length;
+            document.getElementById('overridesCountBadge').innerText = `${spCount + hlCount + catCount} Overrides`;
             document.getElementById('totalCount').innerText = allProducts.length;
         }
 
@@ -845,7 +923,34 @@
                     </div>
 
                     <div class="controls-section">
-                        <div class="control-label">Species Classification:</div>
+                        <div class="control-label">Menu Section / TV Column:</div>
+                        <div class="select-category-wrap">
+                            <select class="select-category ${p.has_category_override ? 'has-override' : ''}" onchange="applyCategoryOverride('${escapeQuotes(p.name)}', this.value)">
+                                <option value="DEFAULT" ${!p.has_category_override ? 'selected' : ''}>
+                                    ⚙️ Default POS Section (${SECTION_NAMES[p.target_section] || p.target_section})
+                                </option>
+                                <optgroup label="📺 TV 1: Pre-Rolls & Infused">
+                                    <option value="PRE_ROLLS" ${p.has_category_override && p.category_override_value === 'PRE_ROLLS' ? 'selected' : ''}>TV 1: Pre-Rolls & Blunts</option>
+                                    <option value="INFUSED_PREROLLS" ${p.has_category_override && p.category_override_value === 'INFUSED_PREROLLS' ? 'selected' : ''}>TV 1: Infused Pre-Rolls</option>
+                                </optgroup>
+                                <optgroup label="📺 TV 2: Flower & Vapes">
+                                    <option value="FLOWER_DRIED" ${p.has_category_override && p.category_override_value === 'FLOWER_DRIED' ? 'selected' : ''}>TV 2: Dried Flower</option>
+                                    <option value="FLOWER_MILLED" ${p.has_category_override && p.category_override_value === 'FLOWER_MILLED' ? 'selected' : ''}>TV 2: Milled Flower</option>
+                                    <option value="VAPES_510" ${p.has_category_override && p.category_override_value === 'VAPES_510' ? 'selected' : ''}>TV 2: 510 Vape Cartridges</option>
+                                    <option value="VAPES_DISPOSABLE" ${p.has_category_override && p.category_override_value === 'VAPES_DISPOSABLE' ? 'selected' : ''}>TV 2: Disposable / AIO Vapes</option>
+                                </optgroup>
+                                <optgroup label="📺 TV 3: Edibles, Drinks & Concentrates">
+                                    <option value="GUMMIES" ${p.has_category_override && p.category_override_value === 'GUMMIES' ? 'selected' : ''}>TV 3: Soft Chews & Gummies</option>
+                                    <option value="BEVERAGES" ${p.has_category_override && p.category_override_value === 'BEVERAGES' ? 'selected' : ''}>TV 3: Infused Beverages</option>
+                                    <option value="CHOCOLATES" ${p.has_category_override && p.category_override_value === 'CHOCOLATES' ? 'selected' : ''}>TV 3: Chocolates</option>
+                                    <option value="CONCENTRATES" ${p.has_category_override && p.category_override_value === 'CONCENTRATES' ? 'selected' : ''}>TV 3: Concentrates & Extracts</option>
+                                    <option value="WELLNESS" ${p.has_category_override && p.category_override_value === 'WELLNESS' ? 'selected' : ''}>TV 3: Oils, Drops & Wellness</option>
+                                </optgroup>
+                            </select>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+
+                        <div class="control-label" style="margin-top: 4px;">Species Classification:</div>
                         <div class="btn-group-species">
                             <button type="button" class="btn-species indica ${isIndica ? 'active' : ''}" onclick="applySpeciesOverride('${escapeQuotes(p.name)}', 'INDICA')">
                                 🌿 INDICA
@@ -873,7 +978,7 @@
 
                         ${p.has_override ? `
                         <div class="card-override-badge">
-                            <span><i class="bi bi-lightning-fill"></i> Custom Override Active</span>
+                            <span><i class="bi bi-lightning-fill"></i> ${p.has_category_override ? 'Custom Category Active' : 'Custom Override Active'}</span>
                             <button type="button" class="btn-revert" onclick="revertOverride('${escapeQuotes(p.name)}')">↺ Revert</button>
                         </div>
                         ` : ''}
@@ -885,6 +990,30 @@
 
         function escapeQuotes(str) {
             return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        async function applyCategoryOverride(productName, category) {
+            try {
+                const res = await fetch('/api/admin/override', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'set_category',
+                        pattern: productName.toLowerCase().trim(),
+                        value: category
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const secName = SECTION_NAMES[category] || category;
+                    showToast(category === 'DEFAULT' ? `↺ Reset "${productName}" to default POS section.` : `✅ "${productName}" moved to ${secName}!`);
+                    loadInventory();
+                } else {
+                    showToast(data.message || 'Error updating category', true);
+                }
+            } catch (e) {
+                showToast('⚠️ Network error saving category override', true);
+            }
         }
 
         async function applySpeciesOverride(productName, species) {
@@ -986,16 +1115,31 @@
             const body = document.getElementById('drawerBody');
             const species = activeOverrides.species_overrides || {};
             const highlights = activeOverrides.highlight_overrides || {};
+            const categories = activeOverrides.category_overrides || {};
 
             const spKeys = Object.keys(species);
             const hlKeys = Object.keys(highlights);
+            const catKeys = Object.keys(categories);
 
-            if (!spKeys.length && !hlKeys.length) {
+            if (!spKeys.length && !hlKeys.length && !catKeys.length) {
                 body.innerHTML = `<div style="text-align: center; padding: 30px; color: #94a3b8; font-weight: 700;">No active custom overrides. All products are using default POS classifications.</div>`;
                 return;
             }
 
             let html = '';
+            catKeys.forEach(k => {
+                html += `
+                <div class="override-row">
+                    <div class="override-info">
+                        <span class="override-name">${k}</span>
+                        <span class="override-val" style="color: #38bdf8;">
+                            📁 Section: ${SECTION_NAMES[categories[k]] || categories[k]}
+                        </span>
+                    </div>
+                    <button type="button" class="btn-revert" onclick="revertOverride('${k}')">Delete Override</button>
+                </div>`;
+            });
+
             spKeys.forEach(k => {
                 html += `
                 <div class="override-row">
