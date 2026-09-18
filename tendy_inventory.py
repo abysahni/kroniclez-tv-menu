@@ -9,7 +9,7 @@ import base64
 import threading
 import hashlib
 from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 try:
     from zoneinfo import ZoneInfo
     TORONTO_TZ = ZoneInfo("America/Toronto")
@@ -57,6 +57,37 @@ def load_product_overrides() -> Dict[str, Any]:
             pass
     return data
 
+
+def find_matching_override(name: str, brand: str = "", overrides_dict: Optional[Dict[str, Any]] = None) -> Tuple[Optional[str], Optional[Any]]:
+    """
+    Finds the best matching override key and value for a product name and brand.
+    Prioritizes:
+    1. Exact match on raw name or full name (brand + name)
+    2. Longest specific substring match where override pattern is contained in full_name or raw_name
+    Guarantees that generic short names do NOT accidentally match longer unrelated pattern keys.
+    """
+    if not overrides_dict:
+        return None, None
+        
+    name_low = str(name or "").lower().strip()
+    brand_low = str(brand or "").lower().strip()
+    full_low = f"{brand_low} {name_low}".strip()
+    
+    # 1. Exact match (highest priority)
+    for pattern, val in overrides_dict.items():
+        p_low = pattern.lower().strip()
+        if p_low and (p_low == name_low or p_low == full_low):
+            return pattern, val
+            
+    # 2. Specific substring match: sorted by pattern length descending (longest, most specific pattern wins)
+    sorted_patterns = sorted(overrides_dict.items(), key=lambda x: len(x[0].strip()), reverse=True)
+    for pattern, val in sorted_patterns:
+        p_low = pattern.lower().strip()
+        if p_low and (p_low in full_low or p_low in name_low):
+            return pattern, val
+            
+    return None, None
+
 VALID_TARGET_SECTIONS = {
     "PRE_ROLLS", "INFUSED_PREROLLS",
     "FLOWER_DRIED", "FLOWER_MILLED", "VAPES_510", "VAPES_DISPOSABLE",
@@ -79,12 +110,11 @@ def get_item_target_section(it: Dict[str, Any]) -> str:
 
     # 1. Check custom Category Overrides first
     cat_overrides = load_product_overrides().get("category_overrides", {})
-    for pattern, target_sec in cat_overrides.items():
-        p_low = pattern.lower().strip()
-        if p_low and (p_low in full_low or p_low in name_low or full_low in p_low or name_low in p_low):
-            target_norm = str(target_sec).strip().upper()
-            if target_norm in VALID_TARGET_SECTIONS:
-                return target_norm
+    matched_cat_key, target_sec = find_matching_override(raw_name, brand_low, cat_overrides)
+    if matched_cat_key and target_sec:
+        target_norm = str(target_sec).strip().upper()
+        if target_norm in VALID_TARGET_SECTIONS:
+            return target_norm
 
     # 2. Fallback to POS categorization
     non_infused_blunt_patterns = ["wes' coast kush", "bird watcher", "billy blunt", "juicy blunt", "dutchy blunt"]
@@ -216,41 +246,40 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
     # 0. Check custom Highlight Overrides first from Admin Portal
     overrides_db = load_product_overrides()
     highlight_ov = overrides_db.get("highlight_overrides", {})
-    for pattern, hl_type in highlight_ov.items():
-        p_low = pattern.lower().strip()
-        if p_low and (p_low in name_low or p_low in f"{brand} {name}".lower() or name_low in p_low or f"{brand} {name}".lower() in p_low):
-            if hl_type == "FEATURED":
-                return {
-                    "price": sale_p,
-                    "old_price": round(sale_p * 1.15, 2),
-                    "is_sale": True,
-                    "tag": "FEATURED",
-                    "promo_name": "Featured Special"
-                }
-            elif hl_type in ["NEW", "NEW_DROP", "NEW DROP"]:
-                return {
-                    "price": sale_p,
-                    "old_price": None,
-                    "is_sale": False,
-                    "tag": "NEW DROP",
-                    "promo_name": "New Drop"
-                }
-            elif hl_type == "STAFF_PICK" or hl_type == "STAFF PICK":
-                return {
-                    "price": sale_p,
-                    "old_price": None,
-                    "is_sale": False,
-                    "tag": "STAFF PICK",
-                    "promo_name": "Staff Pick"
-                }
-            elif hl_type == "NONE" or hl_type == "REGULAR":
-                return {
-                    "price": sale_p,
-                    "old_price": None,
-                    "is_sale": False,
-                    "tag": None,
-                    "promo_name": None
-                }
+    matched_hl_key, hl_type = find_matching_override(name, brand, highlight_ov)
+    if matched_hl_key and hl_type:
+        if hl_type == "FEATURED":
+            return {
+                "price": sale_p,
+                "old_price": round(sale_p * 1.15, 2),
+                "is_sale": True,
+                "tag": "FEATURED",
+                "promo_name": "Featured Special"
+            }
+        elif hl_type in ["NEW", "NEW_DROP", "NEW DROP"]:
+            return {
+                "price": sale_p,
+                "old_price": None,
+                "is_sale": False,
+                "tag": "NEW DROP",
+                "promo_name": "New Drop"
+            }
+        elif hl_type in ["STAFF_PICK", "STAFF PICK"]:
+            return {
+                "price": sale_p,
+                "old_price": None,
+                "is_sale": False,
+                "tag": "STAFF PICK",
+                "promo_name": "Staff Pick"
+            }
+        elif hl_type in ["NONE", "REGULAR", "STANDARD"]:
+            return {
+                "price": sale_p,
+                "old_price": None,
+                "is_sale": False,
+                "tag": None,
+                "promo_name": None
+            }
 
     # 1. Check direct Regular Price Registry (e.g. Pineapple Nuken $22.99 regular vs $19.98 sale)
     reg_registry = load_regular_prices_registry()
@@ -439,11 +468,9 @@ def classify_preroll(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
     name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
-    sorted_overrides = sorted(overrides.items(), key=lambda x: len(x[0]), reverse=True)
-    for pattern, species in sorted_overrides:
-        p_low = pattern.lower().strip()
-        if p_low and (p_low in full or p_low in name_low):
-            return species
+    matched_k, species = find_matching_override(name, brand, overrides)
+    if matched_k and species:
+        return species
     for pattern, species in STRAIN_DATABASE_PREROLL.items():
         if pattern in full or pattern in name_low:
             return species
@@ -509,11 +536,9 @@ def classify_flower(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
     name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
-    sorted_overrides = sorted(overrides.items(), key=lambda x: len(x[0]), reverse=True)
-    for pattern, species in sorted_overrides:
-        p_low = pattern.lower().strip()
-        if p_low and (p_low in full or p_low in name_low):
-            return species
+    matched_k, species = find_matching_override(name, brand, overrides)
+    if matched_k and species:
+        return species
     for pattern, species in STRAIN_DATABASE_FLOWER.items():
         if pattern in full or pattern in name_low:
             return species
@@ -577,11 +602,9 @@ def classify_vape(name: str, brand: str = "") -> str:
     full = f"{brand} {name}".lower()
     name_low = name.lower()
     overrides = load_product_overrides().get("species_overrides", {})
-    sorted_overrides = sorted(overrides.items(), key=lambda x: len(x[0]), reverse=True)
-    for pattern, species in sorted_overrides:
-        p_low = pattern.lower().strip()
-        if p_low and (p_low in full or p_low in name_low):
-            return species
+    matched_k, species = find_matching_override(name, brand, overrides)
+    if matched_k and species:
+        return species
     for pattern, species in STRAIN_DATABASE_VAPE.items():
         if pattern in full or pattern in name_low:
             return species
@@ -936,10 +959,10 @@ class TendyInventoryService:
             potency = lookup_authentic_potency(name, brand, screen)
             pricing_calc = compute_item_pricing(it, screen)
 
-            matched_sp_key = next((k for k in species_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
-            matched_hl_key = next((k for k in highlight_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
-            matched_thc_key = next((k for k in thc_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
-            matched_cat_key = next((k for k in cat_ov if k in clean_t or k in name_t or clean_t in k or name_t in k), None)
+            matched_sp_key, sp_val = find_matching_override(name, brand, species_ov)
+            matched_hl_key, hl_val = find_matching_override(name, brand, highlight_ov)
+            matched_thc_key, thc_val = find_matching_override(name, brand, thc_ov)
+            matched_cat_key, cat_val = find_matching_override(name, brand, cat_ov)
 
             items.append({
                 "id": str(it.get("id") or it.get("sku") or it.get("barcode") or name),
@@ -956,10 +979,10 @@ class TendyInventoryService:
                 "is_sale": pricing_calc.get("is_sale", False),
                 "has_override": bool(matched_sp_key or matched_hl_key or matched_thc_key or matched_cat_key),
                 "has_category_override": bool(matched_cat_key),
-                "category_override_value": cat_ov.get(matched_cat_key) if matched_cat_key else None,
+                "category_override_value": cat_val,
                 "override_species_key": matched_sp_key,
                 "override_highlight_key": matched_hl_key,
-                "highlight_value": highlight_ov.get(matched_hl_key) if matched_hl_key else None,
+                "highlight_value": hl_val,
                 "override_thc_key": matched_thc_key,
                 "override_category_key": matched_cat_key
             })
@@ -1241,10 +1264,7 @@ class TendyInventoryService:
                 spec = classify_preroll(name, brand)
                 full_low = f"{brand} {name}".lower()
                 overrides = load_product_overrides().get("species_overrides", {})
-                has_explicit_override = any(
-                    p.lower().strip() and (p.lower().strip() in full_low or p.lower().strip() in name_low or full_low in p.lower().strip() or name_low in p.lower().strip())
-                    for p in overrides
-                )
+                has_explicit_override = bool(find_matching_override(name, brand, overrides)[0])
                 if not has_explicit_override and spec == "HYBRID":
                     if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
                         spec = "SATIVA"
@@ -1273,6 +1293,7 @@ class TendyInventoryService:
             "screen": 1,
             "title": "Pre-Rolls & Infused Menu",
             "store": config.STORE_NAME,
+            "asset_version": config.ASSET_VERSION,
             "total_in_stock": len(ind_items) + len(hyb_items) + len(sat_items) + len(inf_items),
             "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
             "structured": {
@@ -1478,6 +1499,7 @@ class TendyInventoryService:
             "screen": 2,
             "title": "Flower & Vapes Menu",
             "store": config.STORE_NAME,
+            "asset_version": config.ASSET_VERSION,
             "total_in_stock": total_items,
             "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
             "structured": {
@@ -1638,13 +1660,8 @@ class TendyInventoryService:
                 chocolates.append(entry)
 
             elif target_sec == "GUMMIES":
-                spec = None
                 overrides = load_product_overrides().get("species_overrides", {})
-                for pattern, sp in overrides.items():
-                    p_low = pattern.lower().strip()
-                    if p_low and (p_low in full_low or p_low in name_low or full_low in p_low or name_low in p_low):
-                        spec = sp
-                        break
+                matched_k, spec = find_matching_override(name, brand, overrides)
                 if not spec:
                     if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
                         spec = "SATIVA"
@@ -1676,6 +1693,7 @@ class TendyInventoryService:
             "screen": 3,
             "title": "Edibles, Drinks & Concentrates Menu",
             "store": config.STORE_NAME,
+            "asset_version": config.ASSET_VERSION,
             "total_in_stock": total_items,
             "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
             "structured": {

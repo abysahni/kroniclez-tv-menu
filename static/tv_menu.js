@@ -1,4 +1,5 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
+const CURRENT_APP_VERSION = 55;
 let currentScreenId = 1;
 let currentStoreId = 1;
 let pollTimer = null;
@@ -497,6 +498,11 @@ function fetchLiveMenu(screenId, storeId) {
             return r.json();
         })
         .then(res => {
+            if (res.asset_version && res.asset_version > CURRENT_APP_VERSION) {
+                console.log(`[Kroniclez TV] Detected new client version ${res.asset_version} (current: ${CURRENT_APP_VERSION}). Auto-refreshing TV view...`);
+                window.location.reload();
+                return;
+            }
             if (res.success) {
                 renderMenuData(res);
                 try {

@@ -3,6 +3,7 @@ import sys
 import json
 import gzip
 import time
+import re
 import threading
 import urllib.parse
 import urllib.request
@@ -331,6 +332,11 @@ window.__INITIAL_SCREEN_ID__ = {screen_id};
 window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, **initial_screen_data}, default=str)};
 </script>"""
             html_content = html_content.replace("</head>", f"{script_tag}\n</head>")
+
+            # Dynamically inject cache-buster for static assets so TV browsers always run latest code
+            cache_buster = f"?v={config.ASSET_VERSION}_{int(time.time())}"
+            html_content = re.sub(r'tv_menu\.css\?v=[^\s"\'>]+', f'tv_menu.css{cache_buster}', html_content)
+            html_content = re.sub(r'tv_menu\.js\?v=[^\s"\'>]+', f'tv_menu.js{cache_buster}', html_content)
         except Exception as e:
             print(f"⚠️ Pre-render injection error: {e}")
 

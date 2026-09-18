@@ -53,17 +53,37 @@
     "titanimal bubble infused pre-roll": "INDICA",
     "double dutchies: double down pre-roll": "INDICA",
     "gmo cookies pre-roll": "INDICA",
-    "wedding cake pre-roll": "HYBRID"
+    "wedding cake pre-roll": "HYBRID",
+    "fruit punch bowl diamonds aio": "INDICA",
+    "stinky pinky fse resin aio vape": "INDICA",
+    "blue dream fse resin aio vape": "SATIVA"
   },
   "highlight_overrides": {
     "zombie kush": "FEATURED",
-    "wes' coast kush blunt": "FEATURED",
-    "sgt. pineapple slims pre-roll (+ matches)": "FEATURED",
-    "fuego - galactic fire sativa pre-roll - 2x1g": "FEATURED",
+    "wes' coast kush blunt": "NEW_DROP",
+    "sgt. pineapple slims pre-roll (+ matches)": "NEW_DROP",
     "cuban linx ceramic tip pre-roll": "NEW_DROP",
-    "bird watchers blunts": "FEATURED"
+    "bird watchers blunts": "NEW_DROP",
+    "claybourne - flyers infused blunt grape gasolina - 1x1.25g": "NEW_DROP",
+    "baby jeeter berry white infused pre-roll": "FEATURED",
+    "flyers frosted infused pineapple express pre-rolls": "FEATURED",
+    "northern lights 60+ diamonds & shatter infused blunt": "FEATURED",
+    "peach og infused blunt": "NEW_DROP",
+    "purple punch distillate infused pre-roll": "NEW_DROP",
+    "red hawaiian distillate infused pre-roll": "NEW_DROP",
+    "shark attack heavies diamond & disty infused pre-roll": "NEW_DROP",
+    "titanimal bubble infused pre-roll": "FEATURED",
+    "pineapple paradise liquid diamonds 1g vape": "NEW_DROP",
+    "stinky pinky fse resin aio vape": "NEW_DROP",
+    "big bag o' buds - pink kush mints - 3.5g": "NEW_DROP",
+    "fresh baked": "NEW_DROP",
+    "gasberry kush": "NEW_DROP",
+    "omy! - part time - 7g": "NEW_DROP",
+    "punch out": "NEW_DROP",
+    "fuel cell - drift mode thc + cbn cartridge (ceramic) - 2g": "NEW_DROP",
+    "blue dream fse resin aio vape": "NEW_DROP"
   },
   "thc_overrides": {},
   "category_overrides": {},
-  "last_updated": "2026-09-17T22:12:41.135263+00:00"
+  "last_updated": "2026-09-18T00:21:46.905050+00:00"
 }
