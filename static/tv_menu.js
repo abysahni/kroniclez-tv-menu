@@ -1,6 +1,7 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 55;
+const CURRENT_APP_VERSION = 56;
 window.__IS_V55_RUNNING__ = true;
+window.__IS_V56_RUNNING__ = true;
 let currentScreenId = 1;
 let currentStoreId = 1;
 let pollTimer = null;

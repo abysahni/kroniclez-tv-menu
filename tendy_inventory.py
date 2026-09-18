@@ -951,20 +951,27 @@ class TendyInventoryService:
             else:
                 screen = 1 if any(k in cat.lower() for k in ["pre-roll", "preroll", "pre roll", "blunt"]) else (2 if any(k in cat.lower() for k in ["flower", "vape", "cartridge", "disposable"]) else 3)
             
-            if screen == 1:
-                cur_species = classify_preroll(name, brand)
-            elif screen == 2:
-                cur_species = classify_flower(name, brand) if "FLOWER" in target_sec or "flower" in cat.lower() else classify_vape(name, brand)
-            else:
-                cur_species = "HYBRID"
-
-            potency = lookup_authentic_potency(name, brand, screen)
-            pricing_calc = compute_item_pricing(it, screen)
-
             matched_sp_key, sp_val = find_matching_override(name, brand, species_ov)
             matched_hl_key, hl_val = find_matching_override(name, brand, highlight_ov)
             matched_thc_key, thc_val = find_matching_override(name, brand, thc_ov)
             matched_cat_key, cat_val = find_matching_override(name, brand, cat_ov)
+
+            if matched_sp_key and sp_val:
+                cur_species = sp_val
+            elif screen == 1:
+                cur_species = classify_preroll(name, brand)
+            elif screen == 2:
+                cur_species = classify_flower(name, brand) if "FLOWER" in target_sec or "flower" in cat.lower() else classify_vape(name, brand)
+            else:
+                if any(k in clean_t for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
+                    cur_species = "SATIVA"
+                elif "indica" in clean_t or "blueberry" in name_t or "cbn" in name_t:
+                    cur_species = "INDICA"
+                else:
+                    cur_species = "HYBRID"
+
+            potency = lookup_authentic_potency(name, brand, screen)
+            pricing_calc = compute_item_pricing(it, screen)
 
             items.append({
                 "id": str(it.get("id") or it.get("sku") or it.get("barcode") or name),
@@ -1663,21 +1670,21 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
+            species_ov = load_product_overrides().get("species_overrides", {})
+            matched_sp, spec = find_matching_override(name, brand, species_ov)
+            if not spec:
+                if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
+                    spec = "SATIVA"
+                elif "indica" in full_low or "blueberry" in name_low or "cbn" in name_low:
+                    spec = "INDICA"
+                else:
+                    spec = "HYBRID"
+            entry["species"] = spec
+
             if target_sec == "CHOCOLATES":
-                entry["species"] = "HYBRID"
                 chocolates.append(entry)
 
             elif target_sec == "GUMMIES":
-                overrides = load_product_overrides().get("species_overrides", {})
-                matched_k, spec = find_matching_override(name, brand, overrides)
-                if not spec:
-                    if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
-                        spec = "SATIVA"
-                    elif "indica" in full_low or "blueberry" in name_low or "cbn" in name_low:
-                        spec = "INDICA"
-                    else:
-                        spec = "HYBRID"
-                entry["species"] = spec
                 if spec == "SATIVA":
                     g_sat.append(entry)
                 else:
@@ -1685,15 +1692,12 @@ class TendyInventoryService:
                 all_gummies.append(entry)
 
             elif target_sec == "BEVERAGES":
-                entry["species"] = "HYBRID"
                 beverages.append(entry)
 
             elif target_sec == "CONCENTRATES":
-                entry["species"] = "HYBRID"
                 concentrates.append(entry)
 
             elif target_sec == "WELLNESS":
-                entry["species"] = "HYBRID"
                 wellness.append(entry)
 
         total_items = len(concentrates) + len(beverages) + len(all_gummies) + len(chocolates) + len(wellness)

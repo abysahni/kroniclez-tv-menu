@@ -709,6 +709,7 @@ body {
 
 .p-row.row-featured .p-name, 
 .soft-row.row-featured .p-name,
+.soft-row.row-featured .soft-name,
 .container-prerolls .p-row.row-featured .p-name {
     font-weight: 850 !important;
     color: #ffffff !important;
@@ -717,13 +718,16 @@ body {
 }
 
 .p-row.row-featured .p-thc,
-.soft-row.row-featured .p-thc {
+.soft-row.row-featured .p-thc,
+.soft-row.row-featured .soft-thc {
     font-weight: 850 !important;
     color: #fca5a5 !important;
 }
 
 .p-row.row-featured .p-price .sale,
-.p-row.row-featured .p-price .regular {
+.p-row.row-featured .p-price .regular,
+.soft-row.row-featured .p-price .sale,
+.soft-row.row-featured .p-price .regular {
     font-weight: 900 !important;
 }
 
@@ -739,6 +743,7 @@ body {
 
 .p-row.row-staff-pick .p-name, 
 .soft-row.row-staff-pick .p-name,
+.soft-row.row-staff-pick .soft-name,
 .container-prerolls .p-row.row-staff-pick .p-name {
     font-weight: 850 !important;
     color: #ffffff !important;
@@ -747,13 +752,16 @@ body {
 }
 
 .p-row.row-staff-pick .p-thc,
-.soft-row.row-staff-pick .p-thc {
+.soft-row.row-staff-pick .p-thc,
+.soft-row.row-staff-pick .soft-thc {
     font-weight: 850 !important;
     color: #fde047 !important;
 }
 
 .p-row.row-staff-pick .p-price .regular,
-.p-row.row-staff-pick .p-price .sale {
+.p-row.row-staff-pick .p-price .sale,
+.soft-row.row-staff-pick .p-price .regular,
+.soft-row.row-staff-pick .p-price .sale {
     font-weight: 900 !important;
     color: #fde047 !important;
 }
@@ -770,6 +778,7 @@ body {
 
 .p-row.row-new-drop .p-name, 
 .soft-row.row-new-drop .p-name,
+.soft-row.row-new-drop .soft-name,
 .container-prerolls .p-row.row-new-drop .p-name {
     font-weight: 850 !important;
     color: #ffffff !important;
@@ -778,13 +787,16 @@ body {
 }
 
 .p-row.row-new-drop .p-thc,
-.soft-row.row-new-drop .p-thc {
+.soft-row.row-new-drop .p-thc,
+.soft-row.row-new-drop .soft-thc {
     font-weight: 850 !important;
     color: #67e8f9 !important;
 }
 
 .p-row.row-new-drop .p-price .regular,
-.p-row.row-new-drop .p-price .sale {
+.p-row.row-new-drop .p-price .sale,
+.soft-row.row-new-drop .p-price .regular,
+.soft-row.row-new-drop .p-price .sale {
     font-weight: 900 !important;
     color: #67e8f9 !important;
 }
@@ -797,6 +809,17 @@ body {
     padding-left: 4px !important;
     margin: 1px 0;
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.16);
+}
+
+.p-row.row-low-stock .p-name,
+.soft-row.row-low-stock .soft-name,
+.container-prerolls .p-row.row-low-stock .p-name {
+    color: #fef3c7 !important;
+}
+
+.p-row.row-low-stock .p-thc,
+.soft-row.row-low-stock .soft-thc {
+    color: #fde68a !important;
 }
 
 .p-row.row-low-stock .p-name, 
