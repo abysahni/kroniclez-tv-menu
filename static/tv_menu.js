@@ -489,12 +489,19 @@ function updateHappyHourBanner() {
     } catch (e) {}
 }
 
+// Resolve base API path dynamically (supports root domain as well as subfolders like /kwc/)
+function getApiBasePath() {
+    const p = window.location.pathname.replace(/\/(tv[123]|screen[123]|kitchener|static\/index\.html).*$/, '').replace(/\/+$/, '');
+    return p || '';
+}
+
 // Fetch live menu from API strictly for current TV's dedicated screen
 function fetchLiveMenu(screenId, storeId) {
     const sId = screenId || currentScreenId;
     const stId = storeId || currentStoreId;
+    const base = getApiBasePath();
 
-    fetch(`/api/tv-menu?screen=${sId}&store=${stId}&_t=${Date.now()}`)
+    fetch(`${base}/api/tv-menu?screen=${sId}&store=${stId}&_t=${Date.now()}`)
         .then(r => {
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
             return r.json();

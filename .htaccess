@@ -1,0 +1,11 @@
+# Kroniclez TV Menu - Hostinger / Apache URL Rewrite Engine
+Options -Indexes
+RewriteEngine On
+
+# Allow static files in /static/ or existing files to load directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route all TV menu views, admin portal, and APIs to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
