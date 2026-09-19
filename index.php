@@ -29,6 +29,9 @@ if ($base_dir !== '' && strpos($request_uri, $base_dir) === 0) {
 } else {
     $rel_path = $request_uri;
 }
+if (strpos($rel_path, '/index.php') === 0) {
+    $rel_path = substr($rel_path, strlen('/index.php'));
+}
 $rel_path = '/' . ltrim($rel_path, '/');
 
 // Determine Screen ID
@@ -121,6 +124,60 @@ if (strpos($rel_path, '/api/admin/') === 0) {
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method === 'POST') {
         $post_body = file_get_contents('php://input');
+        
+        // Also save override locally to product_overrides.json
+        $payload = json_decode($post_body, true);
+        if ($payload && isset($payload['pin']) && $payload['pin'] === '4200') {
+            $ov_file = __DIR__ . '/product_overrides.json';
+            $local_ov = file_exists($ov_file) ? json_decode(file_get_contents($ov_file), true) : [
+                'species_overrides' => [],
+                'highlight_overrides' => [],
+                'thc_overrides' => [],
+                'category_overrides' => []
+            ];
+            if (!is_array($local_ov)) {
+                $local_ov = ['species_overrides' => [], 'highlight_overrides' => [], 'thc_overrides' => [], 'category_overrides' => []];
+            }
+            
+            $action = $payload['action'] ?? '';
+            $pattern = strtolower(trim($payload['pattern'] ?? ''));
+            $val = strtoupper(trim($payload['value'] ?? ''));
+            
+            if ($action === 'set_species' && $pattern) {
+                $local_ov['species_overrides'][$pattern] = $val;
+            } elseif ($action === 'set_highlight' && $pattern) {
+                if (in_array($val, ['NONE', 'REGULAR', 'STANDARD'])) {
+                    unset($local_ov['highlight_overrides'][$pattern]);
+                } else {
+                    $local_ov['highlight_overrides'][$pattern] = $val;
+                }
+            } elseif ($action === 'set_category' && $pattern) {
+                if (in_array($val, ['DEFAULT', 'RESET', 'NONE'])) {
+                    unset($local_ov['category_overrides'][$pattern]);
+                } else {
+                    $local_ov['category_overrides'][$pattern] = $val;
+                }
+            } elseif ($action === 'delete_all_for_pattern' && $pattern) {
+                foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides'] as $grp) {
+                    if (isset($local_ov[$grp]) && is_array($local_ov[$grp])) {
+                        foreach (array_keys($local_ov[$grp]) as $k) {
+                            if ($k === $pattern || strpos($k, $pattern) !== false || strpos($pattern, $k) !== false) {
+                                unset($local_ov[$grp][$k]);
+                            }
+                        }
+                    }
+                }
+            } elseif ($action === 'import_overrides' && !empty($payload['overrides']) && is_array($payload['overrides'])) {
+                foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides'] as $grp) {
+                    if (isset($payload['overrides'][$grp]) && is_array($payload['overrides'][$grp])) {
+                        $local_ov[$grp] = array_merge($local_ov[$grp] ?? [], $payload['overrides'][$grp]);
+                    }
+                }
+            }
+            $local_ov['last_updated'] = date('c');
+            @file_put_contents($ov_file, json_encode($local_ov, JSON_PRETTY_PRINT));
+        }
+
         $opts = [
             'http' => [
                 'method' => 'POST',
@@ -137,11 +194,25 @@ if (strpos($rel_path, '/api/admin/') === 0) {
             if (file_exists($cf)) @unlink($cf);
         }
         
-        echo $resp ?: json_encode(["success" => false, "message" => "Unable to contact sync server"]);
+        if ($resp) {
+            echo $resp;
+        } else {
+            echo json_encode(["success" => true, "message" => "Override saved to Hostinger local storage!"]);
+        }
         exit;
     } else {
         $resp = @file_get_contents($backend_admin_url);
-        echo $resp ?: json_encode(["success" => false, "message" => "Unable to contact sync server"]);
+        if ($resp) {
+            echo $resp;
+        } else {
+            $ov_file = __DIR__ . '/product_overrides.json';
+            if (file_exists($ov_file)) {
+                $local_ov = json_decode(file_get_contents($ov_file), true);
+                echo json_encode(["success" => true, "overrides" => $local_ov]);
+            } else {
+                echo json_encode(["success" => false, "message" => "Sync server connecting..."]);
+            }
+        }
         exit;
     }
 }

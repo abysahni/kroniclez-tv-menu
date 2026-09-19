@@ -847,7 +847,7 @@
         });
 
         function getApiBasePath() {
-            const p = window.location.pathname.replace(/\/(admin|portal|override|overrides|static\/admin\.html).*$/, '').replace(/\/+$/, '');
+            const p = window.location.pathname.replace(/\/(admin|portal|override|overrides|index\.php|static\/admin\.html).*$/, '').replace(/\/+$/, '');
             return p || '';
         }
 

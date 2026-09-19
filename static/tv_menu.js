@@ -12,9 +12,9 @@ function getUrlParams() {
     const path = window.location.pathname;
     
     let screen = parseInt(window.__INITIAL_SCREEN_ID__ || 1);
-    if (path === '/tv1' || path === '/screen1') screen = 1;
-    else if (path === '/tv2' || path === '/screen2') screen = 2;
-    else if (path === '/tv3' || path === '/screen3') screen = 3;
+    if (path.endsWith('/tv1') || path.endsWith('/screen1') || path.includes('/tv1') || path.includes('/screen1')) screen = 1;
+    else if (path.endsWith('/tv2') || path.endsWith('/screen2') || path.includes('/tv2') || path.includes('/screen2')) screen = 2;
+    else if (path.endsWith('/tv3') || path.endsWith('/screen3') || path.includes('/tv3') || path.includes('/screen3')) screen = 3;
     else if (params.has('screen')) screen = parseInt(params.get('screen') || 1);
 
     const store = parseInt(params.get('store') || 1);
@@ -491,7 +491,7 @@ function updateHappyHourBanner() {
 
 // Resolve base API path dynamically (supports root domain as well as subfolders like /kwc/)
 function getApiBasePath() {
-    const p = window.location.pathname.replace(/\/(tv[123]|screen[123]|kitchener|static\/index\.html).*$/, '').replace(/\/+$/, '');
+    const p = window.location.pathname.replace(/\/(tv[123]|screen[123]|kitchener|index\.php|static\/index\.html).*$/, '').replace(/\/+$/, '');
     return p || '';
 }
 
