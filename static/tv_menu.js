@@ -1,7 +1,8 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 56;
+const CURRENT_APP_VERSION = 57;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
+window.__IS_V57_RUNNING__ = true;
 let currentScreenId = 1;
 let currentStoreId = 1;
 let pollTimer = null;
@@ -473,6 +474,7 @@ function renderMenuData(res) {
 // Dynamic Happy Hour Banner Evaluator (1:00 PM – 4:00 PM America/Toronto)
 function updateHappyHourBanner() {
     const el = document.getElementById('happyHourBanner');
+    const qrSub = document.querySelector('.qr-header-card .qr-sub');
     if (!el) return;
     try {
         const now = new Date();
@@ -481,10 +483,12 @@ function updateHappyHourBanner() {
 
         if (isActive) {
             el.className = 'happy-hour-pill active';
-            el.innerHTML = '<span style="color:#ef4444; font-size:12px;">⚡</span> <strong>HAPPY HOUR ACTIVE (1 PM – 4 PM)</strong> • SPECIAL PRICING IN EFFECT';
+            el.innerHTML = '<span style="color:#ef4444; font-size:12px;">⚡</span> <strong>ONLINE HAPPY HOUR ACTIVE (1 PM – 4 PM)</strong> • Upto 10% off';
+            if (qrSub) qrSub.innerHTML = 'Scan to Order • <strong style="color:#fde047;">Upto 10% off Online!</strong>';
         } else {
             el.className = 'happy-hour-pill idle';
-            el.innerHTML = '<i class="bi bi-clock-history" style="color:#facc15;"></i> Daily Happy Hour: <strong>1:00 PM – 4:00 PM</strong>';
+            el.innerHTML = '<i class="bi bi-clock-history" style="color:#facc15;"></i> Online Happy Hour: <strong>1:00 PM – 4:00 PM</strong> • Upto 10% off';
+            if (qrSub) qrSub.innerHTML = 'Scan to Order • Upto 10% off (1–4 PM)';
         }
     } catch (e) {}
 }

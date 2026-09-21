@@ -3,8 +3,10 @@
   "promotions": [
     {
       "id": "daily_happy_hour",
-      "name": "Daily Happy Hour (1PM - 4PM)",
-      "enabled": true,
+      "name": "Daily Online Happy Hour (1PM - 4PM) - Upto 10% off",
+      "enabled": false,
+      "online_only": true,
+      "note": "Online purchase only (1PM - 4PM). In-store TV displays standard POS prices to prevent counter discrepancies.",
       "schedule_type": "time_window",
       "start_time": "13:00",
       "end_time": "16:00",

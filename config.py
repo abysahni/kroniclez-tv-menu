@@ -40,4 +40,4 @@ HOST = os.getenv("HOST", "0.0.0.0")
 INVENTORY_CACHE_TTL_SECONDS = int(os.getenv("INVENTORY_CACHE_TTL_SECONDS", "25"))
 ADMIN_PIN = os.getenv("ADMIN_PIN", "4200")
 OVERRIDES_FILE = BASE_DIR / "product_overrides.json"
-ASSET_VERSION = int(os.getenv("ASSET_VERSION", "56"))
+ASSET_VERSION = int(os.getenv("ASSET_VERSION", "57"))
