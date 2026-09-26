@@ -103,7 +103,10 @@ if ($rel_path === '/admin' || $rel_path === '/portal' || $rel_path === '/overrid
     header("Content-Type: text/html; charset=utf-8");
     $admin_file = __DIR__ . '/static/admin.html';
     if (file_exists($admin_file)) {
-        readfile($admin_file);
+        $admin_html = file_get_contents($admin_file);
+        $asset_base = ($base_dir !== '') ? $base_dir . '/static/' : '/static/';
+        $admin_html = str_replace('/static/', $asset_base, $admin_html);
+        echo $admin_html;
         exit;
     }
     echo "Admin portal file not found at static/admin.html";
@@ -239,6 +242,10 @@ $html = str_replace('</head>', $script_injection, $html);
 $cache_buster = '?v=57_' . time();
 $html = preg_replace('/tv_menu\.css\?v=[^\s"\'>]+/', 'tv_menu.css' . $cache_buster, $html);
 $html = preg_replace('/tv_menu\.js\?v=[^\s"\'>]+/', 'tv_menu.js' . $cache_buster, $html);
+
+// Adjust asset paths for subfolder deployment (e.g. /kwc/static/...)
+$asset_base = ($base_dir !== '') ? $base_dir . '/static/' : '/static/';
+$html = str_replace('/static/', $asset_base, $html);
 
 header("Content-Type: text/html; charset=utf-8");
 echo $html;
