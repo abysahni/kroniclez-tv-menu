@@ -1,17 +1,21 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 58;
+const CURRENT_APP_VERSION = 59;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
 window.__IS_V58_RUNNING__ = true;
+window.__IS_V59_RUNNING__ = true;
 let currentScreenId = 1;
 let currentStoreId = 1;
 let pollTimer = null;
 
-// Product Sequential Number Counter (Option B: 01, 02, 03... per TV Screen)
-let screenItemCounter = 1;
-function getNextItemNum() {
-    return String(screenItemCounter++).padStart(2, '0');
+// Product Sequential Number Counter (Option B: 01, 02, 03... per Category)
+let currentCatNum = 1;
+function resetCatCounter() {
+    currentCatNum = 1;
+}
+function getNextCatNum() {
+    return String(currentCatNum++).padStart(2, '0');
 }
 
 // Parse URL Parameters / Dedicated Screen Routes
@@ -61,8 +65,8 @@ function getSizeBadge(productName, variantName) {
 }
 
 // Standard Row Renderer (Screens 1 & 2)
-function renderRowHtml(it, showStrainBadge = false) {
-    const num = getNextItemNum();
+function renderRowHtml(it, showStrainBadge = false, customNum = null) {
+    const num = (customNum !== null && customNum !== undefined) ? String(customNum).padStart(2, '0') : getNextCatNum();
     const numBadge = `<span class="badge-num">${num}</span>`;
 
     let badge = '';
@@ -124,8 +128,8 @@ function renderRowHtml(it, showStrainBadge = false) {
 }
 
 // Soft Chews 5-Column Row Renderer (Screen 3)
-function renderSoftRow(it) {
-    const num = getNextItemNum();
+function renderSoftRow(it, customNum = null) {
+    const num = (customNum !== null && customNum !== undefined) ? String(customNum).padStart(2, '0') : getNextCatNum();
     const numBadge = `<span class="badge-num">${num}</span>`;
 
     const spec = (it.species || 'HYBRID').toUpperCase();
@@ -201,6 +205,7 @@ function renderSoftCard(cardKey, dataObj) {
     const sec = dataObj[cardKey];
     if (!sec || !sec.items || sec.items.length === 0) return '';
 
+    resetCatCounter();
     const count = sec.items.length;
     const subHtml = sec.subtitle ? `<div class="card-head-sub">${sec.subtitle}</div>` : '';
 
@@ -259,7 +264,6 @@ function renderSoftCard(cardKey, dataObj) {
 // Main Render Dispatcher
 function renderMenuData(res) {
     if (!res || !res.structured) return;
-    screenItemCounter = 1;
     const mount = document.getElementById('menuMount');
     if (!mount) return;
 
@@ -273,12 +277,26 @@ function renderMenuData(res) {
         const hybItems = d.hybrid.items || [];
         const satItems = d.sativa.items || [];
 
-        let infusedHtml = '';
+        // 1. Column 1: INDICA PRE-ROLLS (Starts at 01)
+        resetCatCounter();
+        const indHtml = indItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Indica Pre-Rolls</div>';
+
+        // 2. Column 2: HYBRID PRE-ROLLS (Starts at 01)
+        resetCatCounter();
+        const hybHtml = hybItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Hybrid Pre-Rolls</div>';
+
+        // 3. Column 3: SATIVA PRE-ROLLS (Starts at 01)
+        resetCatCounter();
+        const satHtml = satItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Sativa Pre-Rolls</div>';
+
+        // 4. Column 4: INFUSED PRE-ROLLS (Starts at 01)
+        resetCatCounter();
         const infIndica = (d.infused && d.infused.indica_items) || [];
         const infHybrid = (d.infused && d.infused.hybrid_items) || [];
         const infSativa = (d.infused && d.infused.sativa_items) || [];
         const infTotal = (d.infused && d.infused.items) ? d.infused.items.length : (infIndica.length + infHybrid.length + infSativa.length);
 
+        let infusedHtml = '';
         if (infIndica.length) {
             infusedHtml += `<div class="subhead indica"><span style="color:#4CAF50;">Indica Infused</span> <span style="font-size:11px; color:#888;">${infIndica.length} SKUs</span></div>`;
             infusedHtml += infIndica.map(it => renderRowHtml(it, false)).join('');
@@ -298,21 +316,21 @@ function renderMenuData(res) {
                 <div class="panel">
                     <div class="title indica">INDICA PRE-ROLLS <span class="title-count">(${indItems.length})</span></div>
                     <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                    ${indItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Indica Pre-Rolls</div>'}
+                    ${indHtml}
                 </div>
 
                 <!-- HYBRID PRE-ROLLS -->
                 <div class="panel">
                     <div class="title hybrid">HYBRID & BLENDS PRE-ROLLS <span class="title-count">(${hybItems.length})</span></div>
                     <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                    ${hybItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Hybrid Pre-Rolls</div>'}
+                    ${hybHtml}
                 </div>
 
                 <!-- SATIVA PRE-ROLLS -->
                 <div class="panel">
                     <div class="title sativa">SATIVA PRE-ROLLS <span class="title-count">(${satItems.length})</span></div>
                     <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                    ${satItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Sativa Pre-Rolls</div>'}
+                    ${satHtml}
                 </div>
 
                 <!-- INFUSED PRE-ROLLS -->
@@ -336,6 +354,7 @@ function renderMenuData(res) {
         // Column 1: Indica & Hybrid Flower
         let col1Html = '';
         if (indTotal > 0) {
+            resetCatCounter(); // Indica Flower starts at 01
             col1Html += `<div class="subhead indica"><span style="color:#4CAF50;">Indica Dried Flower</span> <span style="font-size:11px; color:#888;">${f.indica_dried.items.length} SKUs</span></div>`;
             col1Html += f.indica_dried.items.map(it => renderRowHtml(it, false)).join('');
             if (f.indica_milled.items.length) {
@@ -345,6 +364,7 @@ function renderMenuData(res) {
         }
 
         if (hybTotal > 0) {
+            resetCatCounter(); // Hybrid Flower starts at 01
             col1Html += `<div class="subhead hybrid" style="margin-top:10px;"><span style="color:#FFC107;">Hybrid Dried Flower</span> <span style="font-size:11px; color:#888;">${f.hybrid_dried.items.length} SKUs</span></div>`;
             col1Html += f.hybrid_dried.items.map(it => renderRowHtml(it, false)).join('');
             if (f.hybrid_milled.items.length) {
@@ -357,6 +377,7 @@ function renderMenuData(res) {
         const satTotal = (f.sativa_dried.items.length + f.sativa_milled.items.length);
         let col2Html = '';
         if (satTotal > 0) {
+            resetCatCounter(); // Sativa Flower starts at 01
             col2Html += `<div class="subhead sativa"><span style="color:#FF6666;">Sativa Dried Flower</span> <span style="font-size:11px; color:#888;">${f.sativa_dried.items.length} SKUs</span></div>`;
             col2Html += f.sativa_dried.items.map(it => renderRowHtml(it, false)).join('');
             if (f.sativa_milled.items.length) {
@@ -366,6 +387,7 @@ function renderMenuData(res) {
         }
 
         // Column 3: 510 Carts (Indica & Hybrid)
+        resetCatCounter(); // 510 Carts starts at 01
         const v510Total = (v.vapes_510_indica.items.length + v.vapes_510_hybrid.items.length);
         let col3Html = '';
         if (v.vapes_510_indica.items.length) {
@@ -386,6 +408,7 @@ function renderMenuData(res) {
             col4Html += v.vapes_510_sativa.items.map(it => renderRowHtml(it, true)).join('');
         }
         if (dispTotal > 0) {
+            resetCatCounter(); // All-in-One Disposables starts at 01
             col4Html += `<div class="subhead disposable" style="margin-top:10px;"><span style="color:#f472b6;">All-in-One Disposables</span> <span style="font-size:11px; color:#888;">${dispTotal} SKUs</span></div>`;
             col4Html += v.disp_indica.items.map(it => renderRowHtml(it, true)).join('');
             col4Html += v.disp_hybrid.items.map(it => renderRowHtml(it, true)).join('');
@@ -433,6 +456,33 @@ function renderMenuData(res) {
         const wellness = (d.wellness && d.wellness.items) || [];
         const col3Total = gSat.length + chocolates.length + wellness.length;
 
+        let gSatHtml = '';
+        if (gSat.length > 0) {
+            resetCatCounter(); // Sativa Soft Chews starts at 01
+            gSatHtml = `
+                <div class="subhead" style="color:#f472b6; margin: 3px 0 1px; font-size:11px;"><span><i class="bi bi-circle-fill" style="font-size:7px;"></i> Sativa Soft Chews</span> <span style="font-size:10px; color:#888;">${gSat.length} SKUs</span></div>
+                ${gSat.map(it => renderSoftRow(it)).join('')}
+            `;
+        }
+
+        let chocHtml = '';
+        if (chocolates.length > 0) {
+            resetCatCounter(); // Artisan Chocolates starts at 01
+            chocHtml = `
+                <div class="subhead" style="color:#fb923c; margin: 4px 0 1px; font-size:11px;"><span><i class="bi bi-box2-heart" style="font-size:10px;"></i> Artisan Chocolates</span> <span style="font-size:10px; color:#888;">${chocolates.length} SKUs</span></div>
+                ${chocolates.map(it => renderSoftRow(it)).join('')}
+            `;
+        }
+
+        let wellHtml = '';
+        if (wellness.length > 0) {
+            resetCatCounter(); // Wellness starts at 01
+            wellHtml = `
+                <div class="subhead" style="color:#c084fc; margin: 4px 0 1px; font-size:11px;"><span><i class="bi bi-capsule" style="font-size:10px;"></i> Oils, Drops & Wellness</span> <span style="font-size:10px; color:#888;">${wellness.length} SKU</span></div>
+                ${wellness.map(it => renderSoftRow(it)).join('')}
+            `;
+        }
+
         const col3UnifiedHtml = `
             <div class="soft-card card-pink">
                 <div class="card-head-title">SATIVA CHEWS, CHOCOLATE & WELLNESS <span class="title-count">(${col3Total})</span></div>
@@ -444,18 +494,9 @@ function renderMenuData(res) {
                     <div style="text-align:center;">CBD</div>
                     <div style="text-align:right;">PRICE</div>
                 </div>
-                ${gSat.length > 0 ? `
-                    <div class="subhead" style="color:#f472b6; margin: 3px 0 1px; font-size:11px;"><span><i class="bi bi-circle-fill" style="font-size:7px;"></i> Sativa Soft Chews</span> <span style="font-size:10px; color:#888;">${gSat.length} SKUs</span></div>
-                    ${gSat.map(it => renderSoftRow(it)).join('')}
-                ` : ''}
-                ${chocolates.length > 0 ? `
-                    <div class="subhead" style="color:#fb923c; margin: 4px 0 1px; font-size:11px;"><span><i class="bi bi-box2-heart" style="font-size:10px;"></i> Artisan Chocolates</span> <span style="font-size:10px; color:#888;">${chocolates.length} SKUs</span></div>
-                    ${chocolates.map(it => renderSoftRow(it)).join('')}
-                ` : ''}
-                ${wellness.length > 0 ? `
-                    <div class="subhead" style="color:#c084fc; margin: 4px 0 1px; font-size:11px;"><span><i class="bi bi-capsule" style="font-size:10px;"></i> Oils, Drops & Wellness</span> <span style="font-size:10px; color:#888;">${wellness.length} SKU</span></div>
-                    ${wellness.map(it => renderSoftRow(it)).join('')}
-                ` : ''}
+                ${gSatHtml}
+                ${chocHtml}
+                ${wellHtml}
             </div>
         `;
 
@@ -615,6 +656,14 @@ window.addEventListener('touchstart', showNav);
 
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', () => {
+    // Clear stale local storage cache on version 59
+    try {
+        if (localStorage.getItem('kroniclez_app_version') !== '59') {
+            localStorage.clear();
+            localStorage.setItem('kroniclez_app_version', '59');
+        }
+    } catch (e) {}
+
     const params = getUrlParams();
     currentScreenId = params.screen;
     currentStoreId = params.store;

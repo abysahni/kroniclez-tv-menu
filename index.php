@@ -239,7 +239,7 @@ $script_injection .= "</script>\n</head>";
 $html = str_replace('</head>', $script_injection, $html);
 
 // Dynamic asset cache-busting
-$cache_buster = '?v=58_' . time();
+$cache_buster = '?v=59_' . time();
 $html = preg_replace('/tv_menu\.css\?v=[^\s"\'>]+/', 'tv_menu.css' . $cache_buster, $html);
 $html = preg_replace('/tv_menu\.js\?v=[^\s"\'>]+/', 'tv_menu.js' . $cache_buster, $html);
 

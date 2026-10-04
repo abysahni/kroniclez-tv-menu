@@ -877,22 +877,26 @@ body {
     margin-top: 1px;
     font-family: 'JetBrains Mono', monospace;
     opacity: 0.8;
-/* Product Sequential Number Badge (Option B) */
+}
+
+/* Product Sequential Number Badge (Option B - Per Category) */
 .badge-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    font-weight: 850;
-    padding: 1px 4px;
-    border-radius: 3px;
-    margin-right: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #fde047;
-    border: 1px solid rgba(250, 204, 21, 0.4);
+    font-size: 11px;
+    font-weight: 900;
+    padding: 1.5px 5.5px;
+    border-radius: 4px;
+    margin-right: 6px;
+    background: rgba(34, 211, 238, 0.2);
+    color: #38bdf8;
+    border: 1.5px solid rgba(56, 189, 248, 0.65);
     display: inline-block;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.4px;
     vertical-align: middle;
-    text-shadow: 0 0 3px rgba(250, 204, 21, 0.25);
+    text-shadow: 0 0 5px rgba(56, 189, 248, 0.4);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     flex-shrink: 0;
+    line-height: 1.1;
 }
 
 /* Strain Badges */

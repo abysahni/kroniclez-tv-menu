@@ -927,22 +927,24 @@ body {
     opacity: 0.8;
 }
 
-/* Product Sequential Number Badge (Option B) */
+/* Product Sequential Number Badge (Option B - Per Category) */
 .badge-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    font-weight: 850;
-    padding: 1px 4px;
-    border-radius: 3px;
-    margin-right: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #fde047;
-    border: 1px solid rgba(250, 204, 21, 0.4);
+    font-size: 11px;
+    font-weight: 900;
+    padding: 1.5px 5.5px;
+    border-radius: 4px;
+    margin-right: 6px;
+    background: rgba(34, 211, 238, 0.2);
+    color: #38bdf8;
+    border: 1.5px solid rgba(56, 189, 248, 0.65);
     display: inline-block;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.4px;
     vertical-align: middle;
-    text-shadow: 0 0 3px rgba(250, 204, 21, 0.25);
+    text-shadow: 0 0 5px rgba(56, 189, 248, 0.4);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     flex-shrink: 0;
+    line-height: 1.1;
 }
 
 /* Strain Badges */
@@ -1404,9 +1406,12 @@ body {
         const initialData = <?= $json_injected ?>;
         const currentScreen = <?= $screen ?>;
 
-        let screenItemCounter = 1;
-        function getNextItemNum() {
-            return String(screenItemCounter++).padStart(2, '0');
+        let currentCatNum = 1;
+        function resetCatCounter() {
+            currentCatNum = 1;
+        }
+        function getNextCatNum() {
+            return String(currentCatNum++).padStart(2, '0');
         }
 
         function formatCAD(val) {
@@ -1437,8 +1442,8 @@ body {
             return '';
         }
 
-        function renderRowHtml(it, showStrainBadge = false) {
-            const num = getNextItemNum();
+        function renderRowHtml(it, showStrainBadge = false, customNum = null) {
+            const num = (customNum !== null && customNum !== undefined) ? String(customNum).padStart(2, '0') : getNextCatNum();
             const numBadge = `<span class="badge-num">${num}</span>`;
 
             let badge = '';
@@ -1485,8 +1490,8 @@ body {
             `;
         }
 
-        function renderSoftRow(it) {
-            const num = getNextItemNum();
+        function renderSoftRow(it, customNum = null) {
+            const num = (customNum !== null && customNum !== undefined) ? String(customNum).padStart(2, '0') : getNextCatNum();
             const numBadge = `<span class="badge-num">${num}</span>`;
 
             const spec = (it.species || 'HYBRID').toUpperCase();
@@ -1542,6 +1547,7 @@ body {
         function renderSoftCard(cardKey, dataObj) {
             const sec = dataObj[cardKey];
             if (!sec || !sec.items || sec.items.length === 0) return '';
+            resetCatCounter();
             const count = sec.items.length;
             const subHtml = sec.subtitle ? `<div class="card-head-sub">${sec.subtitle}</div>` : '';
 
@@ -1609,12 +1615,26 @@ body {
                 const hybItems = d.hybrid.items || [];
                 const satItems = d.sativa.items || [];
 
-                let infHtml = '';
+                // 1. Column 1: INDICA PRE-ROLLS (Starts at 01)
+                resetCatCounter();
+                const indHtml = indItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Indica Pre-Rolls</div>';
+
+                // 2. Column 2: HYBRID PRE-ROLLS (Starts at 01)
+                resetCatCounter();
+                const hybHtml = hybItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Hybrid Pre-Rolls</div>';
+
+                // 3. Column 3: SATIVA PRE-ROLLS (Starts at 01)
+                resetCatCounter();
+                const satHtml = satItems.map(it => renderRowHtml(it, false)).join('') || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Sativa Pre-Rolls</div>';
+
+                // 4. Column 4: INFUSED PRE-ROLLS (Starts at 01)
+                resetCatCounter();
                 const infInd = (d.infused && d.infused.indica_items) || [];
                 const infHyb = (d.infused && d.infused.hybrid_items) || [];
                 const infSat = (d.infused && d.infused.sativa_items) || [];
                 const infTotal = (d.infused && d.infused.items) ? d.infused.items.length : (infInd.length + infHyb.length + infSat.length);
 
+                let infHtml = '';
                 if (infInd.length) {
                     infHtml += `<div class="subhead indica"><span style="color:#4CAF50;">Indica Infused</span> <span style="font-size:11px; color:#888;">${infInd.length} SKUs</span></div>`;
                     infHtml += infInd.map(it => renderRowHtml(it, false)).join('');
@@ -1633,17 +1653,17 @@ body {
                         <div class="panel">
                             <div class="title indica">INDICA PRE-ROLLS <span class="title-count">(${indItems.length})</span></div>
                             <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                            ${indItems.map(it => renderRowHtml(it, false)).join('')}
+                            ${indHtml}
                         </div>
                         <div class="panel">
                             <div class="title hybrid">HYBRID & BLENDS PRE-ROLLS <span class="title-count">(${hybItems.length})</span></div>
                             <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                            ${hybItems.map(it => renderRowHtml(it, false)).join('')}
+                            ${hybHtml}
                         </div>
                         <div class="panel">
                             <div class="title sativa">SATIVA PRE-ROLLS <span class="title-count">(${satItems.length})</span></div>
                             <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                            ${satItems.map(it => renderRowHtml(it, false)).join('')}
+                            ${satHtml}
                         </div>
                         <div class="panel">
                             <div class="title infused">INFUSED PRE-ROLLS <span class="title-count">(${infTotal})</span></div>
@@ -1661,6 +1681,7 @@ body {
 
                 let col1Html = '';
                 if (indTotal > 0) {
+                    resetCatCounter(); // Indica Flower starts at 01
                     col1Html += `<div class="subhead indica"><span style="color:#4CAF50;">Indica Dried Flower</span> <span style="font-size:11px; color:#888;">${f.indica_dried.items.length} SKUs</span></div>`;
                     col1Html += f.indica_dried.items.map(it => renderRowHtml(it, false)).join('');
                     if (f.indica_milled.items.length) {
@@ -1669,6 +1690,7 @@ body {
                     }
                 }
                 if (hybTotal > 0) {
+                    resetCatCounter(); // Hybrid Flower starts at 01
                     col1Html += `<div class="subhead hybrid" style="margin-top:10px;"><span style="color:#FFC107;">Hybrid Dried Flower</span> <span style="font-size:11px; color:#888;">${f.hybrid_dried.items.length} SKUs</span></div>`;
                     col1Html += f.hybrid_dried.items.map(it => renderRowHtml(it, false)).join('');
                     if (f.hybrid_milled.items.length) {
@@ -1680,6 +1702,7 @@ body {
                 const satTotal = f.sativa_dried.items.length + f.sativa_milled.items.length;
                 let col2Html = '';
                 if (satTotal > 0) {
+                    resetCatCounter(); // Sativa Flower starts at 01
                     col2Html += `<div class="subhead sativa"><span style="color:#FF6666;">Sativa Dried Flower</span> <span style="font-size:11px; color:#888;">${f.sativa_dried.items.length} SKUs</span></div>`;
                     col2Html += f.sativa_dried.items.map(it => renderRowHtml(it, false)).join('');
                     if (f.sativa_milled.items.length) {
@@ -1688,6 +1711,7 @@ body {
                     }
                 }
 
+                resetCatCounter(); // 510 Carts starts at 01
                 const v510Total = v.vapes_510_indica.items.length + v.vapes_510_hybrid.items.length;
                 let col3Html = '';
                 if (v.vapes_510_indica.items.length) {
@@ -1707,6 +1731,7 @@ body {
                     col4Html += v.vapes_510_sativa.items.map(it => renderRowHtml(it, true)).join('');
                 }
                 if (dispTotal > 0) {
+                    resetCatCounter(); // All-in-One Disposables starts at 01
                     col4Html += `<div class="subhead disposable" style="margin-top:10px;"><span style="color:#f472b6;">All-in-One Disposables</span> <span style="font-size:11px; color:#888;">${dispTotal} SKUs</span></div>`;
                     col4Html += v.disp_indica.items.map(it => renderRowHtml(it, true)).join('');
                     col4Html += v.disp_hybrid.items.map(it => renderRowHtml(it, true)).join('');
@@ -1744,6 +1769,24 @@ body {
                 const choc = (d.chocolates && d.chocolates.items) || [];
                 const col3EdiblesTotal = gSat.length + choc.length;
 
+                let gSatHtml = '';
+                if (gSat.length > 0) {
+                    resetCatCounter(); // Sativa Soft Chews starts at 01
+                    gSatHtml = `
+                        <div class="subhead" style="color:#f472b6; margin: 4px 0 2px; font-size:12px;"><span>Sativa Soft Chews</span> <span style="font-size:11px; color:#888;">${gSat.length} SKUs</span></div>
+                        ${gSat.map(it => renderSoftRow(it)).join('')}
+                    `;
+                }
+
+                let chocHtml = '';
+                if (choc.length > 0) {
+                    resetCatCounter(); // Artisan Chocolates starts at 01
+                    chocHtml = `
+                        <div class="subhead" style="color:#fb923c; margin: 8px 0 2px; font-size:12px;"><span>Artisan Chocolates</span> <span style="font-size:11px; color:#888;">${choc.length} SKUs</span></div>
+                        ${choc.map(it => renderSoftRow(it)).join('')}
+                    `;
+                }
+
                 const col3Html = `
                     <div class="soft-card card-pink">
                         <div class="card-head-title">SOFT CHEWS & CHOCOLATES <span class="title-count">(${col3EdiblesTotal})</span></div>
@@ -1755,14 +1798,8 @@ body {
                             <div style="text-align:center;">CBD</div>
                             <div style="text-align:right;">PRICE</div>
                         </div>
-                        ${gSat.length > 0 ? `
-                            <div class="subhead" style="color:#f472b6; margin: 4px 0 2px; font-size:12px;"><span>Sativa Soft Chews</span> <span style="font-size:11px; color:#888;">${gSat.length} SKUs</span></div>
-                            ${gSat.map(it => renderSoftRow(it)).join('')}
-                        ` : ''}
-                        ${choc.length > 0 ? `
-                            <div class="subhead" style="color:#fb923c; margin: 8px 0 2px; font-size:12px;"><span>Artisan Chocolates</span> <span style="font-size:11px; color:#888;">${choc.length} SKUs</span></div>
-                            ${choc.map(it => renderSoftRow(it)).join('')}
-                        ` : ''}
+                        ${gSatHtml}
+                        ${chocHtml}
                     </div>
                 `;
 
