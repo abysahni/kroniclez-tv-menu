@@ -877,6 +877,22 @@ body {
     margin-top: 1px;
     font-family: 'JetBrains Mono', monospace;
     opacity: 0.8;
+/* Product Sequential Number Badge (Option B) */
+.badge-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    font-weight: 850;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-right: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fde047;
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    display: inline-block;
+    letter-spacing: 0.2px;
+    vertical-align: middle;
+    text-shadow: 0 0 3px rgba(250, 204, 21, 0.25);
+    flex-shrink: 0;
 }
 
 /* Strain Badges */

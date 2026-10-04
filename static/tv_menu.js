@@ -1,11 +1,18 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 57;
+const CURRENT_APP_VERSION = 58;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
+window.__IS_V58_RUNNING__ = true;
 let currentScreenId = 1;
 let currentStoreId = 1;
 let pollTimer = null;
+
+// Product Sequential Number Counter (Option B: 01, 02, 03... per TV Screen)
+let screenItemCounter = 1;
+function getNextItemNum() {
+    return String(screenItemCounter++).padStart(2, '0');
+}
 
 // Parse URL Parameters / Dedicated Screen Routes
 function getUrlParams() {
@@ -55,6 +62,9 @@ function getSizeBadge(productName, variantName) {
 
 // Standard Row Renderer (Screens 1 & 2)
 function renderRowHtml(it, showStrainBadge = false) {
+    const num = getNextItemNum();
+    const numBadge = `<span class="badge-num">${num}</span>`;
+
     let badge = '';
     if (showStrainBadge) {
         const s = (it.species || 'HYBRID').toUpperCase();
@@ -106,7 +116,7 @@ function renderRowHtml(it, showStrainBadge = false) {
 
     return `
         <div class="p-row ${rowClass}">
-            <div class="p-name">${badge}${pName}${sizeBadge}${tagBadge}${stockBadge}</div>
+            <div class="p-name">${numBadge}${badge}${pName}${sizeBadge}${tagBadge}${stockBadge}</div>
             <div class="p-thc">${thc}</div>
             <div class="p-price">${priceHtml}</div>
         </div>
@@ -115,6 +125,9 @@ function renderRowHtml(it, showStrainBadge = false) {
 
 // Soft Chews 5-Column Row Renderer (Screen 3)
 function renderSoftRow(it) {
+    const num = getNextItemNum();
+    const numBadge = `<span class="badge-num">${num}</span>`;
+
     const spec = (it.species || 'HYBRID').toUpperCase();
     let metaClass = 'meta-hybrid';
     let metaText = 'Hybrid';
@@ -174,7 +187,7 @@ function renderSoftRow(it) {
 
     return `
         <div class="soft-row ${rowClass}">
-            <div class="soft-name">${it.product_name}${sizeBadge}${funcBadge}${tagBadge}${stockBadge}</div>
+            <div class="soft-name">${numBadge}${it.product_name}${sizeBadge}${funcBadge}${tagBadge}${stockBadge}</div>
             <div class="soft-meta ${metaClass}">${metaText}</div>
             <div class="soft-thc">${it.thc || '10mg'}</div>
             <div class="soft-cbd">${it.cbd || '—'}</div>
@@ -246,6 +259,7 @@ function renderSoftCard(cardKey, dataObj) {
 // Main Render Dispatcher
 function renderMenuData(res) {
     if (!res || !res.structured) return;
+    screenItemCounter = 1;
     const mount = document.getElementById('menuMount');
     if (!mount) return;
 

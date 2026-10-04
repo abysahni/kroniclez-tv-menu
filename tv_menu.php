@@ -927,6 +927,24 @@ body {
     opacity: 0.8;
 }
 
+/* Product Sequential Number Badge (Option B) */
+.badge-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    font-weight: 850;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-right: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fde047;
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    display: inline-block;
+    letter-spacing: 0.2px;
+    vertical-align: middle;
+    text-shadow: 0 0 3px rgba(250, 204, 21, 0.25);
+    flex-shrink: 0;
+}
+
 /* Strain Badges */
 .badge-strain {
     font-size: 8px;
@@ -1386,11 +1404,43 @@ body {
         const initialData = <?= $json_injected ?>;
         const currentScreen = <?= $screen ?>;
 
+        let screenItemCounter = 1;
+        function getNextItemNum() {
+            return String(screenItemCounter++).padStart(2, '0');
+        }
+
         function formatCAD(val) {
             return '$' + (parseFloat(val) || 0.0).toFixed(2);
         }
 
+        // Multi-Pack & Bulk Size Micro-Badge Helper
+        function getSizeBadge(productName, variantName) {
+            const text = `${productName || ''} ${variantName || ''}`.toLowerCase();
+            if (text.includes('28g') || text.includes('30g') || text.includes('1 oz') || text.includes('ounce')) {
+                return '<span class="badge-size size-oz">1 OZ (28g)</span>';
+            }
+            if (text.includes('14g') || text.includes('15g') || text.includes('half oz') || text.includes('1/2 oz')) {
+                return '<span class="badge-size size-halfoz">1/2 OZ (14g)</span>';
+            }
+            if (text.includes('10x') || text.includes('10 pack') || text.includes('10-pack') || text.includes('10pk')) {
+                return '<span class="badge-size size-10pk">10-PK</span>';
+            }
+            if (text.includes('5x') || text.includes('5 pack') || text.includes('5-pack') || text.includes('5pk')) {
+                return '<span class="badge-size size-5pk">5-PK</span>';
+            }
+            if (text.includes('4x') || text.includes('3x') || text.includes('variety pack') || text.includes('multi pack') || text.includes('multipack')) {
+                return '<span class="badge-size size-multipk">MULTI-PK</span>';
+            }
+            if (text.includes('2x') || text.includes('2 pack') || text.includes('2-pack') || text.includes('2pk') || text.includes('double up') || text.includes('twofer')) {
+                return '<span class="badge-size size-2pk">2-PK</span>';
+            }
+            return '';
+        }
+
         function renderRowHtml(it, showStrainBadge = false) {
+            const num = getNextItemNum();
+            const numBadge = `<span class="badge-num">${num}</span>`;
+
             let badge = '';
             if (showStrainBadge) {
                 const s = (it.species || 'HYBRID').toUpperCase();
@@ -1402,23 +1452,10 @@ body {
                 ? `<span class="sale">${formatCAD(it.price)}</span><span class="old">${formatCAD(it.old_price)}</span>`
                 : `<span class="regular">${formatCAD(it.price)}</span>`;
 
-            return `
-                <div class="p-row ${(it.tag === 'FEATURED' || (it.is_sale && it.old_price)) ? 'row-featured' : ''}">
-                    <div class="p-name">${badge}${it.product_name || ''}</div>
-                    <div class="p-thc">${it.thc || '28%'}</div>
-                    <div class="p-price">${priceHtml}</div>
-                </div>
-            `;
-        }
-
-        function renderSoftRow(it) {
-            const spec = (it.species || 'HYBRID').toUpperCase();
-            let metaClass = 'meta-hybrid', metaText = 'Hybrid';
-            if (spec.includes('INDICA')) { metaClass = 'meta-indica'; metaText = 'Indica'; }
-            else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
-
             let tagBadge = '';
-            if (it.tag === 'STAFF PICK') {
+            if (it.tag === 'NEW DROP' || it.tag === 'NEW') {
+                tagBadge = '<span class="badge-new-drop">🔥 NEW DROP</span>';
+            } else if (it.tag === 'STAFF PICK') {
                 tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
             } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
                 tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
@@ -1429,6 +1466,50 @@ body {
             if (stockNum > 0 && stockNum <= 3) {
                 stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
             }
+
+            const sizeBadge = getSizeBadge(it.product_name, it.variant);
+
+            const isNewDrop = (it.tag === 'NEW DROP' || it.tag === 'NEW');
+            const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
+            const isStaffPick = (it.tag === 'STAFF PICK');
+            const isLowStock = (!isNewDrop && !isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
+
+            let rowClass = isNewDrop ? 'row-new-drop' : (isFeatured ? 'row-featured' : (isStaffPick ? 'row-staff-pick' : (isLowStock ? 'row-low-stock' : '')));
+
+            return `
+                <div class="p-row ${rowClass}">
+                    <div class="p-name">${numBadge}${badge}${it.product_name || ''}${sizeBadge}${tagBadge}${stockBadge}</div>
+                    <div class="p-thc">${it.thc || '28%'}</div>
+                    <div class="p-price">${priceHtml}</div>
+                </div>
+            `;
+        }
+
+        function renderSoftRow(it) {
+            const num = getNextItemNum();
+            const numBadge = `<span class="badge-num">${num}</span>`;
+
+            const spec = (it.species || 'HYBRID').toUpperCase();
+            let metaClass = 'meta-hybrid', metaText = 'Hybrid';
+            if (spec.includes('INDICA')) { metaClass = 'meta-indica'; metaText = 'Indica'; }
+            else if (spec.includes('SATIVA')) { metaClass = 'meta-sativa'; metaText = 'Sativa'; }
+
+            let tagBadge = '';
+            if (it.tag === 'NEW DROP' || it.tag === 'NEW') {
+                tagBadge = '<span class="badge-new-drop">🔥 NEW DROP</span>';
+            } else if (it.tag === 'STAFF PICK') {
+                tagBadge = '<span class="badge-staff-pick">👑 STAFF PICK</span>';
+            } else if (it.tag === 'FEATURED' || (it.is_sale && it.old_price)) {
+                tagBadge = '<span class="badge-featured">⭐ FEATURED</span>';
+            }
+
+            let stockBadge = '';
+            const stockNum = parseInt(it.stock, 10);
+            if (stockNum > 0 && stockNum <= 3) {
+                stockBadge = `<span class="badge-low-stock">⚠️ ${stockNum === 1 ? 'Last 1 Left!' : `Only ${stockNum} Left!`}</span>`;
+            }
+
+            const sizeBadge = getSizeBadge(it.product_name, it.variant);
 
             let funcBadge = '';
             const pNameLow = (it.product_name || '').toLowerCase();
@@ -1441,16 +1522,15 @@ body {
                 ? `<span class="sale">${formatCAD(it.price)}</span><span class="old">${formatCAD(it.old_price)}</span>`
                 : `<span class="regular">${formatCAD(it.price)}</span>`;
 
+            const isNewDrop = (it.tag === 'NEW DROP' || it.tag === 'NEW');
             const isFeatured = (it.tag === 'FEATURED' || (it.is_sale && it.old_price));
-            const isLowStock = (!isFeatured && stockNum > 0 && stockNum <= 3);
             const isStaffPick = (it.tag === 'STAFF PICK');
-            const isLowStock = (!isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
-            let rowClass = isFeatured ? 'row-featured' : (isStaffPick ? 'row-staff-pick' : (isLowStock ? 'row-low-stock' : ''));
+            const isLowStock = (!isNewDrop && !isFeatured && !isStaffPick && stockNum > 0 && stockNum <= 3);
+            let rowClass = isNewDrop ? 'row-new-drop' : (isFeatured ? 'row-featured' : (isStaffPick ? 'row-staff-pick' : (isLowStock ? 'row-low-stock' : '')));
 
             return `
                 <div class="soft-row ${rowClass}">
-                    const sizeBadge = getSizeBadge(it.product_name, it.variant);
-            return `<div class="soft-row ${rowClass}"><div class="soft-name">${it.product_name}${sizeBadge}${funcBadge}${tagBadge}${stockBadge}</div>
+                    <div class="soft-name">${numBadge}${it.product_name || ''}${sizeBadge}${funcBadge}${tagBadge}${stockBadge}</div>
                     <div class="soft-meta ${metaClass}">${metaText}</div>
                     <div class="soft-thc">${it.thc || '10mg'}</div>
                     <div class="soft-cbd">${it.cbd || '—'}</div>
@@ -1520,6 +1600,8 @@ body {
             if (!res || !res.structured) return;
             const mount = document.getElementById('menuMount');
             if (!mount) return;
+
+            screenItemCounter = 1;
 
             if (currentScreen === 1) {
                 const d = res.structured;
