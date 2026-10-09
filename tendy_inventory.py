@@ -1002,7 +1002,7 @@ class TendyInventoryService:
         try:
             login_payload = json.dumps({
                 "username": config.TENDY_USERNAME or "seabrook@kroniclez.com",
-                "password": config.TENDY_PASSWORD or "Se@brook0107"
+                "password": config.TENDY_PASSWORD or "98133Se@brook"
             }).encode("utf-8")
 
             login_headers = {
@@ -1139,8 +1139,11 @@ class TendyInventoryService:
         if cache_key in self._cache and (now - self._cache_timestamps.get(cache_key, 0)) < 25:
             return self._cache[cache_key]
 
+        raw_items = self.fetch_tendy_raw_inventory()
         feed = None
-        if False:
+        if not raw_items:
+            feed = self.fetch_teamhub_screen_feed(screen_id=1, store_id=store_id)
+        if feed and feed.get("structured"):
             d = feed["structured"]
             ind_items = [it for it in d.get("indica", {}).get("items", []) if not is_accessory(it)]
             for it in ind_items:
@@ -1337,8 +1340,11 @@ class TendyInventoryService:
         if cache_key in self._cache and (now - self._cache_timestamps.get(cache_key, 0)) < 25:
             return self._cache[cache_key]
 
+        raw_items = self.fetch_tendy_raw_inventory()
         feed = None
-        if False:
+        if not raw_items:
+            feed = self.fetch_teamhub_screen_feed(screen_id=2, store_id=store_id)
+        if feed and feed.get("structured"):
             d = feed["structured"]
             f = d.get("flower", {})
             v = d.get("vapes", {})
@@ -1551,8 +1557,11 @@ class TendyInventoryService:
         if cache_key in self._cache and (now - self._cache_timestamps.get(cache_key, 0)) < 25:
             return self._cache[cache_key]
 
+        raw_items = self.fetch_tendy_raw_inventory()
         feed = None
-        if False:
+        if not raw_items:
+            feed = self.fetch_teamhub_screen_feed(screen_id=3, store_id=store_id)
+        if feed and feed.get("structured"):
             d = feed["structured"]
             all_gummies = [it for it in d.get("gummies", {}).get("items", []) if not is_accessory(it)]
             g_ind_hyb = []
