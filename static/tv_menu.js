@@ -571,11 +571,29 @@ function fetchLiveMenu(screenId, storeId) {
                 window.location.reload();
                 return;
             }
-            if (res.success) {
+            const totalCount = res.total_in_stock !== undefined ? res.total_in_stock : (res.total_items || 0);
+            if (res.success && totalCount > 0) {
                 renderMenuData(res);
                 try {
                     localStorage.setItem(`kroniclez_tv_cache_${sId}`, JSON.stringify(res));
                 } catch (e) {}
+            } else {
+                console.warn(`[Kroniclez TV] Preserving active menu: server returned ${totalCount} items (Tendy offline or syncing).`);
+                // If TV just booted and has zero products rendered on screen, restore from localStorage
+                const hasCards = document.querySelectorAll('.product-card, .menu-row, .menu-item').length > 0;
+                if (!hasCards) {
+                    try {
+                        const cached = localStorage.getItem(`kroniclez_tv_cache_${sId}`);
+                        if (cached) {
+                            const parsed = JSON.parse(cached);
+                            const cachedCount = parsed.total_in_stock !== undefined ? parsed.total_in_stock : (parsed.total_items || 0);
+                            if (cachedCount > 0) {
+                                console.log("[Kroniclez TV] Cold boot recovery: restored from browser localStorage.");
+                                renderMenuData(parsed);
+                            }
+                        }
+                    } catch (e) {}
+                }
             }
         })
         .catch(err => {

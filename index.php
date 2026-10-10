@@ -53,44 +53,65 @@ if ($rel_path === '/api/tv-menu' || isset($_GET['api'])) {
     
     $cache_file = sys_get_temp_dir() . "/kroniclez_tv_feed_s{$screen}.json";
     
-    // Check in-memory local disk cache (valid for 20 seconds)
-    if (file_exists($cache_file) && (time() - filemtime($cache_file) < 20)) {
-        echo file_get_contents($cache_file);
-        exit;
+    // Check in-memory local disk cache (valid for 25 seconds if populated)
+    if (file_exists($cache_file) && (time() - filemtime($cache_file) < 25)) {
+        $cached_raw = @file_get_contents($cache_file);
+        $cached_data = json_decode($cached_raw, true);
+        if ($cached_data && !empty($cached_data['success']) && !empty($cached_data['total_in_stock']) && intval($cached_data['total_in_stock']) > 0) {
+            echo $cached_raw;
+            exit;
+        }
     }
     
     // Fetch from live backend engine
     $backend_url = "https://kroniclez-tv-menu-2cmv.onrender.com/api/tv-menu?screen={$screen}&store=1&_t=" . time();
     $ctx = stream_context_create([
         'http' => [
-            'timeout' => 9,
+            'timeout' => 8,
             'header' => "User-Agent: Kroniclez-Hostinger-Proxy/1.0\r\n"
         ]
     ]);
     $json = @file_get_contents($backend_url, false, $ctx);
     
-    if ($json && ($data = json_decode($json, true)) && !empty($data['success'])) {
-        @file_put_contents($cache_file, $json);
-        echo $json;
-        exit;
+    if ($json) {
+        $data = json_decode($json, true);
+        if ($data && !empty($data['success']) && !empty($data['total_in_stock']) && intval($data['total_in_stock']) > 0) {
+            @file_put_contents($cache_file, $json);
+            echo $json;
+            exit;
+        }
     }
     
-    // Fallback: served cached file if cloud is temporarily waking up
+    // Fallback 1: serve cached file if it has valid in-stock items (even if older than 25s)
     if (file_exists($cache_file)) {
-        echo file_get_contents($cache_file);
-        exit;
+        $cached_raw = @file_get_contents($cache_file);
+        $cached_data = json_decode($cached_raw, true);
+        if ($cached_data && !empty($cached_data['total_in_stock']) && intval($cached_data['total_in_stock']) > 0) {
+            echo $cached_raw;
+            exit;
+        }
     }
     
     // Fallback 2: fetch from local teamhub feed
-    $th_url = "https://teamhub.kroniclez.com/api/tv_menu_feed.php?store=1&screen={$screen}";
+    $th_url = "https://teamhub.kroniclez.com/api/tv_menu_feed.php?store=1&screen={$screen}&hide_soldout=1";
     $th_json = @file_get_contents($th_url, false, $ctx);
     if ($th_json) {
-        echo $th_json;
+        $th_data = json_decode($th_json, true);
+        if ($th_data && !empty($th_data['success']) && !empty($th_data['total_items']) && intval($th_data['total_items']) > 0) {
+            echo $th_json;
+            exit;
+        }
+    }
+    
+    // Fallback 3: served cached file regardless
+    if (file_exists($cache_file)) {
+        echo @file_get_contents($cache_file);
         exit;
     }
     
     echo json_encode([
         "success" => false, 
+        "total_in_stock" => 0,
         "message" => "Inventory feed connecting... please wait"
     ]);
     exit;

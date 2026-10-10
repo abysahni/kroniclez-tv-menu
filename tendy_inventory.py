@@ -913,6 +913,19 @@ class TendyInventoryService:
             self.ssl_context.check_hostname = False
             self.ssl_context.verify_mode = ssl.CERT_NONE
 
+        # Preload disk snapshot on server boot so menus are never empty even if Tendy is offline
+        try:
+            snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
+            if snapshot_file.exists():
+                with open(snapshot_file, "r", encoding="utf-8") as sf:
+                    disk_items = json.load(sf)
+                    if isinstance(disk_items, list) and len(disk_items) > 0:
+                        self._raw_inventory_cache = disk_items
+                        self._raw_cache_time = time.time()
+                        print(f"📦 Preloaded {len(disk_items)} inventory items from disk snapshot.")
+        except Exception as e:
+            print(f"⚠️ Snapshot preload note: {e}")
+
     def clear_cache(self):
         self._cache = {}
         self._cache_timestamps = {}
@@ -1102,9 +1115,40 @@ class TendyInventoryService:
                 if in_stock_items:
                     self._raw_inventory_cache = in_stock_items
                     self._raw_cache_time = now
+                    try:
+                        snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
+                        with open(snapshot_file, "w", encoding="utf-8") as sf:
+                            json.dump(in_stock_items, sf)
+                    except Exception:
+                        pass
+                elif not self._raw_inventory_cache:
+                    # Restore from disk snapshot if live API returned empty
+                    try:
+                        snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
+                        if snapshot_file.exists():
+                            with open(snapshot_file, "r", encoding="utf-8") as sf:
+                                disk_items = json.load(sf)
+                                if isinstance(disk_items, list) and len(disk_items) > 0:
+                                    self._raw_inventory_cache = disk_items
+                                    self._raw_cache_time = now
+                    except Exception:
+                        pass
+
                 return self._raw_inventory_cache
         except Exception as e:
             print(f"⚠️ Tendy POS inventory fetch error: {e}")
+            # Restore from disk snapshot on exception if memory cache is empty
+            if not self._raw_inventory_cache:
+                try:
+                    snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
+                    if snapshot_file.exists():
+                        with open(snapshot_file, "r", encoding="utf-8") as sf:
+                            disk_items = json.load(sf)
+                            if isinstance(disk_items, list) and len(disk_items) > 0:
+                                self._raw_inventory_cache = disk_items
+                                self._raw_cache_time = now
+                except Exception:
+                    pass
             token = self._authenticate_tendy()
             if token and not force_refresh:
                 return self.fetch_tendy_raw_inventory(force_refresh=True)
