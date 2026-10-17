@@ -99,68 +99,42 @@ VALID_TARGET_SECTIONS = {
 def get_item_target_section(it: Dict[str, Any]) -> str:
     """
     Determines which menu section an item belongs to across Screen 1, 2, and 3.
-    1. Checks budtender category overrides from product_overrides.json (highest priority).
-    2. Falls back to POS category metadata and product name patterns.
+    Filters products strictly using the exact value in the Category column.
+    Do not perform any text matching, keyword searching, or regex parsing within Product Name or Description.
     """
-    raw_name = it.get("product_name") or it.get("name") or ""
-    name_low = str(raw_name).lower().strip()
-    raw_cat = it.get("category") or it.get("category_name") or it.get("categoryName") or ""
-    cat_low = (raw_cat.get("name") if isinstance(raw_cat, dict) else str(raw_cat)).lower().strip()
-    raw_brand = it.get("brand") or ""
-    brand_low = (raw_brand.get("name") if isinstance(raw_brand, dict) else str(raw_brand)).lower().strip()
-    full_low = f"{brand_low} {name_low} {cat_low}".strip()
+    raw_cat = it.get("categoryName") or it.get("category") or it.get("Category") or it.get("category_name") or ""
+    if isinstance(raw_cat, dict):
+        cat = str(raw_cat.get("name") or "").strip()
+    else:
+        cat = str(raw_cat).strip()
 
-    # 1. Check custom Category Overrides first
-    cat_overrides = load_product_overrides().get("category_overrides", {})
-    matched_cat_key, target_sec = find_matching_override(raw_name, brand_low, cat_overrides)
-    if matched_cat_key and target_sec:
-        target_norm = str(target_sec).strip().upper()
-        if target_norm in VALID_TARGET_SECTIONS:
-            return target_norm
+    # Screen 1 exact categories
+    if cat == "Pre-Rolls":
+        return "PRE_ROLLS"
+    elif cat == "Infused Pre-Rolls":
+        return "INFUSED_PREROLLS"
 
-    # 2. Fallback to POS categorization
-    non_infused_blunt_patterns = ["wes' coast kush", "bird watcher", "billy blunt", "juicy blunt", "dutchy blunt"]
-    is_non_infused_blunt = any(p in name_low for p in non_infused_blunt_patterns)
-
-    # Screen 1 candidates: Pre-rolls & Infused Pre-Rolls
-    if not any(k in cat_low for k in ["cartridge", "vape", "disposable", "flower", "concentrate", "extract", "chocolate", "chew", "gummy", "beverage", "drink", "oil", "capsule", "topical"]) \
-       and not any(k in name_low for k in ["cartridge", "510", "disposable", "battery", "vape"]):
-        if any(k in cat_low for k in ["pre-roll", "preroll", "pre roll", "blunt"]) or any(k in name_low for k in ["pre-roll", "preroll", "joint", "blunt"]):
-            if not is_non_infused_blunt and ("infused" in cat_low or "infused" in name_low or "disty" in name_low):
-                return "INFUSED_PREROLLS"
-            return "PRE_ROLLS"
-
-    # Screen 2 candidates: Flower & Vapes
-    if "flower" in cat_low or "dried" in cat_low or "milled" in cat_low:
-        if "milled" in cat_low or "milled" in name_low:
-            return "FLOWER_MILLED"
+    # Screen 2 exact categories
+    elif cat == "Flower":
         return "FLOWER_DRIED"
-
-    if "510 cartridge" in cat_low or "510" in name_low or ("vape" in cat_low and not any(k in name_low for k in ["disposable", "all-in-one", "aio"])):
+    elif cat == "Milled Flower":
+        return "FLOWER_MILLED"
+    elif cat == "510 Cartridges":
         return "VAPES_510"
-
-    if "disposable" in cat_low or ("vape" in cat_low and any(k in name_low for k in ["disposable", "all-in-one", "aio"])):
+    elif cat in ["Disposable Vapes", "Vapes"]:
         return "VAPES_DISPOSABLE"
 
-    # Screen 3 candidates: Edibles, Drinks, Concentrates, Wellness
-    if "chocolate" in cat_low or "chocolate" in name_low or "bhang" in full_low or "chowie" in full_low:
-        return "CHOCOLATES"
-
-    if "soft chew" in cat_low or "gummy" in name_low or "gummies" in name_low or "chew" in name_low or "sourz" in full_low or "pearls" in full_low:
-        return "GUMMIES"
-
-    if "beverage" in cat_low or "drink" in name_low or "tea" in name_low or "seltzer" in name_low or "soda" in name_low or "cola" in name_low:
-        return "BEVERAGES"
-
-    if "concentrate" in cat_low or "extract" in cat_low or "hash" in name_low or "shatter" in name_low or "wax" in name_low or "diamonds" in name_low:
+    # Screen 3 exact categories
+    elif cat == "Concentrates":
         return "CONCENTRATES"
-
-    if "oil" in cat_low or "drop" in cat_low or "topical" in cat_low or "capsule" in cat_low or "wellness" in cat_low or "moonrocks" in name_low:
+    elif cat == "Beverages":
+        return "BEVERAGES"
+    elif cat in ["Soft Chews", "Gummies"]:
+        return "GUMMIES"
+    elif cat == "Chocolates":
+        return "CHOCOLATES"
+    elif cat in ["Oils & Capsules", "Topicals", "Oils", "Capsules", "Wellness"]:
         return "WELLNESS"
-
-    # Default fallback
-    if any(k in cat_low for k in ["pre-roll", "preroll", "blunt"]) or any(k in name_low for k in ["joint", "blunt", "pre-roll"]):
-        return "PRE_ROLLS"
 
     return "UNKNOWN"
 
@@ -332,29 +306,18 @@ def compute_item_pricing(it: Dict[str, Any], screen_id: int = 1) -> Dict[str, An
     }
 
 def is_accessory(it: Dict[str, Any]) -> bool:
-    """Filter out non-cannabis accessories (batteries, papers, lighters, grinders)."""
-    raw_cat = it.get("category") or it.get("category_name") or it.get("categoryName") or ""
+    """Filter out non-cannabis accessories strictly using the exact Category column."""
+    raw_cat = it.get("categoryName") or it.get("category") or it.get("Category") or it.get("category_name") or ""
     if isinstance(raw_cat, dict):
-        cat = str(raw_cat.get("name") or "").lower()
+        cat = str(raw_cat.get("name") or "").strip()
     else:
-        cat = str(raw_cat).lower()
-        
-    raw_name = it.get("product_name") or it.get("name") or ""
-    name = str(raw_name).lower()
-    
-    if any(k in cat for k in [
-        "accessory", "accessories", "paper", "lighter", "lighers", "battery", "batteries",
-        "grinder", "device", "glass", "pipe", "tray", "cleaning", "merchandise",
-        "apparel", "gear", "vape battery", "bongs", "scale", "cone"
-    ]):
-        return True
-        
-    if any(k in name for k in [
-        "raw classic", "raw organic", "rolling paper", "filter tips", "cone 6 pack",
-        "cone 3 pack", "bic lighter", "clipper", "510 battery", "uni pro",
-        "grinder", "rolling tray", "bong", "pipe", "cleaning swab", "iso-shine"
-    ]):
-        return True
+        cat = str(raw_cat).strip()
+
+    accessory_categories = {
+        "Accessories", "510 Battery", "Bongs", "Grinder", "Lighers", "Lighters",
+        "Pre Rolled Cone", "Rolling Papers", "Scale", "Tray", "Device", "Glass", "Pipe", "Cleaning", "Apparel"
+    }
+    return cat in accessory_categories
 
 def clean_product_title(name: str, brand: str = "", variant: str = "", screen_id: int = 1) -> str:
     """Format and clean product title cleanly with brand, name, and size (e.g. BRAND • Strain Name 1x0.5g)."""
@@ -387,232 +350,38 @@ def clean_product_title(name: str, brand: str = "", variant: str = "", screen_id
 
     return re.sub(r'\s+', ' ', final).strip(" -:•")
         
-STRAIN_DATABASE_PREROLL = {
-    # SPECIFIC SATIVA OVERRIDES (Checked first)
-    "blueberry dream": "SATIVA",
-    "pink rozay": "SATIVA",
-    "cherry boat": "SATIVA",
-    "juicy blunt": "SATIVA",
-    "fruit punch": "SATIVA",
-    "fruit punch slims": "SATIVA",
-    "double dutchies": "SATIVA",
-    "double up": "SATIVA",
-    "pineapple nuken": "SATIVA",
-    "maui wowie": "SATIVA",
-    "lil buddy sativa": "SATIVA",
-    "tropical pocket puffs": "SATIVA",
-    "sativa pre-roll": "SATIVA",
-    "pineapple express": "SATIVA",
-    "lavender haze": "SATIVA",
-    "zsweet": "SATIVA",
-    "rooster call": "SATIVA",
-    "roll up sativa": "SATIVA",
-    "fruit loopz": "SATIVA",
-    "animal face": "SATIVA",
-    "crumbled lime": "SATIVA",
-    "lemon shocker": "SATIVA",
-    "lemon diesel": "SATIVA",
-    "sour chem": "SATIVA",
+def get_item_strain(it: Any) -> str:
+    """
+    Evaluate the Strain column strictly for an exact match.
+    Do not perform any text matching, keyword searching, or regex parsing within Product Name or Description.
+    Returns: 'SATIVA', 'HYBRID', or 'INDICA'.
+    """
+    if isinstance(it, dict):
+        raw = it.get("strain") or it.get("Strain") or it.get("species") or it.get("Species") or it.get("strainType") or ""
+        if isinstance(raw, dict):
+            raw = raw.get("name") or ""
+    elif isinstance(it, str):
+        raw = it
+    else:
+        raw = ""
 
-    # SPECIFIC HYBRID OVERRIDES
-    "10th planet": "HYBRID",
-    "sour kush": "HYBRID",
-    "blue magic": "HYBRID",
-    "backpackers blue magic": "HYBRID",
-    "panama gold": "HYBRID",
-    "peggys puff": "HYBRID",
-    "sgt. pineapple": "HYBRID",
-    "sgt pineapple": "HYBRID",
-    "plg #7": "HYBRID",
-    "pink lemon gas": "HYBRID",
-    "liquid imagination": "HYBRID",
-    "billy blunt": "HYBRID",
-    "forbidden applez": "HYBRID",
-    "twofer": "HYBRID",
-    "opp sativa - indica": "HYBRID",
-    "animal mintz": "HYBRID",
-    "grape diamonds": "HYBRID",
-    "rolls pre-roll": "HYBRID",
+    s = str(raw).strip().lower()
+    if s == "sativa":
+        return "SATIVA"
+    elif s in ["hybrid", "blend"]:
+        return "HYBRID"
+    elif s == "indica":
+        return "INDICA"
+    return "HYBRID"
 
-    # SPECIFIC INDICA OVERRIDES
-    "junior j": "INDICA",
-    "animal rntz": "INDICA",
-    "diesel pocket puffs": "INDICA",
-    "bahama berry": "INDICA",
-    "cali kush": "INDICA",
-    "blueberry": "INDICA",
-    "zombie kush": "INDICA",
-    "strawberry pie": "INDICA",
-    "permanent marker": "INDICA",
-    "pink drip": "INDICA",
-    "kush cookies": "INDICA",
-    "frozen grapes": "INDICA",
-    "couch potato": "INDICA",
-    "triangle kush": "INDICA",
-    "pink moon": "INDICA",
-    "uk cheddar cheese": "INDICA",
-    "pink kush": "INDICA",
-    "wedding cake": "INDICA",
-    "indica pre-roll": "INDICA",
-    "roll up indica": "INDICA",
-    "lil buddy indica": "INDICA",
-    "dutchy blunt": "INDICA",
-    "dutchy": "INDICA",
-    "fire breath": "INDICA",
-    "backpackers fire breath": "INDICA",
-    "wes' coast kush": "INDICA",
-    "wes' coast kush blunt": "INDICA",
-    "bird watchers": "INDICA",
-    "bird watchers blunts": "INDICA",
-}
+def classify_preroll(it_or_name: Any, brand: str = "") -> str:
+    return get_item_strain(it_or_name)
 
-def classify_preroll(name: str, brand: str = "") -> str:
-    full = f"{brand} {name}".lower()
-    name_low = name.lower()
-    overrides = load_product_overrides().get("species_overrides", {})
-    matched_k, species = find_matching_override(name, brand, overrides)
-    if matched_k and species:
-        return species
-    for pattern, species in STRAIN_DATABASE_PREROLL.items():
-        if pattern in full or pattern in name_low:
-            return species
-    if "sativa" in full: return "SATIVA"
-    if "indica" in full: return "INDICA"
-    return "HYBRID" 
+def classify_flower(it_or_name: Any, brand: str = "") -> str:
+    return get_item_strain(it_or_name)
 
-STRAIN_DATABASE_FLOWER = {
-    # INDICA
-    "blueberry muffinz": "INDICA",
-    "couch potato": "INDICA",
-    "gmo cookies": "INDICA",
-    "kush cookies": "INDICA",
-    "purple cherry punch": "INDICA",
-    "cali kush": "INDICA",
-    "cropped blueberry": "INDICA",
-    "sapphire kush": "INDICA",
-    "strawberry pie": "INDICA",
-    "pure milled - indica": "INDICA",
-    "pure milled indica": "INDICA",
-    "pop n’ pour blue raspberry": "INDICA",
-    "pop n pour blue raspberry": "INDICA",
-    "pink kush": "INDICA",
-    "gasberry kush": "INDICA",
-    "gasberry": "INDICA",
-    "fire breath": "INDICA",
-
-    # SATIVA
-    "dragon cake": "SATIVA",
-    "strawnana": "SATIVA",
-    "pop'n'pour strawnana": "SATIVA",
-    "pop 'n' pour strawnana": "SATIVA",
-    "pop n’ pour strawnana": "SATIVA",
-    "pop n pour strawnana": "SATIVA",
-    "cosmic lemonade": "SATIVA",
-    "frosted lemons": "SATIVA",
-    "ripped sativa": "SATIVA",
-    "rooster call": "SATIVA",
-    "sour chem": "SATIVA",
-    "strawberry cheezequake": "SATIVA",
-    "tutti frutti crunchy puff": "SATIVA",
-    "citrus sweet": "SATIVA",
-    "lemon pave": "SATIVA",
-    "maui wowie": "SATIVA",
-    "pure milled - sativa": "SATIVA",
-    "pure milled sativa": "SATIVA",
-
-    # HYBRID
-    "chromatica": "HYBRID",
-    "chubby nuggies": "HYBRID",
-    "farmer’s market": "HYBRID",
-    "farmers market": "HYBRID",
-    "frosted cream puffs": "HYBRID",
-    "moon drifter": "HYBRID",
-    "secret formula": "HYBRID",
-    "the goods": "HYBRID",
-    "the handy harvest": "HYBRID",
-    "do-si-dos": "HYBRID",
-    "sgt. pineapple": "HYBRID"
-}
-
-def classify_flower(name: str, brand: str = "") -> str:
-    full = f"{brand} {name}".lower()
-    name_low = name.lower()
-    overrides = load_product_overrides().get("species_overrides", {})
-    matched_k, species = find_matching_override(name, brand, overrides)
-    if matched_k and species:
-        return species
-    for pattern, species in STRAIN_DATABASE_FLOWER.items():
-        if pattern in full or pattern in name_low:
-            return species
-    if "sativa" in full: return "SATIVA"
-    if "indica" in full: return "INDICA"
-    return "HYBRID" 
-
-STRAIN_DATABASE_VAPE = {
-    # INDICA
-    "blue razz": "INDICA",
-    "blue venom": "INDICA",
-    "blueberry kush": "INDICA",
-    "cherry liquid diamond": "INDICA",
-    "blue zello": "INDICA",
-    "hawaiian za": "INDICA",
-    "jungle fruit": "INDICA",
-    "lemon freeze": "INDICA",
-    "blood orange tangie": "INDICA",
-    "tiger blood": "INDICA",
-    "watermelon splash": "INDICA",
-    "wild berry": "INDICA",
-    "fruit punch bowl": "INDICA",
-    "mango fuzz": "INDICA",
-    "watermelon ice": "INDICA",
-
-    # HYBRID
-    "banana og": "HYBRID",
-    "fruity gobstomper": "HYBRID",
-    "fruity gobbstomper": "HYBRID",
-    "blueberry octane": "HYBRID",
-    "macchiato gold": "HYBRID",
-    "strawberry banana": "HYBRID",
-    "ninja fruit": "HYBRID",
-    "poppin peach": "HYBRID",
-    "alien og": "HYBRID",
-    "kush mint": "HYBRID",
-    "lemonade classic": "HYBRID",
-    "drift mode": "HYBRID",
-    "fuel cell - drift mode": "HYBRID",
-    "fuel cell": "HYBRID",
-
-    # SATIVA
-    "acapulco gold": "SATIVA",
-    "blue kiwi": "SATIVA",
-    "cloudberry": "SATIVA",
-    "strawberry": "SATIVA",
-    "pink grapefruit": "SATIVA",
-    "mango sour": "SATIVA",
-    "mosa x blood orange": "SATIVA",
-    "peach shockwave": "SATIVA",
-    "sticky grape": "SATIVA",
-    "strawberry lemonade": "SATIVA",
-    "blue daze": "SATIVA",
-    "pineapple paradise": "SATIVA",
-    "peach lemonade": "SATIVA",
-    "rainbow melon": "SATIVA",
-    "sunset sherb": "SATIVA"
-}
-
-def classify_vape(name: str, brand: str = "") -> str:
-    full = f"{brand} {name}".lower()
-    name_low = name.lower()
-    overrides = load_product_overrides().get("species_overrides", {})
-    matched_k, species = find_matching_override(name, brand, overrides)
-    if matched_k and species:
-        return species
-    for pattern, species in STRAIN_DATABASE_VAPE.items():
-        if pattern in full or pattern in name_low:
-            return species
-    if "sativa" in full: return "SATIVA"
-    if "indica" in full: return "INDICA"
-    return "HYBRID" 
+def classify_vape(it_or_name: Any, brand: str = "") -> str:
+    return get_item_strain(it_or_name)
 
 # =========================================================================
 # KRONICLEZ AUTHENTIC LAB-TESTED THC & CBD POTENCY DATABASE
@@ -971,17 +740,8 @@ class TendyInventoryService:
 
             if matched_sp_key and sp_val:
                 cur_species = sp_val
-            elif screen == 1:
-                cur_species = classify_preroll(name, brand)
-            elif screen == 2:
-                cur_species = classify_flower(name, brand) if "FLOWER" in target_sec or "flower" in cat.lower() else classify_vape(name, brand)
             else:
-                if any(k in clean_t for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
-                    cur_species = "SATIVA"
-                elif "indica" in clean_t or "blueberry" in name_t or "cbn" in name_t:
-                    cur_species = "INDICA"
-                else:
-                    cur_species = "HYBRID"
+                cur_species = get_item_strain(it)
 
             potency = lookup_authentic_potency(name, brand, screen)
             pricing_calc = compute_item_pricing(it, screen)
@@ -1076,17 +836,7 @@ class TendyInventoryService:
                 return self._raw_inventory_cache
 
         loc_id = config.TENDY_LOCATION_ID or "dc9449a7-953b-47a1-9dcc-ffe3c64be8c9"
-        inv_payload = json.dumps({
-            "date": get_toronto_now().strftime("%Y-%m-%d"),
-            "locationIds": [loc_id],
-            "productIds": [],
-            "categoryIds": [],
-            "inStock": True,
-            "includeLot": False
-        }).encode("utf-8")
-
         inv_headers = {
-            "Content-Type": "application/json",
             "Accept": "application/json",
             "Authorization": f"Bearer {token}",
             "api_token": "laymXDAzvJ8lW24jNxZKivmkTFnZBi42",
@@ -1096,21 +846,42 @@ class TendyInventoryService:
         }
 
         try:
+            # Primary: Native Tendy POS Location Catalog endpoint (includes exact categoryName and strain columns)
             req = urllib.request.Request(
-                "https://product.api.tendypos.net/api/inventory-snapshots/getReportData",
-                data=inv_payload,
+                f"https://product.api.tendypos.net/api/product/location/{loc_id}",
                 headers=inv_headers,
-                method="POST"
+                method="GET"
             )
-            with urllib.request.urlopen(req, context=self.ssl_context, timeout=15) as resp:
+            with urllib.request.urlopen(req, context=self.ssl_context, timeout=12) as resp:
                 inv_data = json.loads(resp.read().decode("utf-8"))
                 records = inv_data.get("payload") or []
                 in_stock_items = []
                 for item in records:
-                    pricing = item.get("productPricing") or {}
-                    stock = pricing.get("stock", 0)
-                    if stock and float(stock) > 0 and not is_accessory(item):
-                        in_stock_items.append(item)
+                    if is_accessory(item):
+                        continue
+                    stock = float(item.get("ppiStock") or item.get("ppiActiveStock") or 0)
+                    if stock <= 0:
+                        continue
+                    sale_p = float(item.get("ppiSalePrice") or item.get("ppiPrice") or 0.0)
+                    cost_p = float(item.get("ppiCost") or 0.0)
+                    cat_name = str(item.get("categoryName") or "").strip()
+                    strain_val = str(item.get("strain") or "").strip()
+
+                    item["category"] = {"name": cat_name}
+                    item["categoryName"] = cat_name
+                    item["strain"] = strain_val
+                    item["species"] = strain_val.title()
+                    if not item.get("productPricing"):
+                        item["productPricing"] = {
+                            "sale_price": sale_p,
+                            "cost": cost_p,
+                            "stock": int(stock)
+                        }
+                    else:
+                        item["productPricing"]["sale_price"] = sale_p
+                        item["productPricing"]["cost"] = cost_p
+                        item["productPricing"]["stock"] = int(stock)
+                    in_stock_items.append(item)
                 
                 if in_stock_items:
                     self._raw_inventory_cache = in_stock_items
@@ -1118,41 +889,63 @@ class TendyInventoryService:
                     try:
                         snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
                         with open(snapshot_file, "w", encoding="utf-8") as sf:
-                            json.dump(in_stock_items, sf)
+                            json.dump(in_stock_items, sf, indent=2)
                     except Exception:
                         pass
-                elif not self._raw_inventory_cache:
-                    # Restore from disk snapshot if live API returned empty
-                    try:
-                        snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
-                        if snapshot_file.exists():
-                            with open(snapshot_file, "r", encoding="utf-8") as sf:
-                                disk_items = json.load(sf)
-                                if isinstance(disk_items, list) and len(disk_items) > 0:
-                                    self._raw_inventory_cache = disk_items
-                                    self._raw_cache_time = now
-                    except Exception:
-                        pass
+                    return self._raw_inventory_cache
 
-                return self._raw_inventory_cache
         except Exception as e:
-            print(f"⚠️ Tendy POS inventory fetch error: {e}")
-            # Restore from disk snapshot on exception if memory cache is empty
-            if not self._raw_inventory_cache:
-                try:
-                    snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
-                    if snapshot_file.exists():
-                        with open(snapshot_file, "r", encoding="utf-8") as sf:
-                            disk_items = json.load(sf)
-                            if isinstance(disk_items, list) and len(disk_items) > 0:
-                                self._raw_inventory_cache = disk_items
-                                self._raw_cache_time = now
-                except Exception:
-                    pass
-            token = self._authenticate_tendy()
-            if token and not force_refresh:
-                return self.fetch_tendy_raw_inventory(force_refresh=True)
-            return self._raw_inventory_cache
+            print(f"⚠️ Tendy POS location catalog fetch note: {e}")
+
+        # Secondary Fallback: Report data endpoint
+        try:
+            inv_payload = json.dumps({
+                "date": get_toronto_now().strftime("%Y-%m-%d"),
+                "locationIds": [loc_id],
+                "productIds": [],
+                "categoryIds": [],
+                "inStock": True,
+                "includeLot": False
+            }).encode("utf-8")
+            post_headers = dict(inv_headers)
+            post_headers["Content-Type"] = "application/json"
+
+            req2 = urllib.request.Request(
+                "https://product.api.tendypos.net/api/inventory-snapshots/getReportData",
+                data=inv_payload,
+                headers=post_headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(req2, context=self.ssl_context, timeout=12) as resp2:
+                inv_data2 = json.loads(resp2.read().decode("utf-8"))
+                records2 = inv_data2.get("payload") or []
+                in_stock_items2 = []
+                for item in records2:
+                    pricing = item.get("productPricing") or {}
+                    stock = pricing.get("stock", 0)
+                    if stock and float(stock) > 0 and not is_accessory(item):
+                        in_stock_items2.append(item)
+                if in_stock_items2:
+                    self._raw_inventory_cache = in_stock_items2
+                    self._raw_cache_time = now
+                    return self._raw_inventory_cache
+        except Exception as e2:
+            print(f"⚠️ Tendy POS report fallback fetch error: {e2}")
+
+        # Final Fallback: Restore from disk snapshot if memory cache is empty
+        if not self._raw_inventory_cache:
+            try:
+                snapshot_file = config.BASE_DIR / "last_known_good_inventory.json"
+                if snapshot_file.exists():
+                    with open(snapshot_file, "r", encoding="utf-8") as sf:
+                        disk_items = json.load(sf)
+                        if isinstance(disk_items, list) and len(disk_items) > 0:
+                            self._raw_inventory_cache = disk_items
+                            self._raw_cache_time = now
+            except Exception:
+                pass
+
+        return self._raw_inventory_cache
 
     def fetch_teamhub_screen_feed(self, screen_id: int = 1, store_id: int = 1) -> Optional[Dict[str, Any]]:
         """Fetch curated live store feed from Kroniclez backend."""
@@ -1216,41 +1009,21 @@ class TendyInventoryService:
                 if not it.get("thc") or it.get("thc") == "30%":
                     it["thc"] = lookup_authentic_potency(it.get("product_name", ""), it.get("brand", ""), screen_id=1)["thc"]
             
-            known_inf = " ".join([(it.get("product_name") or "").lower() for it in inf_items])
-            if "strawberry cough" not in known_inf:
-                inf_items.append({
-                    "product_name": "CLAYBOURNE • Flyers Frosted Infused Strawberry Cough 3x0.5g",
-                    "species": "Sativa",
-                    "price": 26.96,
-                    "brand": "Claybourne",
-                    "thc": "38.5%",
-                    "is_sale": False
-                })
-            if "diamond infused strawberry" not in known_inf:
-                inf_items.append({
-                    "product_name": "JAYS • High Potency 50+ Diamond Infused Strawberry 3x0.5g",
-                    "species": "Sativa",
-                    "price": 24.43,
-                    "brand": "Jays",
-                    "thc": "54.0%",
-                    "is_sale": False
-                })
-
             inf_ind = []
             inf_hyb = []
             inf_sat = []
 
             for it in inf_items:
-                name_low = (it.get("product_name") or "").lower()
-                spec_low = (it.get("species") or "").lower()
-                if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
-                    it["species"] = "SATIVA"
+                it["product_name"] = clean_product_title(it.get("product_name", ""), it.get("brand", ""), screen_id=1)
+                if not it.get("thc") or it.get("thc") == "30%":
+                    it["thc"] = lookup_authentic_potency(it.get("product_name", ""), it.get("brand", ""), screen_id=1)["thc"]
+                spec = get_item_strain(it)
+                it["species"] = spec
+                if spec == "SATIVA":
                     inf_sat.append(it)
-                elif any(k in name_low for k in ["watermelon z", "berry white", "grapey grape", "northern lights", "pink gas", "purple punch", "titanimal"]) or "indica" in spec_low:
-                    it["species"] = "INDICA"
+                elif spec == "INDICA":
                     inf_ind.append(it)
                 else:
-                    it["species"] = "HYBRID"
                     inf_hyb.append(it)
 
             result = {
@@ -1289,11 +1062,7 @@ class TendyInventoryService:
             if target_sec not in ["PRE_ROLLS", "INFUSED_PREROLLS"]:
                 continue
 
-            cat = (it.get("category") or {}).get("name", "")
             name = it.get("name", "")
-            cat_low = cat.lower()
-            name_low = name.lower()
-
             pricing = it.get("productPricing") or {}
             price = pricing.get("sale_price", 0)
             stock = pricing.get("stock", 0)
@@ -1316,17 +1085,10 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
+            spec = get_item_strain(it)
+            entry["species"] = spec
+
             if target_sec == "INFUSED_PREROLLS":
-                spec = classify_preroll(name, brand)
-                full_low = f"{brand} {name}".lower()
-                overrides = load_product_overrides().get("species_overrides", {})
-                has_explicit_override = bool(find_matching_override(name, brand, overrides)[0])
-                if not has_explicit_override and spec == "HYBRID":
-                    if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
-                        spec = "SATIVA"
-                    elif any(k in name_low for k in ["watermelon z", "berry white", "grapey grape", "northern lights", "pink gas", "purple punch", "titanimal"]):
-                        spec = "INDICA"
-                entry["species"] = spec
                 if spec == "SATIVA":
                     inf_sat.append(entry)
                 elif spec == "INDICA":
@@ -1336,8 +1098,6 @@ class TendyInventoryService:
                 inf_items.append(entry)
 
             else:  # PRE_ROLLS
-                spec = classify_preroll(name, brand)
-                entry["species"] = spec
                 if spec == "INDICA":
                     ind_items.append(entry)
                 elif spec == "SATIVA":
@@ -1516,9 +1276,10 @@ class TendyInventoryService:
                 "promo_name": pricing_data.get("promo_name")
             }
 
+            spec = get_item_strain(it)
+            entry["species"] = spec
+
             if target_sec == "FLOWER_DRIED":
-                spec = classify_flower(name, brand)
-                entry["species"] = spec
                 if spec == "SATIVA":
                     sat_dr.append(entry)
                 elif spec == "INDICA":
@@ -1527,8 +1288,6 @@ class TendyInventoryService:
                     hyb_dr.append(entry)
 
             elif target_sec == "FLOWER_MILLED":
-                spec = classify_flower(name, brand)
-                entry["species"] = spec
                 if spec == "SATIVA":
                     sat_mil.append(entry)
                 elif spec == "INDICA":
@@ -1537,8 +1296,6 @@ class TendyInventoryService:
                     hyb_mil.append(entry)
 
             elif target_sec == "VAPES_510":
-                spec = classify_vape(name, brand)
-                entry["species"] = spec
                 if spec == "SATIVA":
                     v510_sat.append(entry)
                 elif spec == "INDICA":
@@ -1547,8 +1304,6 @@ class TendyInventoryService:
                     v510_hyb.append(entry)
 
             elif target_sec == "VAPES_DISPOSABLE":
-                spec = classify_vape(name, brand)
-                entry["species"] = spec
                 if spec == "SATIVA":
                     disp_sat.append(entry)
                 elif spec == "INDICA":
@@ -1612,40 +1367,32 @@ class TendyInventoryService:
             g_sat = []
 
             for it in all_gummies:
-                spec = (it.get("species") or "HYBRID").upper()
+                spec = get_item_strain(it)
+                it["species"] = spec
                 it["product_name"] = clean_product_title(it.get("product_name", ""), it.get("brand", ""), screen_id=3)
-                if "SATIVA" in spec:
-                    it["species"] = "SATIVA"
+                if spec == "SATIVA":
                     g_sat.append(it)
-                elif "INDICA" in spec:
-                    it["species"] = "INDICA"
-                    g_ind_hyb.append(it)
                 else:
-                    it["species"] = "HYBRID"
                     g_ind_hyb.append(it)
 
             concentrates = [it for it in d.get("concentrates", {}).get("items", []) if not is_accessory(it)]
             for it in concentrates:
-                spec = (it.get("species") or "HYBRID").upper()
-                it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
+                it["species"] = get_item_strain(it)
                 it["product_name"] = clean_product_title(it.get("product_name", ""), it.get("brand", ""), screen_id=3)
 
             beverages = [it for it in d.get("beverages", {}).get("items", []) if not is_accessory(it)]
             for it in beverages:
-                spec = (it.get("species") or "HYBRID").upper()
-                it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
+                it["species"] = get_item_strain(it)
                 it["product_name"] = clean_product_title(it.get("product_name", ""), it.get("brand", ""), screen_id=3)
 
             chocolates = [it for it in d.get("chocolates", {}).get("items", []) if not is_accessory(it)]
             for it in chocolates:
-                spec = (it.get("species") or "HYBRID").upper()
-                it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
+                it["species"] = get_item_strain(it)
                 it["product_name"] = clean_product_title(it.get("product_name", ""), it.get("brand", ""), screen_id=3)
 
             wellness = [it for it in d.get("wellness", {}).get("items", []) if not is_accessory(it)]
             for it in wellness:
-                spec = (it.get("species") or "HYBRID").upper()
-                it["species"] = "SATIVA" if "SATIVA" in spec else ("INDICA" if "INDICA" in spec else "HYBRID")
+                it["species"] = get_item_strain(it)
                 it["product_name"] = clean_product_title(it.get("product_name", ""), it.get("brand", ""), screen_id=3)
 
             g_ind_hyb_card = {
@@ -1702,10 +1449,6 @@ class TendyInventoryService:
             stock = pricing.get("stock", 0)
             brand = (it.get("brand") or {}).get("name", "")
             var = it.get("variantName", "")
-            
-            cat_low = cat.lower()
-            name_low = name.lower()
-            full_low = f"{brand} {name} {cat}".lower()
 
             p_title = clean_product_title(name, brand, var, screen_id=3)
             potency = lookup_authentic_potency(name, brand, screen_id=3)
@@ -1726,12 +1469,7 @@ class TendyInventoryService:
             species_ov = load_product_overrides().get("species_overrides", {})
             matched_sp, spec = find_matching_override(name, brand, species_ov)
             if not spec:
-                if any(k in full_low for k in ["sativa", "strawberry mango", "wild strawberry", "pink lemonade", "sunny drift", "blue razzleberry", "sour blue one"]):
-                    spec = "SATIVA"
-                elif "indica" in full_low or "blueberry" in name_low or "cbn" in name_low:
-                    spec = "INDICA"
-                else:
-                    spec = "HYBRID"
+                spec = get_item_strain(it)
             entry["species"] = spec
 
             if target_sec == "CHOCOLATES":

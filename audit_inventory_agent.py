@@ -26,14 +26,11 @@ sys.path.insert(0, str(BASE_DIR))
 import config
 from tendy_inventory import (
     inventory_service,
-    classify_preroll,
-    classify_vape,
     clean_product_title,
     lookup_authentic_potency,
     is_accessory,
-    STRAIN_DATABASE_PREROLL,
-    STRAIN_DATABASE_FLOWER,
-    STRAIN_DATABASE_VAPE
+    get_item_target_section,
+    get_item_strain
 )
 
 class InventoryAuditAgent:
@@ -69,81 +66,54 @@ class InventoryAuditAgent:
         price = float(pricing.get("sale_price", 0) or 0)
         stock = int(pricing.get("stock", 0) or 0)
 
-        # 1. Filter Accessories
-        if is_accessory(item) or "accessory" in cat.lower():
+        # 1. Filter Accessories strictly using exact Category
+        if is_accessory(item):
             return {"is_accessory": True, "sku": sku_id, "name": name}
 
-        # 2. Determine Expected Screen & Subcategory
-        cat_low = cat.lower()
-        name_low = name.lower()
-        full_text = f"{brand} {name} {cat} {var}".lower()
-
+        # 2. Determine Expected Screen & Subcategory strictly from exact Category
+        target_sec = get_item_target_section(item)
         screen_assigned = None
         target_subcategory = None
 
-        if "infused pre-roll" in cat_low or ("infused" in name_low and "pre-roll" in cat_low):
+        if target_sec == "INFUSED_PREROLLS":
             screen_assigned = 1
             target_subcategory = "Infused Pre-Rolls"
-        elif "pre-roll" in cat_low:
+        elif target_sec == "PRE_ROLLS":
             screen_assigned = 1
             target_subcategory = "Standard Pre-Rolls"
-        elif "dried flower" in cat_low or "milled" in cat_low or "flower" in cat_low:
+        elif target_sec == "FLOWER_DRIED":
             screen_assigned = 2
-            target_subcategory = "Dried / Milled Flower"
-        elif "510" in cat_low or "cartridge" in cat_low:
+            target_subcategory = "Dried Flower"
+        elif target_sec == "FLOWER_MILLED":
+            screen_assigned = 2
+            target_subcategory = "Milled Flower"
+        elif target_sec == "VAPES_510":
             screen_assigned = 2
             target_subcategory = "510 Cartridges"
-        elif "disposable" in cat_low or "all-in-one" in name_low or "disposable" in name_low:
+        elif target_sec == "VAPES_DISPOSABLE":
             screen_assigned = 2
             target_subcategory = "All-in-One Disposables"
-        elif "beverage" in cat_low or "drink" in cat_low:
+        elif target_sec == "BEVERAGES":
             screen_assigned = 3
             target_subcategory = "Infused Beverages"
-        elif "soft chew" in cat_low or "gummy" in name_low or "chew" in name_low or "edible" in cat_low:
+        elif target_sec == "GUMMIES":
             screen_assigned = 3
             target_subcategory = "Soft Chews & Gummies"
-        elif "chocolate" in cat_low or "chocolate" in name_low:
+        elif target_sec == "CHOCOLATES":
             screen_assigned = 3
             target_subcategory = "Artisan Chocolates"
-        elif any(k in cat_low for k in ["concentrate", "extract", "rosin", "shatter", "hash", "wax", "diamond"]):
+        elif target_sec == "CONCENTRATES":
             screen_assigned = 3
             target_subcategory = "Concentrates & Extracts"
-        elif any(k in cat_low for k in ["topical", "oil", "capsule", "tincture", "cream", "wellness"]):
+        elif target_sec == "WELLNESS":
             screen_assigned = 3
             target_subcategory = "Oils, Drops & Wellness"
         else:
             screen_assigned = 3
             target_subcategory = "Specialty"
 
-        # 3. Strain Detection
-        detected_strain = "HYBRID"
-        if target_subcategory == "Infused Pre-Rolls":
-            if any(k in name_low for k in ["strawberry cough", "blue dream", "berry sunshine", "diamond infused strawberry"]):
-                detected_strain = "SATIVA"
-            elif any(k in name_low for k in ["watermelon z", "berry white", "grapey grape", "northern lights", "pink gas", "purple punch", "titanimal"]):
-                detected_strain = "INDICA"
-            else:
-                detected_strain = "HYBRID"
-        elif target_subcategory == "Standard Pre-Rolls":
-            detected_strain = classify_preroll(name, brand)
-        elif target_subcategory == "Dried / Milled Flower":
-            for pat, sp in STRAIN_DATABASE_FLOWER.items():
-                if pat in full_text:
-                    detected_strain = sp
-                    break
-            else:
-                if any(k in full_text for k in ["sativa", "lemon", "sour", "haze", "diesel", "tangie", "mango", "sunshine", "cough", "acapulco", "jack", "linx", "grapefruit", "shockwave", "sticky"]):
-                    detected_strain = "SATIVA"
-                elif any(k in full_text for k in ["indica", "kush", "pink", "purple", "bubba", "berry", "og", "punch", "sleep", "lights", "zello", "venom", "freeze", "tiger", "cherry"]):
-                    detected_strain = "INDICA"
-                else:
-                    detected_strain = "HYBRID"
-        elif "510" in target_subcategory or "Disposable" in target_subcategory:
-            detected_strain = classify_vape(name, brand)
-        else:
-            if "sativa" in full_text: detected_strain = "SATIVA"
-            elif "indica" in full_text: detected_strain = "INDICA"
-            else: detected_strain = "HYBRID"
+        # 3. Strain Detection strictly using exact Strain column
+        detected_strain = get_item_strain(item)
 
         # 4. Potency Check
         potency_info = lookup_authentic_potency(name, brand, screen_assigned)

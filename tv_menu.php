@@ -154,26 +154,18 @@ function fetchTendyInventory($config) {
         if (is_array($data) && count($data) > 0) return $data;
     }
 
-    $payload = json_encode([
-        'locationId' => $config['location_id'],
-        'page' => 1,
-        'limit' => 500,
-        'status' => 'IN_STOCK'
-    ]);
-
+    $url = 'https://product.api.tendypos.net/api/product/location/' . $config['location_id'];
     $headers = [
-        'Content-Type: application/json',
-        'Authorization: ' . $config['auth_token'],
-        'token: ' . $config['product_token'],
+        'Accept: application/json',
+        'Authorization: Bearer ' . $config['auth_token'],
+        'api_token: ' . $config['product_token'],
         'User-Agent: Kroniclez-TV-Menu/2.0'
     ];
 
-    $ch = curl_init($config['product_api_url']);
+    $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 12);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
     $resp = curl_exec($ch);
@@ -182,10 +174,32 @@ function fetchTendyInventory($config) {
 
     if ($http_code == 200 && $resp) {
         $res = json_decode($resp, true);
-        $items = isset($res['data']) ? $res['data'] : (isset($res['items']) ? $res['items'] : []);
-        if (is_array($items) && count($items) > 0) {
-            file_put_contents($cache_file, json_encode($items));
-            return $items;
+        $records = isset($res['payload']) ? $res['payload'] : [];
+        if (is_array($records) && count($records) > 0) {
+            $items = [];
+            $acc_cats = ['Accessories', '510 Battery', 'Bongs', 'Grinder', 'Lighers', 'Lighters', 'Pre Rolled Cone', 'Rolling Papers', 'Scale', 'Tray', 'Device', 'Glass', 'Pipe', 'Cleaning', 'Apparel'];
+            foreach ($records as $item) {
+                $cat = isset($item['categoryName']) ? trim(strval($item['categoryName'])) : '';
+                if (in_array($cat, $acc_cats)) continue;
+                $stock = floatval(isset($item['ppiStock']) ? $item['ppiStock'] : (isset($item['ppiActiveStock']) ? $item['ppiActiveStock'] : 0));
+                if ($stock <= 0) continue;
+                $price = floatval(isset($item['ppiSalePrice']) ? $item['ppiSalePrice'] : (isset($item['ppiPrice']) ? $item['ppiPrice'] : 0.0));
+                $cost = floatval(isset($item['ppiCost']) ? $item['ppiCost'] : 0.0);
+                $item['category'] = ['name' => $cat];
+                $item['categoryName'] = $cat;
+                $item['strain'] = isset($item['strain']) ? $item['strain'] : '';
+                $item['species'] = ucfirst(strtolower(strval($item['strain'])));
+                $item['productPricing'] = [
+                    'sale_price' => $price,
+                    'cost' => $cost,
+                    'stock' => intval($stock)
+                ];
+                $items[] = $item;
+            }
+            if (count($items) > 0) {
+                file_put_contents($cache_file, json_encode($items));
+                return $items;
+            }
         }
     }
 
@@ -238,43 +252,20 @@ function isHappyHourActive() {
     return ($hour >= 13 && $hour < 16);
 }
 
-function classifyStrain($name, $brand) {
-    $full = strtolower("$brand $name");
-    
-    // Explicit Sativa overrides
-    if (strpos($full, "blueberry dream") !== false) return "SATIVA";
-    if (strpos($full, "pink rozay") !== false) return "SATIVA";
-    if (strpos($full, "cherry boat") !== false) return "SATIVA";
-    if (strpos($full, "juicy blunt") !== false) return "SATIVA";
-    if (strpos($full, "fruit punch") !== false) return "SATIVA";
-    if (strpos($full, "double up") !== false || strpos($full, "double dutchies") !== false) return "SATIVA";
-    if (strpos($full, "pineapple nuken") !== false) return "SATIVA";
-    if (strpos($full, "dragon cake") !== false) return "SATIVA";
-    if (strpos($full, "strawnana") !== false) return "SATIVA";
-    if (strpos($full, "pop n pour strawnana") !== false || strpos($full, "pop'n'pour strawnana") !== false) return "SATIVA";
-
-    // Explicit Hybrid overrides
-    if (strpos($full, "10th planet") !== false) return "HYBRID";
-    if (strpos($full, "sour kush") !== false) return "HYBRID";
-    if (strpos($full, "blue magic") !== false) return "HYBRID";
-    if (strpos($full, "panama gold") !== false) return "HYBRID";
-    if (strpos($full, "peggys puff") !== false) return "HYBRID";
-    if (strpos($full, "sgt. pineapple") !== false || strpos($full, "sgt pineapple") !== false) return "HYBRID";
-    if (strpos($full, "plg #7") !== false || strpos($full, "pink lemon gas") !== false) return "HYBRID";
-
-    // Explicit Indica overrides
-    if (strpos($full, "junior j") !== false) return "INDICA";
-    if (strpos($full, "animal rntz") !== false) return "INDICA";
-    if (strpos($full, "diesel pocket puffs") !== false) return "INDICA";
-    if (strpos($full, "bahama berry") !== false) return "INDICA";
-    if (strpos($full, "dutchy") !== false) return "INDICA";
-    if (strpos($full, "fire breath") !== false) return "INDICA";
-    if (strpos($full, "pink kush") !== false) return "INDICA";
-    if (strpos($full, "gasberry") !== false) return "INDICA";
-
-    // Generic keyword fallback
-    if (preg_replace('/\b(sativa|lemon|sour|haze|diesel|tangie|mango|sunshine|cough|acapulco|jack|linx|grapefruit|shockwave|sticky)\b/', '', $full) !== $full) return 'SATIVA';
-    if (preg_replace('/\b(indica|kush|pink|purple|bubba|berry|og|punch|sleep|lights|zello|venom|freeze|tiger|cherry)\b/', '', $full) !== $full) return 'INDICA';
+function getExactStrain($it) {
+    $raw = '';
+    if (is_array($it)) {
+        if (!empty($it['strain'])) $raw = $it['strain'];
+        elseif (!empty($it['species'])) $raw = $it['species'];
+        elseif (!empty($it['Strain'])) $raw = $it['Strain'];
+        elseif (!empty($it['Species'])) $raw = $it['Species'];
+    } elseif (is_string($it)) {
+        $raw = $it;
+    }
+    $s = strtolower(trim(strval($raw)));
+    if ($s === 'sativa') return 'SATIVA';
+    if ($s === 'hybrid' || $s === 'blend') return 'HYBRID';
+    if ($s === 'indica') return 'INDICA';
     return 'HYBRID';
 }
 
@@ -282,23 +273,22 @@ function classifyStrain($name, $brand) {
 $raw = fetchTendyInventory($TENDY_CONFIG);
 
 if ($screen === 1) {
-    // Screen 1: Pre-Rolls
+    // Screen 1: Pre-Rolls & Infused Pre-Rolls
     $ind = []; $hyb = []; $sat = []; $inf = []; $inf_ind = []; $inf_hyb = []; $inf_sat = [];
     foreach ($raw as $it) {
-        $cat = isset($it['category']['name']) ? $it['category']['name'] : '';
+        $cat = isset($it['categoryName']) ? trim(strval($it['categoryName'])) : (isset($it['category']['name']) ? trim(strval($it['category']['name'])) : '');
+        if ($cat !== 'Pre-Rolls' && $cat !== 'Infused Pre-Rolls') continue;
+
         $name = isset($it['name']) ? $it['name'] : '';
-        $brand = isset($it['brand']['name']) ? $it['brand']['name'] : '';
+        $brand = isset($it['brand']['name']) ? $it['brand']['name'] : (is_string($it['brand'] ?? null) ? $it['brand'] : '');
         $var = isset($it['variantName']) ? $it['variantName'] : '';
         $pricing = isset($it['productPricing']) ? $it['productPricing'] : [];
         $price = isset($pricing['sale_price']) ? floatval($pricing['sale_price']) : 0.0;
         $stock = isset($pricing['stock']) ? intval($pricing['stock']) : 0;
-        if ($stock <= 0 || stripos($cat, 'accessories') !== false) continue;
-        if (stripos($cat, 'pre-roll') !== false || stripos($cat, 'cartridge') !== false || stripos($cat, 'disposable') !== false || stripos($cat, 'flower') !== false || stripos($cat, 'milled') !== false) continue;
-        if (stripos($name, 'joint') !== false || stripos($name, 'blunt') !== false || stripos($name, 'vape') !== false || stripos($name, 'cartridge') !== false || stripos($name, '510 ') !== false) continue;
+        if ($stock <= 0) continue;
 
         $p_title = cleanTitle($name, $brand, $var, 1);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '28.5%');
-        $sku_id = isset($it['id']) ? strval($it['id']) : (isset($it['sku']) ? strval($it['sku']) : '');
         $cost = isset($pricing["cost"]) ? floatval($pricing["cost"]) : 0.0;
         $markup = isset($pricing["markup"]) ? floatval($pricing["markup"]) : 0.0;
         $reg_p = ($cost > 0 && $markup > 0) ? round($cost * (1.0 + ($markup / 100.0)), 2) : $price;
@@ -309,8 +299,10 @@ if ($screen === 1) {
             $is_promo = false;
             $old_price = null;
         }
+        $spec = getExactStrain($it);
         $entry = [
             'product_name' => $p_title,
+            'species' => $spec,
             'price' => $price,
             'old_price' => $old_price,
             'brand' => $brand,
@@ -319,16 +311,12 @@ if ($screen === 1) {
             'is_sale' => $is_promo
         ];
 
-        if (stripos($cat, 'Infused') !== false || stripos($name, 'infused') !== false) {
-            $spec = classifyStrain($name, $brand);
-            $entry['species'] = $spec;
+        if ($cat === 'Infused Pre-Rolls') {
             if ($spec === 'SATIVA') $inf_sat[] = $entry;
             elseif ($spec === 'INDICA') $inf_ind[] = $entry;
             else $inf_hyb[] = $entry;
             $inf[] = $entry;
-        } elseif (stripos($cat, 'Pre-Roll') !== false) {
-            $spec = classifyStrain($name, $brand);
-            $entry['species'] = $spec;
+        } else {
             if ($spec === 'INDICA') $ind[] = $entry;
             elseif ($spec === 'SATIVA') $sat[] = $entry;
             else $hyb[] = $entry;
@@ -353,48 +341,44 @@ if ($screen === 1) {
     $v_ind = []; $v_hyb = []; $v_sat = []; $d_ind = []; $d_hyb = []; $d_sat = [];
 
     foreach ($raw as $it) {
-        $cat = isset($it['category']['name']) ? $it['category']['name'] : '';
+        $cat = isset($it['categoryName']) ? trim(strval($it['categoryName'])) : (isset($it['category']['name']) ? trim(strval($it['category']['name'])) : '');
+        if ($cat !== 'Flower' && $cat !== 'Milled Flower' && $cat !== '510 Cartridges' && $cat !== 'Disposable Vapes' && $cat !== 'Vapes') continue;
+
         $name = isset($it['name']) ? $it['name'] : '';
-        $brand = isset($it['brand']['name']) ? $it['brand']['name'] : '';
+        $brand = isset($it['brand']['name']) ? $it['brand']['name'] : (is_string($it['brand'] ?? null) ? $it['brand'] : '');
         $var = isset($it['variantName']) ? $it['variantName'] : '';
         $pricing = isset($it['productPricing']) ? $it['productPricing'] : [];
         $price = isset($pricing['sale_price']) ? floatval($pricing['sale_price']) : 0.0;
         $stock = isset($pricing['stock']) ? intval($pricing['stock']) : 0;
-        if ($stock <= 0 || stripos($cat, 'accessories') !== false) continue;
-        if (stripos($cat, 'pre-roll') !== false || stripos($cat, 'cartridge') !== false || stripos($cat, 'disposable') !== false || stripos($cat, 'flower') !== false || stripos($cat, 'milled') !== false) continue;
-        if (stripos($name, 'joint') !== false || stripos($name, 'blunt') !== false || stripos($name, 'vape') !== false || stripos($name, 'cartridge') !== false || stripos($name, '510 ') !== false) continue;
+        if ($stock <= 0) continue;
 
         $p_title = cleanTitle($name, $brand, $var, 2);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '88.0%');
-        $n_low = strtolower($name);
-        $is_promo = (strpos($n_low, 'sapphire kush') === false && strpos($n_low, 'dragon cake') === false);
-        $old_price = ($is_promo && $price > 0) ? round($price / 0.90, 2) : null;
+        $spec = getExactStrain($it);
         $entry = [
             'product_name' => $p_title,
+            'species' => $spec,
             'price' => $price,
-            'old_price' => $old_price,
+            'old_price' => null,
             'brand' => $brand,
             'thc' => $pot['thc'],
             'cbd' => $pot['cbd'],
-            'is_sale' => $is_promo
+            'is_sale' => false
         ];
 
-        if (stripos($cat, 'Dried Flower') !== false || stripos($cat, 'Milled') !== false) {
-            $spec = classifyStrain($name, $brand);
-            $entry['species'] = $spec;
-            $is_milled = stripos($cat, 'Milled') !== false || stripos($name, 'milled') !== false;
-            if ($spec === 'INDICA') { if ($is_milled) $f_ind_m[] = $entry; else $f_ind[] = $entry; }
-            elseif ($spec === 'SATIVA') { if ($is_milled) $f_sat_m[] = $entry; else $f_sat[] = $entry; }
-            else { if ($is_milled) $f_hyb_m[] = $entry; else $f_hyb[] = $entry; }
-        } elseif (stripos($cat, '510') !== false || (stripos($cat, 'Cartridge') !== false && stripos($cat, 'Disposable') === false)) {
-            $spec = classifyStrain($name, $brand);
-            $entry['species'] = $spec;
+        if ($cat === 'Flower') {
+            if ($spec === 'INDICA') $f_ind[] = $entry;
+            elseif ($spec === 'SATIVA') $f_sat[] = $entry;
+            else $f_hyb[] = $entry;
+        } elseif ($cat === 'Milled Flower') {
+            if ($spec === 'INDICA') $f_ind_m[] = $entry;
+            elseif ($spec === 'SATIVA') $f_sat_m[] = $entry;
+            else $f_hyb_m[] = $entry;
+        } elseif ($cat === '510 Cartridges') {
             if ($spec === 'INDICA') $v_ind[] = $entry;
             elseif ($spec === 'SATIVA') $v_sat[] = $entry;
             else $v_hyb[] = $entry;
-        } elseif (stripos($cat, 'Disposable') !== false || stripos($name, 'disposable') !== false || stripos($name, 'all-in-one') !== false) {
-            $spec = classifyStrain($name, $brand);
-            $entry['species'] = $spec;
+        } elseif ($cat === 'Disposable Vapes' || $cat === 'Vapes') {
             if ($spec === 'INDICA') $d_ind[] = $entry;
             elseif ($spec === 'SATIVA') $d_sat[] = $entry;
             else $d_hyb[] = $entry;
@@ -423,40 +407,39 @@ if ($screen === 1) {
     $bev = []; $g_ind_hyb = []; $g_sat = []; $choc = []; $conc = []; $well = [];
 
     foreach ($raw as $it) {
-        $cat = isset($it['category']['name']) ? $it['category']['name'] : '';
+        $cat = isset($it['categoryName']) ? trim(strval($it['categoryName'])) : (isset($it['category']['name']) ? trim(strval($it['category']['name'])) : '');
         $name = isset($it['name']) ? $it['name'] : '';
-        $brand = isset($it['brand']['name']) ? $it['brand']['name'] : '';
+        $brand = isset($it['brand']['name']) ? $it['brand']['name'] : (is_string($it['brand'] ?? null) ? $it['brand'] : '');
         $var = isset($it['variantName']) ? $it['variantName'] : '';
         $pricing = isset($it['productPricing']) ? $it['productPricing'] : [];
         $price = isset($pricing['sale_price']) ? floatval($pricing['sale_price']) : 0.0;
         $stock = isset($pricing['stock']) ? intval($pricing['stock']) : 0;
-        if ($stock <= 0 || stripos($cat, 'accessories') !== false) continue;
-        if (stripos($cat, 'pre-roll') !== false || stripos($cat, 'cartridge') !== false || stripos($cat, 'disposable') !== false || stripos($cat, 'flower') !== false || stripos($cat, 'milled') !== false) continue;
-        if (stripos($name, 'joint') !== false || stripos($name, 'blunt') !== false || stripos($name, 'vape') !== false || stripos($name, 'cartridge') !== false || stripos($name, '510 ') !== false) continue;
+        if ($stock <= 0) continue;
 
         $p_title = cleanTitle($name, $brand, $var, 3);
         $pot = lookupPotency($name, $brand, $POTENCY_MAP, '10mg');
-        $spec = classifyStrain($name, $brand);
+        $spec = getExactStrain($it);
         $entry = [
             'product_name' => $p_title,
             'species' => $spec,
             'price' => $price,
+            'old_price' => null,
             'brand' => $brand,
             'thc' => $pot['thc'],
             'cbd' => $pot['cbd'],
-            'is_sale' => true
+            'is_sale' => false
         ];
 
-        if (stripos($cat, 'Beverage') !== false || stripos($cat, 'Drink') !== false) {
+        if ($cat === 'Beverages') {
             $bev[] = $entry;
-        } elseif (stripos($cat, 'Chocolate') !== false || stripos($name, 'chocolate') !== false) {
+        } elseif ($cat === 'Chocolates') {
             $choc[] = $entry;
-        } elseif (stripos($cat, 'Soft Chew') !== false || stripos($cat, 'Gummies') !== false || stripos($cat, 'Edible') !== false) {
+        } elseif ($cat === 'Soft Chews' || $cat === 'Gummies') {
             if ($spec === 'SATIVA') $g_sat[] = $entry;
             else $g_ind_hyb[] = $entry;
-        } elseif (stripos($cat, 'Concentrate') !== false || stripos($cat, 'Extract') !== false || stripos($cat, 'Rosin') !== false || stripos($cat, 'Shatter') !== false) {
+        } elseif ($cat === 'Concentrates') {
             $conc[] = $entry;
-        } elseif (stripos($cat, 'Topical') !== false || stripos($cat, 'Oil') !== false || stripos($cat, 'Capsule') !== false) {
+        } elseif (in_array($cat, ['Oils & Capsules', 'Topicals', 'Oils', 'Capsules', 'Wellness'])) {
             $well[] = $entry;
         }
     }
