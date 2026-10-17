@@ -1183,11 +1183,11 @@
 
                     <!-- Slider for continuous fine tuning -->
                     <div class="slider-track-wrap">
-                        <input type="range" id="scaleSlider" min="70" max="115" step="1" value="86" class="scale-slider" oninput="onScaleSliderInput(this.value)">
+                        <input type="range" id="scaleSlider" min="70" max="135" step="1" value="88" class="scale-slider" oninput="onScaleSliderInput(this.value)">
                         <div class="scale-slider-labels">
-                            <span><i class="bi bi-zoom-out"></i> 70% (Ultra-Dense / Fits Small TVs)</span>
-                            <span style="color:#facc15; font-weight: 800;">● 86% Balanced Default</span>
-                            <span>115% (Extra Large) <i class="bi bi-zoom-in"></i></span>
+                            <span><i class="bi bi-zoom-out"></i> 70% (Ultra-Dense)</span>
+                            <span style="color:#facc15; font-weight: 800;">● 88% Standard Fit</span>
+                            <span>135% (Huge 4K Display) <i class="bi bi-zoom-in"></i></span>
                         </div>
                     </div>
                 </div>
@@ -1198,9 +1198,10 @@
                     <div class="scale-presets-group">
                         <button type="button" class="preset-btn" onclick="applyScalePreset(75)">Extra Small (75%)</button>
                         <button type="button" class="preset-btn" onclick="applyScalePreset(82)">Small / Dense (82%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(86)">Compact (86%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(92)">Medium (92%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(100)">Large / 1080p (100%)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(88)">Compact (88%)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(100)">Large / 100%</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(110)">65" TV / 4K (110%)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(120)">Huge 4K (120%)</button>
                     </div>
                 </div>
 
@@ -1603,12 +1604,12 @@
             const badge = document.getElementById('scaleSliderLabel');
             let desc = 'Balanced';
             if (num <= 75) desc = 'Extra Small — Maximum Screen Fit';
-            else if (num <= 82) desc = 'Small — Fits 35+ SKUs on TV 1';
-            else if (num <= 86) desc = 'Compact — Recommended Default';
-            else if (num <= 92) desc = 'Medium — Balanced';
-            else if (num < 100) desc = 'Comfortable Large';
-            else if (num === 100) desc = 'Large / 100% Standard 1080p';
-            else desc = 'Extra Large';
+            else if (num <= 82) desc = 'Small — Dense Catalog';
+            else if (num <= 88) desc = 'Compact — Standard Fit (Recommended)';
+            else if (num <= 95) desc = 'Medium — Balanced';
+            else if (num <= 105) desc = 'Large — 100% 1080p';
+            else if (num <= 118) desc = 'Extra Large — 65"+ TV Fit';
+            else desc = 'Huge — 4K Ultra HD Display';
 
             if (badge) {
                 badge.innerText = `${num}% (${desc})`;
@@ -1632,8 +1633,8 @@
         function adjustScaleStep(delta) {
             const slider = document.getElementById('scaleSlider');
             if (!slider) return;
-            const current = parseInt(slider.value) || 86;
-            const next = Math.max(70, Math.min(115, current + delta));
+            const current = parseInt(slider.value) || 88;
+            const next = Math.max(70, Math.min(135, current + delta));
             slider.value = next;
             onScaleSliderInput(next);
         }

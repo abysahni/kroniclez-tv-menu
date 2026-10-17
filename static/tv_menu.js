@@ -351,16 +351,24 @@ function showTvScaleHud(scaleVal) {
     }, 2200);
 }
 
+function setTvZoomAndDimensions(scaleVal) {
+    const valid = Math.max(65, Math.min(140, parseInt(scaleVal) || 88));
+    const factor = valid / 100;
+    document.body.style.zoom = factor;
+    // Critical 65-inch / 4K TV fix: dynamically expand body coordinates so rendered width and height ALWAYS fill 100% of the physical TV display
+    document.body.style.width = (100 / factor) + 'vw';
+    document.body.style.height = (100 / factor) + 'vh';
+    document.documentElement.style.setProperty('--tv-scale', factor.toString());
+    document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
+    return valid;
+}
+
 function applyTvDisplayScale(scaleVal, showHud = false) {
-    const valid = Math.max(60, Math.min(125, parseInt(scaleVal) || 84));
+    const valid = setTvZoomAndDimensions(scaleVal);
     currentTvScale = valid;
     lastAppliedBaseScale = valid;
     lastAutoFitScale = null; // explicit change resets auto-fit
     
-    const factor = valid / 100;
-    document.body.style.zoom = factor;
-    document.documentElement.style.setProperty('--tv-scale', factor.toString());
-    document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
     if (showHud) {
         showTvScaleHud(valid);
     }
@@ -403,37 +411,29 @@ function checkAndAutoFitScreen() {
             }
         }
 
-        // Also check if document body has scrollable vertical overflow
-        const bodyDiff = document.body.scrollHeight - window.innerHeight;
-
-        if (maxExceededPx > 2 || bodyDiff > 4) {
+        if (maxExceededPx > 4) {
             let fitRatio = 1.0;
             if (worstPanel && worstPanelH > 50) {
                 const availableH = allowedMaxBottom - worstPanelTop;
                 if (availableH > 150) {
                     fitRatio = availableH / worstPanelH;
                 }
-            } else if (bodyDiff > 4) {
-                fitRatio = (window.innerHeight - bottomSafetyPadding) / document.body.scrollHeight;
             }
 
-            if (fitRatio < 0.999) {
-                const newScale = Math.max(60, Math.floor(currentTvScale * fitRatio) - 1);
+            if (fitRatio < 0.99) {
+                const newScale = Math.max(68, Math.floor(currentTvScale * fitRatio) - 1);
                 if (newScale < currentTvScale) {
                     isAutoFitting = true;
                     console.log(`[Kroniclez TV] Screen auto-fit: Content exceeds TV bottom by ${Math.round(maxExceededPx)}px. Micro-scaling from ${currentTvScale}% to ${newScale}% to guarantee 100% on-screen fit.`);
                     currentTvScale = newScale;
                     lastAutoFitScale = newScale;
-                    const factor = newScale / 100;
-                    document.body.style.zoom = factor;
-                    document.documentElement.style.setProperty('--tv-scale', factor.toString());
-                    document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
+                    setTvZoomAndDimensions(newScale);
 
                     // Follow-up check to guarantee zero remaining overflow
                     setTimeout(() => {
                         isAutoFitting = false;
                         checkAndAutoFitScreen();
-                    }, 80);
+                    }, 120);
                     return;
                 }
             }
@@ -497,7 +497,7 @@ function renderMenuData(res) {
     if (scaleChanged) {
         applyTvDisplayScale(activeScale, false);
     } else if (lastAutoFitScale && lastAutoFitScale < currentTvScale) {
-        document.body.style.zoom = (lastAutoFitScale / 100);
+        setTvZoomAndDimensions(lastAutoFitScale);
     }
     lastRenderedScreenId = screen;
 
