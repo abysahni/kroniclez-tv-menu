@@ -1,5 +1,5 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 61;
+let CURRENT_APP_VERSION = 59;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
@@ -623,9 +623,16 @@ function fetchLiveMenu(screenId, storeId) {
         })
         .then(res => {
             if (res.asset_version && res.asset_version > CURRENT_APP_VERSION) {
-                console.log(`[Kroniclez TV] Detected new client version ${res.asset_version} (current: ${CURRENT_APP_VERSION}). Auto-refreshing TV view...`);
-                window.location.reload();
-                return;
+                const reloadKey = `kroniclez_reloaded_v${res.asset_version}`;
+                if (!sessionStorage.getItem(reloadKey)) {
+                    sessionStorage.setItem(reloadKey, '1');
+                    console.log(`[Kroniclez TV] Detected new client version ${res.asset_version} (current: ${CURRENT_APP_VERSION}). Refreshing once...`);
+                    window.location.reload();
+                    return;
+                } else {
+                    console.warn(`[Kroniclez TV] Running version ${CURRENT_APP_VERSION} while server reports ${res.asset_version}. Reload loop prevented; adopting version.`);
+                    CURRENT_APP_VERSION = res.asset_version;
+                }
             }
             const totalCount = res.total_in_stock !== undefined ? res.total_in_stock : (res.total_items || 0);
             if (res.success && totalCount > 0) {
