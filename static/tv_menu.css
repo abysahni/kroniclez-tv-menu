@@ -6,17 +6,10 @@
     -webkit-user-select: none;
 }
 
-:root {
-    --tv-scale: 0.86;
-    --tv-text-scale: 0.86;
-}
-
 html {
     background: #000000;
     font-size: 16px;
-    width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 body {
@@ -24,14 +17,10 @@ body {
     color: #ffffff;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     width: 100vw;
-    height: 100vh;
-    min-width: 100vw;
     min-height: 100vh;
-    overflow: hidden;
-    padding: 4px 8px 8px 8px;
+    padding: 6px 8px 10px 8px;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
 }
 
 /* Ambient Particle Background Canvas */
@@ -420,7 +409,7 @@ body {
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Screen 1 Enhanced Typography & Visibility (Pre-Rolls) */
+/* Screen 1 Enhanced Typography & Visibility (Pre-Rolls - 2% Scaled for Perfect Fullscreen Fit) */
 .container-prerolls {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1.25fr;
@@ -432,130 +421,61 @@ body {
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
     align-items: center;
-    padding: 0.6px 0;
+    padding: 0.8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 750;
-    line-height: 1.1;
+    line-height: 1.15;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 11.8px;
+    font-size: 14.5px;
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 12px;
+    font-size: 14.8px;
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 8.8px;
+    font-size: 9.5px;
     font-weight: 700;
 }
 .container-prerolls .title {
-    font-size: 14px;
+    font-size: 17.5px;
     font-weight: 900;
     padding-bottom: 2px;
     margin-bottom: 2px;
     letter-spacing: 0.4px;
 }
 .container-prerolls .subhead {
-    font-size: 9.5px;
+    font-size: 11.5px;
     font-weight: 800;
-    margin: 1.5px 0 1px;
+    margin: 2px 0 1px;
     padding-bottom: 1px;
 }
 .container-prerolls .table-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
-    font-size: 8.5px;
+    font-size: 9.5px;
     font-weight: 800;
     margin: 1px 0;
     padding-bottom: 1px;
 }
 .container-prerolls .panel {
-    padding: 2px 5px;
-    border-radius: 6px;
+    padding: 3px 6px;
+    border-radius: 7px;
 }
-
-/* Column 4 (Infused Pre-Rolls) Ultra-Fit Density: Ensures 34+ items fit 100% on screen */
-.container-prerolls .panel:nth-child(4) .p-row {
-    padding: 0.15px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.container-prerolls .panel:nth-child(4) .p-name {
-    font-size: 10.8px;
-    line-height: 1.05;
-    padding-right: 3px;
-}
-.container-prerolls .panel:nth-child(4) .p-thc {
-    font-size: 10.8px;
-}
-.container-prerolls .panel:nth-child(4) .p-price .regular {
-    font-size: 11.2px;
-}
-.container-prerolls .panel:nth-child(4) .p-price .sale {
-    font-size: 11.5px;
-}
-.container-prerolls .panel:nth-child(4) .subhead {
-    margin: 1px 0 0.5px;
-    padding-bottom: 0.5px;
-    font-size: 9px;
-}
-.container-prerolls .panel:nth-child(4) .table-header {
-    margin: 0.5px 0;
-    padding-bottom: 0.5px;
-    font-size: 8px;
-}
-
-/* Column 3 (Sativa Pre-Rolls) High Density Optimization (31 items) */
-.container-prerolls .panel:nth-child(3) .p-row {
-    padding: 0.35px 0;
-}
-.container-prerolls .panel:nth-child(3) .p-name {
-    line-height: 1.06;
-}
-
-/* Column 1 (Indica Pre-Rolls) High Density Optimization (29 items) */
-.container-prerolls .panel:nth-child(1) .p-row {
-    padding: 0.4px 0;
-}
-.container-prerolls .panel:nth-child(1) .p-name {
-    line-height: 1.06;
-}
-
-/* On-Screen Scale HUD Pill */
-.tv-scale-hud {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: rgba(9, 10, 15, 0.92);
-    border: 1.5px solid #38bdf8;
-    color: #38bdf8;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.3);
-    z-index: 99999;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none;
-    font-family: 'JetBrains Mono', monospace;
-}
-.tv-scale-hud.show {
-    opacity: 1;
-    transform: translateY(0);
+.container-prerolls .badge-num {
+    font-size: 10px;
+    padding: 1px 4.5px;
+    margin-right: 4.5px;
 }
 
 /* Screen 2 Targeted Micro-Adjustment (Indica & Hybrid Flower Column Fit) */

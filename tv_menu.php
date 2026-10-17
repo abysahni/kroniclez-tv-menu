@@ -737,7 +737,7 @@ body {
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Screen 1 Enhanced Typography & Visibility (Pre-Rolls) */
+/* Screen 1 Enhanced Typography & Visibility (Pre-Rolls - 2% Scaled for Perfect Fullscreen Fit) */
 .container-prerolls {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1.25fr;
@@ -749,56 +749,61 @@ body {
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
     align-items: center;
-    padding: 1.2px 0;
+    padding: 0.8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 750;
-    line-height: 1.18;
+    line-height: 1.15;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 15.5px;
+    font-size: 14.8px;
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
 }
 .container-prerolls .title {
-    font-size: 18px;
+    font-size: 17.5px;
     font-weight: 900;
-    padding-bottom: 3px;
-    margin-bottom: 3px;
-    letter-spacing: 0.5px;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+    letter-spacing: 0.4px;
 }
 .container-prerolls .subhead {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 800;
-    margin: 3px 0 1.5px;
-    padding-bottom: 1.5px;
+    margin: 2px 0 1px;
+    padding-bottom: 1px;
 }
 .container-prerolls .table-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
-    margin: 1.5px 0;
-    padding-bottom: 1.5px;
+    margin: 1px 0;
+    padding-bottom: 1px;
 }
 .container-prerolls .panel {
-    padding: 4px 7px;
+    padding: 3px 6px;
     border-radius: 7px;
+}
+.container-prerolls .badge-num {
+    font-size: 10px;
+    padding: 1px 4.5px;
+    margin-right: 4.5px;
 }
 
 /* Screen 2 Targeted Micro-Adjustment (Indica & Hybrid Flower Column Fit) */
