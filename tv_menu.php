@@ -302,6 +302,7 @@ if ($screen === 1) {
         $spec = getExactStrain($it);
         $entry = [
             'product_name' => $p_title,
+            'variant' => $var,
             'species' => $spec,
             'price' => $price,
             'old_price' => $old_price,
@@ -357,6 +358,7 @@ if ($screen === 1) {
         $spec = getExactStrain($it);
         $entry = [
             'product_name' => $p_title,
+            'variant' => $var,
             'species' => $spec,
             'price' => $price,
             'old_price' => null,
@@ -421,6 +423,7 @@ if ($screen === 1) {
         $spec = getExactStrain($it);
         $entry = [
             'product_name' => $p_title,
+            'variant' => $var,
             'species' => $spec,
             'price' => $price,
             'old_price' => null,
@@ -955,39 +958,23 @@ body {
     letter-spacing: 0.3px;
     text-transform: uppercase;
 }
+.size-50pk { background: rgba(244, 63, 94, 0.25); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.6); font-weight: 900; }
+.size-20pk { background: rgba(236, 72, 153, 0.22); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.5); }
 .size-10pk { background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
+.size-7pk { background: rgba(139, 92, 246, 0.22); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.5); }
 .size-5pk { background: rgba(168, 85, 247, 0.22); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.5); }
+.size-4pack { background: rgba(20, 184, 166, 0.25); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.55); font-weight: 900; }
+.size-4pk { background: rgba(59, 130, 246, 0.22); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
+.size-3pk { background: rgba(99, 102, 241, 0.22); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.5); }
 .size-2pk { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.45); }
+.size-1pk { background: rgba(148, 163, 184, 0.18); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.35); }
+.size-can { background: rgba(6, 182, 212, 0.22); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.5); }
 .size-oz { background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.6); font-weight: 900; }
 .size-halfoz { background: rgba(34, 197, 94, 0.22); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.55); font-weight: 900; }
-.size-multipk { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
-
-.badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
-.badge-low-stock { font-size: 7.5px; font-weight: 850; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); display: inline-block; vertical-align: middle; }
-.p-row.row-featured, .soft-row.row-featured { background: linear-gradient(90deg, rgba(239, 68, 68, 0.20) 0%, rgba(185, 28, 28, 0.05) 100%) !important; border-left: 3.5px solid #ef4444 !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(239, 68, 68, 0.18); }
-.p-row.row-staff-pick, .soft-row.row-staff-pick { background: linear-gradient(90deg, rgba(234, 179, 8, 0.20) 0%, rgba(202, 138, 4, 0.05) 100%) !important; border-left: 3.5px solid #eab308 !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(234, 179, 8, 0.20); }
-.p-row.row-low-stock, .soft-row.row-low-stock { background: linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.04) 100%) !important; border-left: 3.5px solid #f59e0b !important; border-radius: 3px; padding-left: 4px !important; margin: 1px 0; box-shadow: 0 0 10px rgba(245, 158, 11, 0.16); }
-.badge-cbn { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(147, 51, 234, 0.25); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.5); display: inline-block; vertical-align: middle; }
-.badge-cbg { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(14, 165, 233, 0.25); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.5); display: inline-block; vertical-align: middle; }
-.badge-cbd { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.5); display: inline-block; vertical-align: middle; }
-.badge-balance { font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 4px; background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.5); display: inline-block; vertical-align: middle; }
-.badge-featured { font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-left: 4px; text-transform: uppercase; display: inline-block; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; letter-spacing: 0.4px; box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); vertical-align: middle; }
-.badge-size {
-    font-size: 7.5px;
-    font-weight: 850;
-    padding: 1px 4px;
-    border-radius: 3px;
-    margin-left: 4px;
-    display: inline-block;
-    vertical-align: middle;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-}
-.size-10pk { background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
-.size-5pk { background: rgba(168, 85, 247, 0.22); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.5); }
-.size-2pk { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.45); }
-.size-oz { background: rgba(234, 179, 8, 0.25); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.6); font-weight: 900; }
-.size-halfoz { background: rgba(34, 197, 94, 0.22); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.55); font-weight: 900; }
+.size-quarteroz { background: rgba(45, 212, 191, 0.22); color: #2dd4bf; border: 1px solid rgba(45, 212, 191, 0.5); font-weight: 850; }
+.size-eighth { background: rgba(34, 197, 94, 0.18); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.4); font-weight: 850; }
+.size-2g { background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); font-weight: 850; }
+.size-gram { background: rgba(100, 116, 139, 0.18); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.35); }
 .size-multipk { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
 
 .badge-staff-pick { font-size: 8px; font-weight: 900; padding: 1px 4.5px; border-radius: 3px; margin-left: 4px; background: linear-gradient(135deg, #facc15, #eab308); color: #000000; letter-spacing: 0.3px; display: inline-block; vertical-align: middle; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
@@ -1403,24 +1390,81 @@ body {
 
         // Multi-Pack & Bulk Size Micro-Badge Helper
         function getSizeBadge(productName, variantName) {
-            const text = `${productName || ''} ${variantName || ''}`.toLowerCase();
-            if (text.includes('28g') || text.includes('30g') || text.includes('1 oz') || text.includes('ounce')) {
-                return '<span class="badge-size size-oz">1 OZ (28g)</span>';
+            const p = (productName || '').toLowerCase();
+            const v = (variantName || '').toLowerCase();
+            const text = `${p} ${v}`;
+
+            // 1. Bulk count / 50-pack / bulk caps
+            if (/\b10x5\b/.test(text) || /\b50\s*(caps?|pk|pack)\b/.test(text)) {
+                return '<span class="badge-size size-50pk">50-PK</span>';
             }
-            if (text.includes('14g') || text.includes('15g') || text.includes('half oz') || text.includes('1/2 oz')) {
-                return '<span class="badge-size size-halfoz">1/2 OZ (14g)</span>';
+            // 2. 20-pack
+            if (/\b20x|\b20\s*(pk|pack)\b/.test(text)) {
+                return '<span class="badge-size size-20pk">20-PK</span>';
             }
-            if (text.includes('10x') || text.includes('10 pack') || text.includes('10-pack') || text.includes('10pk')) {
+            // 3. 10-pack
+            if (/\b10x|\b10\s*(pk|pack)\b/.test(text)) {
                 return '<span class="badge-size size-10pk">10-PK</span>';
             }
-            if (text.includes('5x') || text.includes('5 pack') || text.includes('5-pack') || text.includes('5pk')) {
+            // 4. 7-pack
+            if (/\b7x|\b7\s*(pk|pack)\b/.test(text)) {
+                return '<span class="badge-size size-7pk">7-PK</span>';
+            }
+            // 5. 5-pack
+            if (/\b5x|\b5\s*(pk|pack)\b/.test(text)) {
                 return '<span class="badge-size size-5pk">5-PK</span>';
             }
-            if (text.includes('4x') || text.includes('3x') || text.includes('variety pack') || text.includes('multi pack') || text.includes('multipack')) {
-                return '<span class="badge-size size-multipk">MULTI-PK</span>';
+            // 6. 4-pack / 4x355ml
+            if (text.includes('4x355') || /\b4\s*pack|\b4-pack\b/.test(text)) {
+                return '<span class="badge-size size-4pack">4-PACK</span>';
             }
-            if (text.includes('2x') || text.includes('2 pack') || text.includes('2-pack') || text.includes('2pk') || text.includes('double up') || text.includes('twofer')) {
+            if (/\b4x|\b4\s*pk\b/.test(text)) {
+                return '<span class="badge-size size-4pk">4-PK</span>';
+            }
+            // 7. 3-pack
+            if (/\b3x|\b3\s*(pk|pack)\b/.test(text)) {
+                return '<span class="badge-size size-3pk">3-PK</span>';
+            }
+            // 8. 2-pack
+            if (/\b2x|\b2\s*(pk|pack)\b|double\s*up|twofer/.test(text)) {
                 return '<span class="badge-size size-2pk">2-PK</span>';
+            }
+            // 9. 1-pack / single
+            if (/\b1x|\b1\s*(pk|pack)\b|\bsingle\b/.test(text) || ['1x0.5g', '1x1g', '1x0.35g', '1x1.25g', '1 pack'].includes(v)) {
+                return '<span class="badge-size size-1pk">1-PK</span>';
+            }
+            // 10. Beverage single can
+            if (text.includes('355ml') || text.includes('355 ml')) {
+                return '<span class="badge-size size-can">CAN (355ml)</span>';
+            }
+            // 11. Flower bulk / weights
+            if (/\b(28g|30g|1\s*oz|ounce)\b/.test(text)) {
+                return '<span class="badge-size size-oz">1 OZ (28g)</span>';
+            }
+            if (/\b(14g|15g|half\s*oz|1\/2\s*oz)\b/.test(text)) {
+                return '<span class="badge-size size-halfoz">1/2 OZ (14g)</span>';
+            }
+            if (/\b(7g|quarter\s*oz|1\/4\s*oz)\b/.test(text)) {
+                return '<span class="badge-size size-quarteroz">1/4 OZ (7g)</span>';
+            }
+            if (/\b(3\.5g|1\/8\s*oz|eighth)\b/.test(text)) {
+                return '<span class="badge-size size-eighth">3.5g</span>';
+            }
+            // 12. Vapes & concentrates weights
+            if (/\b2g\b/.test(text)) {
+                return '<span class="badge-size size-2g">2g</span>';
+            }
+            if (/\b1\.2g\b/.test(text)) {
+                return '<span class="badge-size size-gram">1.2g</span>';
+            }
+            if (/\b0\.95g\b/.test(text)) {
+                return '<span class="badge-size size-gram">0.95g</span>';
+            }
+            if (/\b1g\b/.test(text)) {
+                return '<span class="badge-size size-gram">1g</span>';
+            }
+            if (/\b0\.5g\b/.test(text)) {
+                return '<span class="badge-size size-gram">0.5g</span>';
             }
             return '';
         }

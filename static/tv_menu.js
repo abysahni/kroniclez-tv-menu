@@ -1,5 +1,5 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 59;
+const CURRENT_APP_VERSION = 60;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
@@ -39,27 +39,83 @@ function formatCAD(val) {
     return `$${num.toFixed(2)}`;
 }
 
-// Multi-Pack & Bulk Size Micro-Badge Helper (Option 3)
+// Multi-Pack & Bulk Size Micro-Badge Helper
 function getSizeBadge(productName, variantName) {
-    const text = `${productName || ''} ${variantName || ''}`.toLowerCase();
-    
-    if (text.includes('28g') || text.includes('30g') || text.includes('1 oz') || text.includes('ounce')) {
-        return '<span class="badge-size size-oz">1 OZ (28g)</span>';
+    const p = (productName || '').toLowerCase();
+    const v = (variantName || '').toLowerCase();
+    const text = `${p} ${v}`;
+
+    // 1. Bulk count / 50-pack / bulk caps
+    if (/\b10x5\b/.test(text) || /\b50\s*(caps?|pk|pack)\b/.test(text)) {
+        return '<span class="badge-size size-50pk">50-PK</span>';
     }
-    if (text.includes('14g') || text.includes('15g') || text.includes('half oz') || text.includes('1/2 oz')) {
-        return '<span class="badge-size size-halfoz">1/2 OZ (14g)</span>';
+    // 2. 20-pack
+    if (/\b20x|\b20\s*(pk|pack)\b/.test(text)) {
+        return '<span class="badge-size size-20pk">20-PK</span>';
     }
-    if (text.includes('10x') || text.includes('10 pack') || text.includes('10-pack') || text.includes('10pk')) {
+    // 3. 10-pack
+    if (/\b10x|\b10\s*(pk|pack)\b/.test(text)) {
         return '<span class="badge-size size-10pk">10-PK</span>';
     }
-    if (text.includes('5x') || text.includes('5 pack') || text.includes('5-pack') || text.includes('5pk')) {
+    // 4. 7-pack
+    if (/\b7x|\b7\s*(pk|pack)\b/.test(text)) {
+        return '<span class="badge-size size-7pk">7-PK</span>';
+    }
+    // 5. 5-pack
+    if (/\b5x|\b5\s*(pk|pack)\b/.test(text)) {
         return '<span class="badge-size size-5pk">5-PK</span>';
     }
-    if (text.includes('4x') || text.includes('3x') || text.includes('variety pack') || text.includes('multi pack') || text.includes('multipack')) {
-        return '<span class="badge-size size-multipk">MULTI-PK</span>';
+    // 6. 4-pack / 4x355ml
+    if (text.includes('4x355') || /\b4\s*pack|\b4-pack\b/.test(text)) {
+        return '<span class="badge-size size-4pack">4-PACK</span>';
     }
-    if (text.includes('2x') || text.includes('2 pack') || text.includes('2-pack') || text.includes('2pk') || text.includes('double up') || text.includes('twofer')) {
+    if (/\b4x|\b4\s*pk\b/.test(text)) {
+        return '<span class="badge-size size-4pk">4-PK</span>';
+    }
+    // 7. 3-pack
+    if (/\b3x|\b3\s*(pk|pack)\b/.test(text)) {
+        return '<span class="badge-size size-3pk">3-PK</span>';
+    }
+    // 8. 2-pack
+    if (/\b2x|\b2\s*(pk|pack)\b|double\s*up|twofer/.test(text)) {
         return '<span class="badge-size size-2pk">2-PK</span>';
+    }
+    // 9. 1-pack / single
+    if (/\b1x|\b1\s*(pk|pack)\b|\bsingle\b/.test(text) || ['1x0.5g', '1x1g', '1x0.35g', '1x1.25g', '1 pack'].includes(v)) {
+        return '<span class="badge-size size-1pk">1-PK</span>';
+    }
+    // 10. Beverage single can
+    if (text.includes('355ml') || text.includes('355 ml')) {
+        return '<span class="badge-size size-can">CAN (355ml)</span>';
+    }
+    // 11. Flower bulk / weights
+    if (/\b(28g|30g|1\s*oz|ounce)\b/.test(text)) {
+        return '<span class="badge-size size-oz">1 OZ (28g)</span>';
+    }
+    if (/\b(14g|15g|half\s*oz|1\/2\s*oz)\b/.test(text)) {
+        return '<span class="badge-size size-halfoz">1/2 OZ (14g)</span>';
+    }
+    if (/\b(7g|quarter\s*oz|1\/4\s*oz)\b/.test(text)) {
+        return '<span class="badge-size size-quarteroz">1/4 OZ (7g)</span>';
+    }
+    if (/\b(3\.5g|1\/8\s*oz|eighth)\b/.test(text)) {
+        return '<span class="badge-size size-eighth">3.5g</span>';
+    }
+    // 12. Vapes & concentrates weights
+    if (/\b2g\b/.test(text)) {
+        return '<span class="badge-size size-2g">2g</span>';
+    }
+    if (/\b1\.2g\b/.test(text)) {
+        return '<span class="badge-size size-gram">1.2g</span>';
+    }
+    if (/\b0\.95g\b/.test(text)) {
+        return '<span class="badge-size size-gram">0.95g</span>';
+    }
+    if (/\b1g\b/.test(text)) {
+        return '<span class="badge-size size-gram">1g</span>';
+    }
+    if (/\b0\.5g\b/.test(text)) {
+        return '<span class="badge-size size-gram">0.5g</span>';
     }
     return '';
 }

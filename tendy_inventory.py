@@ -1074,6 +1074,7 @@ class TendyInventoryService:
             pricing_data = compute_item_pricing(it, screen_id=1)
             entry = {
                 "product_name": p_title,
+                "variant": var,
                 "price": pricing_data["price"],
                 "old_price": pricing_data["old_price"],
                 "stock": stock,
@@ -1265,6 +1266,7 @@ class TendyInventoryService:
             pricing_data = compute_item_pricing(it, screen_id=2)
             entry = {
                 "product_name": p_title,
+                "variant": var,
                 "price": pricing_data["price"],
                 "old_price": pricing_data["old_price"],
                 "stock": stock,
@@ -1455,6 +1457,7 @@ class TendyInventoryService:
             pricing_data = compute_item_pricing(it, screen_id=3)
             entry = {
                 "product_name": p_title,
+                "variant": var,
                 "price": pricing_data["price"],
                 "old_price": pricing_data["old_price"],
                 "stock": stock,
