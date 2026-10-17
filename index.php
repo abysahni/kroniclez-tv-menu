@@ -140,7 +140,8 @@ if ($rel_path === '/admin' || $rel_path === '/portal' || $rel_path === '/overrid
 if (strpos($rel_path, '/api/admin/') === 0) {
     header("Content-Type: application/json; charset=utf-8");
     
-    $backend_admin_url = "https://kroniclez-tv-menu-2cmv.onrender.com" . $rel_path;
+    $forward_path = ($rel_path === '/api/admin/overrides') ? '/api/admin/override' : $rel_path;
+    $backend_admin_url = "https://kroniclez-tv-menu-2cmv.onrender.com" . $forward_path;
     if (!empty($_SERVER['QUERY_STRING'])) {
         $backend_admin_url .= '?' . $_SERVER['QUERY_STRING'];
     }

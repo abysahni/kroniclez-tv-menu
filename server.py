@@ -213,7 +213,7 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
-        if path == "/api/admin/override":
+        if path in ["/api/admin/override", "/api/admin/overrides"]:
             content_len = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
             try:

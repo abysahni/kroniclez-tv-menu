@@ -1132,7 +1132,7 @@ class TendyInventoryService:
 
         ov = load_product_overrides()
         disp = ov.get("display_settings", {})
-        screen_scale = disp.get("screen_1_scale") or disp.get("scale", 88)
+        screen_scale = disp.get("screen_1_scale") or disp.get("scale", 80)
 
         result = {
             "screen": 1,
