@@ -125,8 +125,13 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             return
 
         # 12-Month Seasonal Calendar Mockup & Simulation Route
-        elif path in ["/preview", "/mockup", "/calendar", "/seasonal"]:
+        elif path in ["/preview", "/calendar", "/seasonal"]:
             self._send_file(config.STATIC_DIR / "seasonal_preview.html")
+            return
+
+        # Child Product Variants Mockup & Simulation Route
+        elif path in ["/variants", "/mockup", "/child-variants"]:
+            self._send_file(config.STATIC_DIR / "child_variants_mockup.html")
             return
 
         elif path == "/api/admin/inventory":
@@ -213,7 +218,7 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
-        if path in ["/api/admin/override", "/api/admin/overrides"]:
+        if path == "/api/admin/override":
             content_len = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_len).decode("utf-8") if content_len > 0 else "{}"
             try:
@@ -288,33 +293,6 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             elif action == "flush_cache":
                 inventory_service.clear_cache()
                 self._send_json({"success": True, "message": "TV Menu Cache Flushed successfully"})
-                return
-
-            elif action == "set_display_scale":
-                scale = int(data.get("scale", 88))
-                scale = max(70, min(125, scale))
-                target = str(data.get("target", "all")).lower()
-                disp = ov.setdefault("display_settings", {})
-                if target in ["1", "screen1", "tv1"]:
-                    disp["screen_1_scale"] = scale
-                elif target in ["2", "screen2", "tv2"]:
-                    disp["screen_2_scale"] = scale
-                elif target in ["3", "screen3", "tv3"]:
-                    disp["screen_3_scale"] = scale
-                else:
-                    disp["scale"] = scale
-                    disp["screen_1_scale"] = scale
-                    disp["screen_2_scale"] = scale
-                    disp["screen_3_scale"] = scale
-                save_product_overrides(ov)
-                config.ASSET_VERSION += 1
-                inventory_service.clear_cache()
-                self._send_json({
-                    "success": True,
-                    "message": f"TV text scale updated to {scale}% for {target.upper()}! All TVs auto-refreshing...",
-                    "display_settings": disp,
-                    "asset_version": config.ASSET_VERSION
-                })
                 return
 
             elif action == "import_overrides":

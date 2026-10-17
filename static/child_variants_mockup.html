@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kroniclez TV - Child Product Variants Display Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-[#07090e] text-slate-100 antialiased p-4 min-h-screen">
+
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header & Controls -->
+    <div class="bg-[#0f1420] border border-slate-800 rounded-2xl p-5 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-rose-500 font-black text-sm tracking-wider">🔥 KRONICLEZ DISPENSARY</span>
+          <span class="text-[11px] bg-slate-800 text-amber-400 px-2 py-0.5 rounded font-bold border border-amber-500/30">TV DISPLAY ENGINE</span>
+        </div>
+        <h1 class="text-lg font-black text-white mt-1">Child Product Variant Grouping Comparison</h1>
+        <p class="text-xs text-slate-400">Comparing 3 ways to present multiple sizes/packs under one product on TV menus.</p>
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="flex bg-slate-900 border border-slate-700/80 p-1.5 rounded-xl gap-1.5 self-stretch md:self-auto">
+        <button id="btn-pills" onclick="setMode('pills')" class="flex-1 md:flex-initial px-3 py-1.5 text-xs font-black rounded-lg bg-amber-400 text-slate-950 shadow transition-all">
+          ⭐ Option 1: Multi-Price Pills
+        </button>
+        <button id="btn-tree" onclick="setMode('tree')" class="flex-1 md:flex-initial px-3 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all">
+          Option 2: Nested Sub-Rows
+        </button>
+        <button id="btn-separate" onclick="setMode('separate')" class="flex-1 md:flex-initial px-3 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all">
+          Option 3: Separate Rows (Current)
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Mode Explanation Banner -->
+    <div id="mode-banner" class="px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-3">
+      <span class="text-base">💡</span>
+      <div>
+        <strong id="banner-title" class="text-amber-300 font-extrabold block">Option 1: Consolidated Single Row with Multi-Price Pills (Recommended)</strong>
+        <span id="banner-desc" class="text-slate-300">Merges all child variants into a single clean line. Customers see the brand, strain, and all available sizes & prices side-by-side in one glance. Saves TV screen space and prevents duplicate item names!</span>
+      </div>
+    </div>
+
+    <!-- TV Display Simulation Container -->
+    <div class="bg-[#0b0e15] border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
+      
+      <!-- Section 1: Pre-Rolls Simulation -->
+      <div>
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black text-amber-400 tracking-wider uppercase">TV 1 • PRE-ROLLS (SATIVA)</span>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold">2 MULTI-VARIANT FAMILIES</span>
+          </div>
+          <span class="text-[10px] text-slate-500 mono">4K TV RESOLUTION VIEW</span>
+        </div>
+
+        <div id="prerolls-container" class="space-y-2">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Section 2: Dried Flower Simulation -->
+      <div>
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black text-emerald-400 tracking-wider uppercase">TV 2 • DRIED FLOWER (INDICA)</span>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold">BULK & EIGHTH VARIANTS</span>
+          </div>
+          <span class="text-[10px] text-slate-500 mono">4K TV RESOLUTION VIEW</span>
+        </div>
+
+        <div id="flower-container" class="space-y-2">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Section 3: Beverages Simulation -->
+      <div>
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black text-cyan-400 tracking-wider uppercase">TV 3 • INFUSED BEVERAGES</span>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold">CAN VS 4-PACK</span>
+          </div>
+          <span class="text-[10px] text-slate-500 mono">4K TV RESOLUTION VIEW</span>
+        </div>
+
+        <div id="beverages-container" class="space-y-2">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Identified Product Families Breakdown Table -->
+    <div class="bg-[#0f1420] border border-slate-800 rounded-2xl p-5 shadow-2xl">
+      <h3 class="text-sm font-extrabold text-white mb-2 flex items-center gap-2">
+        <span>🔍</span>
+        <span>All 10 Child Product Families Identified in Live Store Inventory</span>
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">Identified either via Tendy POS native <code class="text-amber-300">parentProductId</code> or Brand + Base Product Line matching:</p>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 font-extrabold uppercase text-[10px]">
+              <th class="py-2 px-3">Parent Product Base</th>
+              <th class="py-2 px-3">Strain</th>
+              <th class="py-2 px-3">Category</th>
+              <th class="py-2 px-3">Child Variants In Stock</th>
+              <th class="py-2 px-3">POS Linkage</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 font-medium text-slate-300">
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">COMMON GROUND • Pink Rozay</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SAT</span></td>
+              <td class="py-2 px-3 text-slate-400">Pre-Rolls</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-amber-300 font-bold mr-1">1x1g ($7.49)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-purple-300 font-bold">5x0.5g ($15.11)</span></td>
+              <td class="py-2 px-3 text-emerald-400 font-semibold text-[11px]">Brand + Line Match</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">PIFF • Cali Kush</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">IND</span></td>
+              <td class="py-2 px-3 text-slate-400">Pre-Rolls</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-bold mr-1">1x0.5g ($4.49)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-slate-200 font-bold">2x1g ($8.99)</span></td>
+              <td class="py-2 px-3 text-cyan-400 font-semibold text-[11px]">POS parentProductId #100134</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">PIFF • Maui Wowie</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SAT</span></td>
+              <td class="py-2 px-3 text-slate-400">Pre-Rolls</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-bold mr-1">1x0.5g ($4.99)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-slate-200 font-bold">2x1g ($8.99)</span></td>
+              <td class="py-2 px-3 text-cyan-400 font-semibold text-[11px]">POS parentProductId #100130</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">THUMBS UP • Indica</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">IND</span></td>
+              <td class="py-2 px-3 text-slate-400">Pre-Rolls</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-slate-200 font-bold mr-1">2x1g ($9.49)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-blue-300 font-bold">4x0.5g ($10.49)</span></td>
+              <td class="py-2 px-3 text-cyan-400 font-semibold text-[11px]">POS parentProductId #100146</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">THUMBS UP • Sativa</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SAT</span></td>
+              <td class="py-2 px-3 text-slate-400">Pre-Rolls</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-slate-200 font-bold mr-1">2x1g ($9.99)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-blue-300 font-bold">4x0.5g ($10.49)</span></td>
+              <td class="py-2 px-3 text-cyan-400 font-semibold text-[11px]">POS parentProductId #100149</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">POTLUCK • Pineapple Express</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SAT</span></td>
+              <td class="py-2 px-3 text-slate-400">Pre-Rolls</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-bold mr-1">1x0.5g ($5.49)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-indigo-300 font-bold">3x0.5g ($15.25)</span></td>
+              <td class="py-2 px-3 text-emerald-400 font-semibold text-[11px]">Brand + Line Match</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">CATCH ME OUTSIDE • Couch Potato</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">IND</span></td>
+              <td class="py-2 px-3 text-slate-400">Flower</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-green-300 font-bold mr-1">3.5g ($19.99)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-emerald-400 font-bold">14g / 1/2 OZ ($62.88)</span></td>
+              <td class="py-2 px-3 text-emerald-400 font-semibold text-[11px]">Brand + Line Match</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">CATCH ME OUTSIDE • Rooster Call</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SAT</span></td>
+              <td class="py-2 px-3 text-slate-400">Flower</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-green-300 font-bold mr-1">3.5g ($19.99)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-emerald-400 font-bold">14g / 1/2 OZ ($62.88)</span></td>
+              <td class="py-2 px-3 text-emerald-400 font-semibold text-[11px]">Brand + Line Match</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">RIPPED • Sativa</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SAT</span></td>
+              <td class="py-2 px-3 text-slate-400">Flower</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-green-300 font-bold mr-1">3.5g ($17.99)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-emerald-400 font-bold">14g / 1/2 OZ ($54.35)</span></td>
+              <td class="py-2 px-3 text-emerald-400 font-semibold text-[11px]">Brand + Line Match</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-white">XMG • Cream Soda</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">HYB</span></td>
+              <td class="py-2 px-3 text-slate-400">Beverages</td>
+              <td class="py-2 px-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-cyan-300 font-bold mr-1">355ml ($6.78)</span> <span class="bg-slate-800 px-2 py-0.5 rounded text-teal-300 font-bold">4x355ml ($19.99)</span></td>
+              <td class="py-2 px-3 text-emerald-400 font-semibold text-[11px]">Brand + Line Match</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentMode = 'pills';
+
+    const sampleData = {
+      prerolls: [
+        {
+          num: '01',
+          strain: 'SAT',
+          brand: 'COMMON GROUND',
+          name: 'Pink Rozay',
+          thc: '29.0%',
+          variants: [
+            { label: '1-PK', badgeClass: 'bg-slate-800 text-slate-300 border-slate-700', price: '$7.49' },
+            { label: '5-PK', badgeClass: 'bg-purple-950/70 text-purple-300 border-purple-800/60', price: '$15.11' }
+          ]
+        },
+        {
+          num: '02',
+          strain: 'SAT',
+          brand: 'POTLUCK',
+          name: 'Pineapple Express',
+          thc: '27.5%',
+          variants: [
+            { label: '1-PK', badgeClass: 'bg-slate-800 text-slate-300 border-slate-700', price: '$5.49' },
+            { label: '3-PK', badgeClass: 'bg-indigo-950/70 text-indigo-300 border-indigo-800/60', price: '$15.25' }
+          ]
+        }
+      ],
+      flower: [
+        {
+          num: '01',
+          strain: 'IND',
+          brand: 'CATCH ME OUTSIDE',
+          name: 'Couch Potato',
+          thc: '28.5%',
+          variants: [
+            { label: '3.5g', badgeClass: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60', price: '$19.99' },
+            { label: '1/2 OZ (14g)', badgeClass: 'bg-emerald-900/80 text-emerald-200 border-emerald-500 font-extrabold', price: '$62.88' }
+          ]
+        }
+      ],
+      beverages: [
+        {
+          num: '01',
+          strain: 'HYB',
+          brand: 'XMG',
+          name: 'Cream Soda',
+          thc: '10mg',
+          variants: [
+            { label: 'CAN (355ml)', badgeClass: 'bg-cyan-950/70 text-cyan-300 border-cyan-800/60', price: '$6.78' },
+            { label: '4-PACK', badgeClass: 'bg-teal-950/80 text-teal-200 border-teal-500 font-extrabold', price: '$19.99' }
+          ]
+        }
+      ]
+    };
+
+    function setMode(mode) {
+      currentMode = mode;
+      
+      // Update buttons
+      ['pills', 'tree', 'separate'].forEach(m => {
+        const btn = document.getElementById(`btn-${m}`);
+        if (m === mode) {
+          btn.className = "flex-1 md:flex-initial px-3 py-1.5 text-xs font-black rounded-lg bg-amber-400 text-slate-950 shadow transition-all";
+        } else {
+          btn.className = "flex-1 md:flex-initial px-3 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+        }
+      });
+
+      // Update banner
+      const title = document.getElementById('banner-title');
+      const desc = document.getElementById('banner-desc');
+      if (mode === 'pills') {
+        title.textContent = '⭐ Option 1: Consolidated Single Row with Multi-Price Pills (Recommended)';
+        desc.textContent = 'Merges all child variants into a single clean line. Customers see the brand, strain, and all available sizes & prices side-by-side in one glance. Saves TV screen space and prevents duplicate item names!';
+      } else if (mode === 'tree') {
+        title.textContent = 'Option 2: Hierarchical Tree Sub-Rows';
+        desc.textContent = 'Displays a single parent row header, followed by distinct indented sub-rows for each child variant. Highly explicit, but takes up extra vertical space on TV screens.';
+      } else {
+        title.textContent = 'Option 3: Separate Independent Rows with Sizing Badges (Current v60 Implementation)';
+        desc.textContent = 'Every variant is displayed on its own line with its own category number (01, 02) and an inline sizing badge (e.g. 1-PK, 5-PK). Simple table structure, but repeats product names.';
+      }
+
+      renderAll();
+    }
+
+    function renderSection(items, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      if (currentMode === 'pills') {
+        container.innerHTML = items.map(item => `
+          <div class="flex items-center justify-between bg-slate-900/80 hover:bg-slate-800/60 border border-slate-800 rounded-xl px-3.5 py-2.5 transition-all">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="mono px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-800 text-amber-300 border border-amber-500/30">${item.num}</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold ${item.strain === 'IND' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : item.strain === 'SAT' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'}">${item.strain}</span>
+              <span class="text-xs font-black text-white tracking-wide truncate">${item.brand} • ${item.name}</span>
+            </div>
+            
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="text-[11px] font-bold text-slate-400 mono">${item.thc}</span>
+              <div class="flex items-center gap-1.5">
+                ${item.variants.map(v => `
+                  <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg border ${v.badgeClass}">
+                    <span class="text-[9.5px] font-black uppercase tracking-wider">${v.label}</span>
+                    <span class="text-xs font-black text-white mono">${v.price}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } else if (currentMode === 'tree') {
+        container.innerHTML = items.map(item => `
+          <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="mono px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-800 text-amber-300 border border-amber-500/30">${item.num}</span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold ${item.strain === 'IND' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : item.strain === 'SAT' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'}">${item.strain}</span>
+                <span class="text-xs font-black text-white tracking-wide">${item.brand} • ${item.name}</span>
+              </div>
+              <span class="text-[11px] font-bold text-slate-400 mono">${item.thc}</span>
+            </div>
+
+            <div class="pl-8 space-y-1 border-l-2 border-slate-800 ml-3.5">
+              ${item.variants.map((v, i) => `
+                <div class="flex items-center justify-between text-xs py-1 px-2.5 rounded-lg bg-slate-950/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span class="text-slate-500 mono font-bold text-[10px]">${i === item.variants.length - 1 ? '└─' : '├─'}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[9.5px] font-black border ${v.badgeClass}">${v.label}</span>
+                    <span class="text-slate-300 font-semibold text-[11px]">Variant SKU</span>
+                  </div>
+                  <span class="font-black text-white mono text-xs">${v.price}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        // Separate rows (Current)
+        let rowCount = 1;
+        container.innerHTML = items.map(item => {
+          return item.variants.map(v => {
+            const numStr = String(rowCount++).padStart(2, '0');
+            return `
+              <div class="flex items-center justify-between bg-slate-900/80 hover:bg-slate-800/60 border border-slate-800 rounded-xl px-3.5 py-2.5 transition-all">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="mono px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-800 text-amber-300 border border-amber-500/30">${numStr}</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold ${item.strain === 'IND' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : item.strain === 'SAT' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'}">${item.strain}</span>
+                  <span class="text-xs font-black text-white tracking-wide truncate">${item.brand} • ${item.name}</span>
+                  <span class="px-1.5 py-0.5 rounded text-[9.5px] font-black border ${v.badgeClass}">${v.label}</span>
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                  <span class="text-[11px] font-bold text-slate-400 mono">${item.thc}</span>
+                  <span class="text-xs font-black text-white mono">${v.price}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }).join('');
+      }
+    }
+
+    function renderAll() {
+      renderSection(sampleData.prerolls, 'prerolls-container');
+      renderSection(sampleData.flower, 'flower-container');
+      renderSection(sampleData.beverages, 'beverages-container');
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
