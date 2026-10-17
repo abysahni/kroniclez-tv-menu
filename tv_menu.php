@@ -527,10 +527,16 @@ $json_injected = json_encode($response_payload);
     -webkit-user-select: none;
 }
 
+:root {
+    --tv-scale: <?= $screen_scale / 100 ?>;
+    --tv-text-scale: <?= $screen_scale / 100 ?>;
+}
+
 html {
     background: #000000;
     font-size: 16px;
     height: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -538,8 +544,9 @@ body {
     color: #ffffff;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     width: 100vw;
-    min-height: 100vh;
-    padding: 6px 8px 10px 8px;
+    height: 100vh;
+    overflow: hidden;
+    padding: 4px 6px 6px 6px;
     display: flex;
     flex-direction: column;
 }
@@ -771,42 +778,42 @@ body {
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
     align-items: center;
-    padding: 0.8px 0;
+    padding: 0.6px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 11.2px;
+    font-size: 11px;
     font-weight: 750;
-    line-height: 1.14;
+    line-height: 1.1;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 11.2px;
+    font-size: 11px;
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 12px;
+    font-size: 11.8px;
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 9px;
+    font-size: 8.8px;
     font-weight: 700;
 }
 .container-prerolls .title {
-    font-size: 14.5px;
+    font-size: 14px;
     font-weight: 900;
     padding-bottom: 2px;
     margin-bottom: 2px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
 }
 .container-prerolls .subhead {
-    font-size: 9.8px;
+    font-size: 9.5px;
     font-weight: 800;
-    margin: 2px 0 1px;
+    margin: 1.5px 0 1px;
     padding-bottom: 1px;
 }
 .container-prerolls .table-header {
@@ -819,7 +826,7 @@ body {
     padding-bottom: 1px;
 }
 .container-prerolls .panel {
-    padding: 2.5px 5px;
+    padding: 2px 5px;
     border-radius: 6px;
 }
 
@@ -1455,17 +1462,43 @@ body {
         }
 
         function applyTvDisplayScale(scaleVal, showHud = false) {
-            const valid = Math.max(70, Math.min(125, parseInt(scaleVal) || 88));
+            const valid = Math.max(65, Math.min(125, parseInt(scaleVal) || 86));
             currentTvScale = valid;
-            document.body.style.zoom = (valid / 100);
-            document.documentElement.style.setProperty('--tv-scale', (valid / 100).toString());
+            const factor = valid / 100;
+            document.body.style.zoom = factor;
+            document.documentElement.style.setProperty('--tv-scale', factor.toString());
+            document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
             if (showHud) showTvScaleHud(valid);
+            checkAndAutoFitScreen();
         }
+
+        function checkAndAutoFitScreen() {
+            requestAnimationFrame(() => {
+                const mount = document.getElementById('menuMount');
+                if (!mount) return;
+                const header = document.querySelector('.tv-top-header');
+                const headerH = header ? header.offsetHeight : 44;
+                const availableH = window.innerHeight - headerH - 12;
+                const contentH = mount.scrollHeight;
+
+                if (contentH > availableH && availableH > 250) {
+                    const fitFactor = Math.max(0.65, Math.min(1.0, availableH / contentH));
+                    const newScale = Math.floor(currentTvScale * fitFactor);
+                    if (newScale < currentTvScale) {
+                        console.log(`[Kroniclez TV] Screen auto-fit: content (${contentH}px) exceeds screen (${availableH}px). Scaling from ${currentTvScale}% -> ${newScale}%.`);
+                        document.body.style.zoom = (newScale / 100);
+                        document.documentElement.style.setProperty('--tv-scale', (newScale / 100).toString());
+                        document.documentElement.style.setProperty('--tv-text-scale', (newScale / 100).toString());
+                    }
+                }
+            });
+        }
+        window.addEventListener('resize', checkAndAutoFitScreen);
 
         window.addEventListener('keydown', (e) => {
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
             if (e.key === '[' || e.key === '{') {
-                const next = Math.max(70, currentTvScale - 2);
+                const next = Math.max(65, currentTvScale - 2);
                 applyTvDisplayScale(next, true);
                 try { localStorage.setItem(`kroniclez_tv_scale_${currentScreen}`, next); } catch (err) {}
             } else if (e.key === ']' || e.key === '}') {
@@ -1951,6 +1984,7 @@ body {
 
             document.getElementById('tv-sync-time').textContent = `TENDY LIVE • ${res.updated_at || ''}`;
             updateHappyHourBanner();
+            checkAndAutoFitScreen();
         }
 
 

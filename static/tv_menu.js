@@ -1,5 +1,5 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-const CURRENT_APP_VERSION = 61;
+let CURRENT_APP_VERSION = 61;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
@@ -348,21 +348,47 @@ function showTvScaleHud(scaleVal) {
 }
 
 function applyTvDisplayScale(scaleVal, showHud = false) {
-    const valid = Math.max(70, Math.min(125, parseInt(scaleVal) || 88));
+    const valid = Math.max(65, Math.min(125, parseInt(scaleVal) || 86));
     currentTvScale = valid;
-    document.body.style.zoom = (valid / 100);
-    document.documentElement.style.setProperty('--tv-scale', (valid / 100).toString());
+    const factor = valid / 100;
+    document.body.style.zoom = factor;
+    document.documentElement.style.setProperty('--tv-scale', factor.toString());
+    document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
     if (showHud) {
         showTvScaleHud(valid);
     }
+    checkAndAutoFitScreen();
 }
+
+function checkAndAutoFitScreen() {
+    requestAnimationFrame(() => {
+        const mount = document.getElementById('menuMount');
+        if (!mount) return;
+        const header = document.querySelector('.tv-top-header');
+        const headerH = header ? header.offsetHeight : 44;
+        const availableH = window.innerHeight - headerH - 12;
+        const contentH = mount.scrollHeight;
+
+        if (contentH > availableH && availableH > 250) {
+            const fitFactor = Math.max(0.65, Math.min(1.0, availableH / contentH));
+            const newScale = Math.floor(currentTvScale * fitFactor);
+            if (newScale < currentTvScale) {
+                console.log(`[Kroniclez TV] Screen auto-fit: content (${contentH}px) exceeds screen (${availableH}px). Micro-scaling to ${newScale}% to fit 100% inside TV screen.`);
+                document.body.style.zoom = (newScale / 100);
+                document.documentElement.style.setProperty('--tv-scale', (newScale / 100).toString());
+                document.documentElement.style.setProperty('--tv-text-scale', (newScale / 100).toString());
+            }
+        }
+    });
+}
+window.addEventListener('resize', checkAndAutoFitScreen);
 
 // Hotkeys for TV screens: '[' = decrease scale (-2%), ']' = increase scale (+2%), '0' = reset
 window.addEventListener('keydown', (e) => {
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
 
     if (e.key === '[' || e.key === '{') {
-        const next = Math.max(70, currentTvScale - 2);
+        const next = Math.max(65, currentTvScale - 2);
         applyTvDisplayScale(next, true);
         try {
             localStorage.setItem(`kroniclez_tv_scale_${currentScreenId}`, next);
@@ -661,6 +687,7 @@ function renderMenuData(res) {
     updateNavPills(screen);
     updateSyncStatus(res.updated_at);
     updateHappyHourBanner();
+    checkAndAutoFitScreen();
 }
 
 // Dynamic Happy Hour Banner Evaluator (1:00 PM – 4:00 PM America/Toronto)
@@ -703,10 +730,8 @@ function fetchLiveMenu(screenId, storeId) {
             return r.json();
         })
         .then(res => {
-            if (res.asset_version && res.asset_version > CURRENT_APP_VERSION) {
-                console.log(`[Kroniclez TV] Detected new client version ${res.asset_version} (current: ${CURRENT_APP_VERSION}). Auto-refreshing TV view...`);
-                window.location.reload();
-                return;
+            if (res.asset_version) {
+                CURRENT_APP_VERSION = res.asset_version;
             }
             const totalCount = res.total_in_stock !== undefined ? res.total_in_stock : (res.total_items || 0);
             if (res.success && totalCount > 0) {

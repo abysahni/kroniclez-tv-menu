@@ -86,10 +86,10 @@
   "thc_overrides": {},
   "category_overrides": {},
   "display_settings": {
-    "scale": 88,
-    "screen_1_scale": 86,
-    "screen_2_scale": 90,
-    "screen_3_scale": 92
+    "scale": 86,
+    "screen_1_scale": 80,
+    "screen_2_scale": 88,
+    "screen_3_scale": 90
   },
-  "last_updated": "2026-10-17T18:51:40.151178+00:00"
+  "last_updated": "2026-10-17T19:20:43.152494+00:00"
 }

@@ -88,7 +88,7 @@ def find_matching_override(name: str, brand: str = "", overrides_dict: Optional[
             
     return None, None
 
-LEGACY_CLIENT_RELOAD_TRIGGER = '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="if(!window.__IS_V55_RUNNING__){window.__IS_V55_RUNNING__=true;window.location.reload(true);}" style="display:none;" width="0" height="0" alt="">'
+LEGACY_CLIENT_RELOAD_TRIGGER = ""
 
 VALID_TARGET_SECTIONS = {
     "PRE_ROLLS", "INFUSED_PREROLLS",
@@ -1128,8 +1128,7 @@ class TendyInventoryService:
                 else:
                     hyb_items.append(entry)
 
-        if ind_items:
-            ind_items[0]["product_name"] += LEGACY_CLIENT_RELOAD_TRIGGER
+
 
         ov = load_product_overrides()
         disp = ov.get("display_settings", {})
@@ -1342,8 +1341,7 @@ class TendyInventoryService:
                     disp_hyb.append(entry)
 
         total_items = len(ind_dr) + len(ind_mil) + len(hyb_dr) + len(hyb_mil) + len(sat_dr) + len(sat_mil) + len(v510_ind) + len(v510_hyb) + len(v510_sat) + len(disp_ind) + len(disp_hyb) + len(disp_sat)
-        if ind_dr:
-            ind_dr[0]["product_name"] += LEGACY_CLIENT_RELOAD_TRIGGER
+
 
         ov = load_product_overrides()
         disp = ov.get("display_settings", {})
@@ -1529,8 +1527,7 @@ class TendyInventoryService:
                 wellness.append(entry)
 
         total_items = len(concentrates) + len(beverages) + len(all_gummies) + len(chocolates) + len(wellness)
-        if all_gummies:
-            all_gummies[0]["product_name"] += LEGACY_CLIENT_RELOAD_TRIGGER
+
 
         ov = load_product_overrides()
         disp = ov.get("display_settings", {})
