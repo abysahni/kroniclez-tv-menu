@@ -1,12 +1,11 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-let CURRENT_APP_VERSION = 61;
+const CURRENT_APP_VERSION = 61;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
 window.__IS_V58_RUNNING__ = true;
 window.__IS_V59_RUNNING__ = true;
 let currentScreenId = 1;
-let lastRenderedScreenId = null;
 let currentStoreId = 1;
 let pollTimer = null;
 
@@ -318,158 +317,6 @@ function renderSoftCard(cardKey, dataObj) {
     `;
 }
 
-// ==========================================================================
-// DYNAMIC TV DISPLAY SCALE & KEYBOARD HOTKEY ENGINE
-// ==========================================================================
-let currentTvScale = 84;
-let serverTvScale = 84;
-let lastAppliedBaseScale = null;
-let lastAutoFitScale = null;
-let isAutoFitting = false;
-let hudHideTimer = null;
-
-function ensureScaleHudElement() {
-    let hud = document.getElementById('tvScaleHud');
-    if (!hud) {
-        hud = document.createElement('div');
-        hud.id = 'tvScaleHud';
-        hud.className = 'tv-scale-hud';
-        hud.innerHTML = '<i class="bi bi-aspect-ratio"></i> TV Scale: <span id="tvScaleHudVal">84%</span>';
-        document.body.appendChild(hud);
-    }
-    return hud;
-}
-
-function showTvScaleHud(scaleVal) {
-    const hud = ensureScaleHudElement();
-    const valEl = document.getElementById('tvScaleHudVal');
-    if (valEl) valEl.innerText = `${scaleVal}%`;
-    hud.classList.add('show');
-    if (hudHideTimer) clearTimeout(hudHideTimer);
-    hudHideTimer = setTimeout(() => {
-        hud.classList.remove('show');
-    }, 2200);
-}
-
-function setTvZoomAndDimensions(scaleVal) {
-    const valid = Math.max(65, Math.min(140, parseInt(scaleVal) || 88));
-    const factor = valid / 100;
-    document.body.style.zoom = factor;
-    // Critical 65-inch / 4K TV fix: dynamically expand body coordinates so rendered width and height ALWAYS fill 100% of the physical TV display
-    document.body.style.width = (100 / factor) + 'vw';
-    document.body.style.height = (100 / factor) + 'vh';
-    document.documentElement.style.setProperty('--tv-scale', factor.toString());
-    document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
-    return valid;
-}
-
-function applyTvDisplayScale(scaleVal, showHud = false) {
-    const valid = setTvZoomAndDimensions(scaleVal);
-    currentTvScale = valid;
-    lastAppliedBaseScale = valid;
-    lastAutoFitScale = null; // explicit change resets auto-fit
-    
-    if (showHud) {
-        showTvScaleHud(valid);
-    }
-    requestAnimationFrame(() => {
-        checkAndAutoFitScreen();
-    });
-}
-
-function checkAndAutoFitScreen() {
-    if (isAutoFitting) return;
-
-    requestAnimationFrame(() => {
-        const mount = document.getElementById('menuMount');
-        if (!mount) return;
-
-        // Collect all column panels / decks across Screens 1, 2, and 3
-        const panels = Array.from(document.querySelectorAll(
-            '.container-prerolls .panel, .container-vapes-flower .panel, .container-softchews .column-deck, .container-softchews .soft-card, .container-softchews .panel'
-        ));
-        if (panels.length === 0) return;
-
-        // Reserve 18px safety padding at bottom of screen for TV bezel / overscan
-        const bottomSafetyPadding = 18;
-        const allowedMaxBottom = window.innerHeight - bottomSafetyPadding;
-
-        let maxExceededPx = 0;
-        let worstPanel = null;
-        let worstPanelH = 0;
-        let worstPanelTop = 0;
-
-        for (const p of panels) {
-            const rect = p.getBoundingClientRect();
-            if (rect.height <= 0) continue;
-            const diff = rect.bottom - allowedMaxBottom;
-            if (diff > maxExceededPx) {
-                maxExceededPx = diff;
-                worstPanel = p;
-                worstPanelH = rect.height;
-                worstPanelTop = rect.top;
-            }
-        }
-
-        if (maxExceededPx > 4) {
-            let fitRatio = 1.0;
-            if (worstPanel && worstPanelH > 50) {
-                const availableH = allowedMaxBottom - worstPanelTop;
-                if (availableH > 150) {
-                    fitRatio = availableH / worstPanelH;
-                }
-            }
-
-            if (fitRatio < 0.99) {
-                const newScale = Math.max(68, Math.floor(currentTvScale * fitRatio) - 1);
-                if (newScale < currentTvScale) {
-                    isAutoFitting = true;
-                    console.log(`[Kroniclez TV] Screen auto-fit: Content exceeds TV bottom by ${Math.round(maxExceededPx)}px. Micro-scaling from ${currentTvScale}% to ${newScale}% to guarantee 100% on-screen fit.`);
-                    currentTvScale = newScale;
-                    lastAutoFitScale = newScale;
-                    setTvZoomAndDimensions(newScale);
-
-                    // Follow-up check to guarantee zero remaining overflow
-                    setTimeout(() => {
-                        isAutoFitting = false;
-                        checkAndAutoFitScreen();
-                    }, 120);
-                    return;
-                }
-            }
-        }
-        isAutoFitting = false;
-    });
-}
-window.addEventListener('resize', () => {
-    isAutoFitting = false;
-    checkAndAutoFitScreen();
-});
-
-// Hotkeys for TV screens: '[' = decrease scale (-2%), ']' = increase scale (+2%), '0' = reset
-window.addEventListener('keydown', (e) => {
-    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
-
-    if (e.key === '[' || e.key === '{') {
-        const next = Math.max(60, currentTvScale - 2);
-        applyTvDisplayScale(next, true);
-        try {
-            localStorage.setItem(`kroniclez_tv_scale_${currentScreenId}`, next);
-        } catch (err) {}
-    } else if (e.key === ']' || e.key === '}') {
-        const next = Math.min(125, currentTvScale + 2);
-        applyTvDisplayScale(next, true);
-        try {
-            localStorage.setItem(`kroniclez_tv_scale_${currentScreenId}`, next);
-        } catch (err) {}
-    } else if (e.key === '0' || e.key === ')') {
-        try {
-            localStorage.removeItem(`kroniclez_tv_scale_${currentScreenId}`);
-        } catch (err) {}
-        applyTvDisplayScale(serverTvScale, true);
-    }
-});
-
 // Main Render Dispatcher
 function renderMenuData(res) {
     if (!res || !res.structured) return;
@@ -477,29 +324,6 @@ function renderMenuData(res) {
     if (!mount) return;
 
     const screen = res.screen || currentScreenId;
-
-    // Apply server-provided or admin-controlled display scale
-    let sScale = 84;
-    if (res.font_scale) {
-        sScale = res.font_scale;
-    } else if (res.display_settings) {
-        sScale = res.display_settings[`screen_${screen}_scale`] || res.display_settings.scale || 84;
-    }
-    serverTvScale = sScale;
-
-    let activeScale = sScale;
-    try {
-        const manual = localStorage.getItem(`kroniclez_tv_scale_${screen}`);
-        if (manual) activeScale = parseInt(manual);
-    } catch (err) {}
-
-    const scaleChanged = (lastAppliedBaseScale !== activeScale) || (lastRenderedScreenId !== screen);
-    if (scaleChanged) {
-        applyTvDisplayScale(activeScale, false);
-    } else if (lastAutoFitScale && lastAutoFitScale < currentTvScale) {
-        setTvZoomAndDimensions(lastAutoFitScale);
-    }
-    lastRenderedScreenId = screen;
 
     if (screen === 1) {
         // SCREEN 1: PRE-ROLLS (Indica, Hybrid, Sativa, Infused)
@@ -756,7 +580,6 @@ function renderMenuData(res) {
     updateNavPills(screen);
     updateSyncStatus(res.updated_at);
     updateHappyHourBanner();
-    checkAndAutoFitScreen();
 }
 
 // Dynamic Happy Hour Banner Evaluator (1:00 PM – 4:00 PM America/Toronto)
@@ -799,8 +622,10 @@ function fetchLiveMenu(screenId, storeId) {
             return r.json();
         })
         .then(res => {
-            if (res.asset_version) {
-                CURRENT_APP_VERSION = res.asset_version;
+            if (res.asset_version && res.asset_version > CURRENT_APP_VERSION) {
+                console.log(`[Kroniclez TV] Detected new client version ${res.asset_version} (current: ${CURRENT_APP_VERSION}). Auto-refreshing TV view...`);
+                window.location.reload();
+                return;
             }
             const totalCount = res.total_in_stock !== undefined ? res.total_in_stock : (res.total_items || 0);
             if (res.success && totalCount > 0) {
