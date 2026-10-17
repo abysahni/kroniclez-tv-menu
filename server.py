@@ -290,6 +290,33 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 self._send_json({"success": True, "message": "TV Menu Cache Flushed successfully"})
                 return
 
+            elif action == "set_display_scale":
+                scale = int(data.get("scale", 88))
+                scale = max(70, min(125, scale))
+                target = str(data.get("target", "all")).lower()
+                disp = ov.setdefault("display_settings", {})
+                if target in ["1", "screen1", "tv1"]:
+                    disp["screen_1_scale"] = scale
+                elif target in ["2", "screen2", "tv2"]:
+                    disp["screen_2_scale"] = scale
+                elif target in ["3", "screen3", "tv3"]:
+                    disp["screen_3_scale"] = scale
+                else:
+                    disp["scale"] = scale
+                    disp["screen_1_scale"] = scale
+                    disp["screen_2_scale"] = scale
+                    disp["screen_3_scale"] = scale
+                save_product_overrides(ov)
+                config.ASSET_VERSION += 1
+                inventory_service.clear_cache()
+                self._send_json({
+                    "success": True,
+                    "message": f"TV text scale updated to {scale}% for {target.upper()}! All TVs auto-refreshing...",
+                    "display_settings": disp,
+                    "asset_version": config.ASSET_VERSION
+                })
+                return
+
             elif action == "import_overrides":
                 raw_ov = data.get("overrides", {})
                 if not isinstance(raw_ov, dict):

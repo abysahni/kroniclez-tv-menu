@@ -1131,11 +1131,17 @@ class TendyInventoryService:
         if ind_items:
             ind_items[0]["product_name"] += LEGACY_CLIENT_RELOAD_TRIGGER
 
+        ov = load_product_overrides()
+        disp = ov.get("display_settings", {})
+        screen_scale = disp.get("screen_1_scale") or disp.get("scale", 88)
+
         result = {
             "screen": 1,
             "title": "Pre-Rolls & Infused Menu",
             "store": config.STORE_NAME,
             "asset_version": config.ASSET_VERSION,
+            "font_scale": screen_scale,
+            "display_settings": disp,
             "total_in_stock": len(ind_items) + len(hyb_items) + len(sat_items) + len(inf_items),
             "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
             "structured": {
@@ -1339,11 +1345,17 @@ class TendyInventoryService:
         if ind_dr:
             ind_dr[0]["product_name"] += LEGACY_CLIENT_RELOAD_TRIGGER
 
+        ov = load_product_overrides()
+        disp = ov.get("display_settings", {})
+        screen_scale = disp.get("screen_2_scale") or disp.get("scale", 90)
+
         result = {
             "screen": 2,
             "title": "Flower & Vapes Menu",
             "store": config.STORE_NAME,
             "asset_version": config.ASSET_VERSION,
+            "font_scale": screen_scale,
+            "display_settings": disp,
             "total_in_stock": total_items,
             "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
             "structured": {
@@ -1520,11 +1532,17 @@ class TendyInventoryService:
         if all_gummies:
             all_gummies[0]["product_name"] += LEGACY_CLIENT_RELOAD_TRIGGER
 
+        ov = load_product_overrides()
+        disp = ov.get("display_settings", {})
+        screen_scale = disp.get("screen_3_scale") or disp.get("scale", 92)
+
         result = {
             "screen": 3,
             "title": "Edibles, Drinks & Concentrates Menu",
             "store": config.STORE_NAME,
             "asset_version": config.ASSET_VERSION,
+            "font_scale": screen_scale,
+            "display_settings": disp,
             "total_in_stock": total_items,
             "updated_at": get_toronto_now().strftime("%I:%M:%S %p"),
             "structured": {

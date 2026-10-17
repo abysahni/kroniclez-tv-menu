@@ -475,10 +475,22 @@ if ($screen === 1) {
     ];
 }
 
+$ov_file = __DIR__ . '/product_overrides.json';
+$display_settings = ['scale' => 88, 'screen_1_scale' => 86, 'screen_2_scale' => 90, 'screen_3_scale' => 92];
+if (file_exists($ov_file)) {
+    $parsed_ov = json_decode(file_get_contents($ov_file), true);
+    if (!empty($parsed_ov['display_settings']) && is_array($parsed_ov['display_settings'])) {
+        $display_settings = array_merge($display_settings, $parsed_ov['display_settings']);
+    }
+}
+$screen_scale = $display_settings["screen_{$screen}_scale"] ?? $display_settings['scale'] ?? 88;
+
 $response_payload = [
     'success' => true,
     'screen' => $screen,
     'store' => $TENDY_CONFIG['store_name'],
+    'font_scale' => $screen_scale,
+    'display_settings' => $display_settings,
     'updated_at' => date('h:i:s A'),
     'structured' => $structured
 ];
@@ -759,56 +771,84 @@ body {
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
     align-items: center;
-    padding: 1.2px 0;
+    padding: 0.8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 14px;
+    font-size: 11.2px;
     font-weight: 750;
-    line-height: 1.18;
+    line-height: 1.14;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 14px;
+    font-size: 11.2px;
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 15.5px;
+    font-size: 12.5px;
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
 }
 .container-prerolls .title {
-    font-size: 18px;
+    font-size: 14.5px;
     font-weight: 900;
-    padding-bottom: 3px;
-    margin-bottom: 3px;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
     letter-spacing: 0.5px;
 }
 .container-prerolls .subhead {
-    font-size: 12px;
+    font-size: 9.8px;
     font-weight: 800;
-    margin: 3px 0 1.5px;
-    padding-bottom: 1.5px;
+    margin: 2px 0 1px;
+    padding-bottom: 1px;
 }
 .container-prerolls .table-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
-    font-size: 10px;
+    font-size: 8.5px;
     font-weight: 800;
-    margin: 1.5px 0;
-    padding-bottom: 1.5px;
+    margin: 1px 0;
+    padding-bottom: 1px;
 }
 .container-prerolls .panel {
-    padding: 4px 7px;
-    border-radius: 7px;
+    padding: 2.5px 5px;
+    border-radius: 6px;
+}
+
+/* On-Screen Scale HUD Pill */
+.tv-scale-hud {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(9, 10, 15, 0.92);
+    border: 1.5px solid #38bdf8;
+    color: #38bdf8;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.3);
+    z-index: 99999;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+}
+.tv-scale-hud.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Screen 2 Targeted Micro-Adjustment (Indica & Hybrid Flower Column Fit) */
@@ -1379,6 +1419,9 @@ body {
         </div>
     </header>
 
+    <!-- On-Screen Scale HUD Pill -->
+    <div id="tvScaleHud" class="tv-scale-hud"><i class="bi bi-aspect-ratio"></i> TV Scale: <span id="tvScaleHudVal"><?= $screen_scale ?>%</span></div>
+
     <!-- Main TV Screen Mount -->
     <main id="menuMount"></main>
 
@@ -1394,6 +1437,46 @@ body {
     <script>
         const initialData = <?= $json_injected ?>;
         const currentScreen = <?= $screen ?>;
+
+        // Dynamic Display Scale Engine & Remote Hotkeys
+        let currentTvScale = <?= $screen_scale ?>;
+        let serverTvScale = <?= $screen_scale ?>;
+        let hudHideTimer = null;
+
+        function showTvScaleHud(scaleVal) {
+            const hud = document.getElementById('tvScaleHud');
+            const valEl = document.getElementById('tvScaleHudVal');
+            if (valEl) valEl.innerText = `${scaleVal}%`;
+            if (hud) {
+                hud.classList.add('show');
+                if (hudHideTimer) clearTimeout(hudHideTimer);
+                hudHideTimer = setTimeout(() => hud.classList.remove('show'), 2200);
+            }
+        }
+
+        function applyTvDisplayScale(scaleVal, showHud = false) {
+            const valid = Math.max(70, Math.min(125, parseInt(scaleVal) || 88));
+            currentTvScale = valid;
+            document.body.style.zoom = (valid / 100);
+            document.documentElement.style.setProperty('--tv-scale', (valid / 100).toString());
+            if (showHud) showTvScaleHud(valid);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+            if (e.key === '[' || e.key === '{') {
+                const next = Math.max(70, currentTvScale - 2);
+                applyTvDisplayScale(next, true);
+                try { localStorage.setItem(`kroniclez_tv_scale_${currentScreen}`, next); } catch (err) {}
+            } else if (e.key === ']' || e.key === '}') {
+                const next = Math.min(125, currentTvScale + 2);
+                applyTvDisplayScale(next, true);
+                try { localStorage.setItem(`kroniclez_tv_scale_${currentScreen}`, next); } catch (err) {}
+            } else if (e.key === '0' || e.key === ')') {
+                try { localStorage.removeItem(`kroniclez_tv_scale_${currentScreen}`); } catch (err) {}
+                applyTvDisplayScale(serverTvScale, true);
+            }
+        });
 
         let currentCatNum = 1;
         function resetCatCounter() {
@@ -1892,7 +1975,20 @@ body {
         function pollLive() {
             fetch(`tv_menu.php?api=1&screen=${currentScreen}`)
                 .then(r => r.json())
-                .then(data => { if (data.success) renderScreen(data); })
+                .then(data => {
+                    if (data.success) {
+                        if (data.font_scale) {
+                            serverTvScale = data.font_scale;
+                            let activeScale = serverTvScale;
+                            try {
+                                const manual = localStorage.getItem(`kroniclez_tv_scale_${currentScreen}`);
+                                if (manual) activeScale = parseInt(manual);
+                            } catch (err) {}
+                            applyTvDisplayScale(activeScale, false);
+                        }
+                        renderScreen(data);
+                    }
+                })
                 .catch(e => console.error(e));
         }
 
@@ -1913,6 +2009,12 @@ body {
         window.addEventListener('touchstart', showNav);
 
         document.addEventListener('DOMContentLoaded', () => {
+            let activeScale = serverTvScale;
+            try {
+                const manual = localStorage.getItem(`kroniclez_tv_scale_${currentScreen}`);
+                if (manual) activeScale = parseInt(manual);
+            } catch (err) {}
+            applyTvDisplayScale(activeScale, false);
             renderScreen(initialData);
             setInterval(pollLive, 25000);
         });

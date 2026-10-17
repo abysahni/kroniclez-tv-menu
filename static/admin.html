@@ -206,6 +206,236 @@
             font-weight: 900;
         }
 
+        /* TV Display Scale & Text Size Control Card */
+        .scale-control-panel {
+            background: linear-gradient(135deg, rgba(18, 22, 31, 0.95), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .scale-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 14px;
+        }
+
+        .scale-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .scale-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scale-title i {
+            color: #38bdf8;
+            font-size: 17px;
+        }
+
+        .scale-subtitle {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .scale-target-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scale-target-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scale-target-select {
+            background: rgba(9, 10, 15, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 750;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .scale-target-select:focus {
+            border-color: #facc15;
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
+        }
+
+        .scale-body {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .scale-slider-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .scale-slider-wrap {
+            flex: 1;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .scale-slider-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .scale-current-badge {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .scale-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.12);
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .scale-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: #facc15;
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.8);
+        }
+
+        .scale-action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .save-scale-btn {
+            background: linear-gradient(135deg, #facc15, #eab308);
+            border: 1px solid #facc15;
+            color: #000000;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 14px rgba(250, 204, 21, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .save-scale-btn:hover {
+            background: linear-gradient(135deg, #fde047, #facc15);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(250, 204, 21, 0.5);
+        }
+
+        .save-scale-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .scale-presets-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scale-presets-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .scale-presets-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .preset-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+        }
+
+        .preset-btn.active {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: #38bdf8;
+            color: #ffffff;
+            font-weight: 800;
+        }
+
         /* Product Cards Grid */
         .products-grid {
             display: grid;
@@ -795,6 +1025,54 @@
             </div>
         </div>
 
+        <!-- TV Display Scale & Text Size Control Card -->
+        <div class="scale-control-panel">
+            <div class="scale-header">
+                <div class="scale-title-group">
+                    <div class="scale-title"><i class="bi bi-display"></i> TV Display Scale & Text Size Controls</div>
+                    <div class="scale-subtitle">Adjust typography & zoom scale across store TV displays so all items fit comfortably without scrolling.</div>
+                </div>
+                <div class="scale-target-wrap">
+                    <label for="scaleTargetSelect" class="scale-target-label"><i class="bi bi-tv"></i> Target TV:</label>
+                    <select id="scaleTargetSelect" class="scale-target-select" onchange="onScaleTargetChange()">
+                        <option value="all">🌐 All TV Screens (Global)</option>
+                        <option value="1">📺 TV 1: Pre-Rolls & Infused</option>
+                        <option value="2">📺 TV 2: Flower & Vapes</option>
+                        <option value="3">📺 TV 3: Edibles & Drinks</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="scale-body">
+                <div class="scale-slider-row">
+                    <div class="scale-slider-wrap">
+                        <div class="scale-slider-labels">
+                            <span><i class="bi bi-zoom-out"></i> 70% (Ultra-Dense)</span>
+                            <span id="scaleSliderLabel" class="scale-current-badge">88% (Balanced)</span>
+                            <span>115% (Large) <i class="bi bi-zoom-in"></i></span>
+                        </div>
+                        <input type="range" id="scaleSlider" min="70" max="115" step="1" value="88" class="scale-slider" oninput="onScaleSliderInput(this.value)">
+                    </div>
+                    <div class="scale-action-buttons">
+                        <button type="button" id="saveScaleBtn" class="save-scale-btn" onclick="saveDisplayScale()">
+                            <i class="bi bi-broadcast"></i> Save & Apply to TVs
+                        </button>
+                    </div>
+                </div>
+
+                <div class="scale-presets-row">
+                    <span class="scale-presets-label">Quick Presets:</span>
+                    <div class="scale-presets-group">
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(75)">75% (Ultra-Fit)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(85)">85% (Compact)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(88)">88% (Recommended)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(92)">92% (Comfortable)</button>
+                        <button type="button" class="preset-btn" onclick="applyScalePreset(100)">100% (Standard 1080p)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Policy Banner -->
         <div style="margin-bottom: 16px; padding: 10px 16px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; font-size: 12px; color: #cbd5e1; display: flex; align-items: center; gap: 8px;">
             <i class="bi bi-info-circle-fill" style="color: #38bdf8; font-size: 14px;"></i>
@@ -884,7 +1162,8 @@
                 }
                 const data = await res.json();
                 allProducts = data.items || [];
-                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {} };
+                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {}, display_settings: {} };
+                updateScaleUI();
                 const curCount = Object.keys(activeOverrides.species_overrides || {}).length + Object.keys(activeOverrides.highlight_overrides || {}).length + Object.keys(activeOverrides.category_overrides || {}).length;
                 if (curCount > 0) {
                     try {
@@ -1148,6 +1427,111 @@
         function jsonStringifyWithPin(obj) {
             obj.pin = authPin;
             return JSON.stringify(obj);
+        }
+
+        // ==========================================================================
+        // TV DISPLAY SCALE & TEXT SIZE CONTROLS
+        // ==========================================================================
+        function getScaleForTarget(target) {
+            const disp = activeOverrides.display_settings || {};
+            if (target === '1') return disp.screen_1_scale || disp.scale || 86;
+            if (target === '2') return disp.screen_2_scale || disp.scale || 90;
+            if (target === '3') return disp.screen_3_scale || disp.scale || 92;
+            return disp.scale || 88;
+        }
+
+        function updateScaleUI() {
+            const select = document.getElementById('scaleTargetSelect');
+            if (!select) return;
+            const target = select.value;
+            const scale = getScaleForTarget(target);
+            const slider = document.getElementById('scaleSlider');
+            if (slider) slider.value = scale;
+            onScaleSliderInput(scale);
+        }
+
+        function onScaleTargetChange() {
+            updateScaleUI();
+        }
+
+        function onScaleSliderInput(val) {
+            const num = parseInt(val);
+            const badge = document.getElementById('scaleSliderLabel');
+            let desc = 'Balanced';
+            if (num <= 75) desc = 'Ultra-Dense';
+            else if (num <= 85) desc = 'Compact';
+            else if (num <= 92) desc = 'Balanced';
+            else if (num < 100) desc = 'Comfortable';
+            else if (num === 100) desc = '100% Standard';
+            else desc = 'Large';
+
+            if (badge) {
+                badge.innerText = `${num}% (${desc})`;
+            }
+
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                if (btn.innerText.startsWith(`${num}%`)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function applyScalePreset(val) {
+            const slider = document.getElementById('scaleSlider');
+            if (slider) slider.value = val;
+            onScaleSliderInput(val);
+        }
+
+        async function saveDisplayScale() {
+            const slider = document.getElementById('scaleSlider');
+            const targetSelect = document.getElementById('scaleTargetSelect');
+            if (!slider || !targetSelect) return;
+
+            const scale = parseInt(slider.value);
+            const target = targetSelect.value;
+            const targetText = targetSelect.options[targetSelect.selectedIndex].text;
+            const saveBtn = document.getElementById('saveScaleBtn');
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+
+            try {
+                const base = getApiBasePath();
+                const res = await fetch(`${base}/api/admin/override`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'set_display_scale',
+                        scale: scale,
+                        target: target
+                    })
+                });
+
+                if (res.status === 401) {
+                    showToast("❌ Staff PIN invalid or session expired.", true);
+                    lockPortal();
+                    return;
+                }
+
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`✅ TV text scale updated to ${scale}% for ${targetText}! All TVs auto-refreshing...`);
+                    if (data.display_settings) {
+                        activeOverrides.display_settings = data.display_settings;
+                    }
+                    onScaleSliderInput(scale);
+                } else {
+                    showToast(`❌ Error: ${data.message || 'Could not save scale'}`, true);
+                }
+            } catch (err) {
+                console.error("Save scale error:", err);
+                showToast(`⚠️ Failed to save scale: ${err.message}`, true);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="bi bi-broadcast"></i> Save & Apply to TVs';
+            }
         }
 
         function toggleOverridesDrawer(open) {

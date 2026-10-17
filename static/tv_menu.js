@@ -317,6 +317,70 @@ function renderSoftCard(cardKey, dataObj) {
     `;
 }
 
+// ==========================================================================
+// DYNAMIC TV DISPLAY SCALE & KEYBOARD HOTKEY ENGINE
+// ==========================================================================
+let currentTvScale = 88;
+let serverTvScale = 88;
+let hudHideTimer = null;
+
+function ensureScaleHudElement() {
+    let hud = document.getElementById('tvScaleHud');
+    if (!hud) {
+        hud = document.createElement('div');
+        hud.id = 'tvScaleHud';
+        hud.className = 'tv-scale-hud';
+        hud.innerHTML = '<i class="bi bi-aspect-ratio"></i> TV Scale: <span id="tvScaleHudVal">88%</span>';
+        document.body.appendChild(hud);
+    }
+    return hud;
+}
+
+function showTvScaleHud(scaleVal) {
+    const hud = ensureScaleHudElement();
+    const valEl = document.getElementById('tvScaleHudVal');
+    if (valEl) valEl.innerText = `${scaleVal}%`;
+    hud.classList.add('show');
+    if (hudHideTimer) clearTimeout(hudHideTimer);
+    hudHideTimer = setTimeout(() => {
+        hud.classList.remove('show');
+    }, 2200);
+}
+
+function applyTvDisplayScale(scaleVal, showHud = false) {
+    const valid = Math.max(70, Math.min(125, parseInt(scaleVal) || 88));
+    currentTvScale = valid;
+    document.body.style.zoom = (valid / 100);
+    document.documentElement.style.setProperty('--tv-scale', (valid / 100).toString());
+    if (showHud) {
+        showTvScaleHud(valid);
+    }
+}
+
+// Hotkeys for TV screens: '[' = decrease scale (-2%), ']' = increase scale (+2%), '0' = reset
+window.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+
+    if (e.key === '[' || e.key === '{') {
+        const next = Math.max(70, currentTvScale - 2);
+        applyTvDisplayScale(next, true);
+        try {
+            localStorage.setItem(`kroniclez_tv_scale_${currentScreenId}`, next);
+        } catch (err) {}
+    } else if (e.key === ']' || e.key === '}') {
+        const next = Math.min(125, currentTvScale + 2);
+        applyTvDisplayScale(next, true);
+        try {
+            localStorage.setItem(`kroniclez_tv_scale_${currentScreenId}`, next);
+        } catch (err) {}
+    } else if (e.key === '0' || e.key === ')') {
+        try {
+            localStorage.removeItem(`kroniclez_tv_scale_${currentScreenId}`);
+        } catch (err) {}
+        applyTvDisplayScale(serverTvScale, true);
+    }
+});
+
 // Main Render Dispatcher
 function renderMenuData(res) {
     if (!res || !res.structured) return;
@@ -324,6 +388,23 @@ function renderMenuData(res) {
     if (!mount) return;
 
     const screen = res.screen || currentScreenId;
+
+    // Apply server-provided or admin-controlled display scale
+    let sScale = 88;
+    if (res.font_scale) {
+        sScale = res.font_scale;
+    } else if (res.display_settings) {
+        sScale = res.display_settings[`screen_${screen}_scale`] || res.display_settings.scale || 88;
+    }
+    serverTvScale = sScale;
+
+    let activeScale = sScale;
+    try {
+        const manual = localStorage.getItem(`kroniclez_tv_scale_${screen}`);
+        if (manual) activeScale = parseInt(manual);
+    } catch (err) {}
+
+    applyTvDisplayScale(activeScale, false);
 
     if (screen === 1) {
         // SCREEN 1: PRE-ROLLS (Indica, Hybrid, Sativa, Infused)

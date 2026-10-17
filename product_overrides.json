@@ -85,5 +85,11 @@
   },
   "thc_overrides": {},
   "category_overrides": {},
-  "last_updated": "2026-09-18T00:21:46.905050+00:00"
+  "display_settings": {
+    "scale": 88,
+    "screen_1_scale": 86,
+    "screen_2_scale": 90,
+    "screen_3_scale": 92
+  },
+  "last_updated": "2026-10-17T18:51:40.151178+00:00"
 }
