@@ -177,24 +177,43 @@ function fetchTendyInventory($config) {
         $records = isset($res['payload']) ? $res['payload'] : [];
         if (is_array($records) && count($records) > 0) {
             $items = [];
+            $seen_ids = [];
             $acc_cats = ['Accessories', '510 Battery', 'Bongs', 'Grinder', 'Lighers', 'Lighters', 'Pre Rolled Cone', 'Rolling Papers', 'Scale', 'Tray', 'Device', 'Glass', 'Pipe', 'Cleaning', 'Apparel'];
-            foreach ($records as $item) {
-                $cat = isset($item['categoryName']) ? trim(strval($item['categoryName'])) : '';
-                if (in_array($cat, $acc_cats)) continue;
-                $stock = floatval(isset($item['ppiStock']) ? $item['ppiStock'] : (isset($item['ppiActiveStock']) ? $item['ppiActiveStock'] : 0));
-                if ($stock <= 0) continue;
-                $price = floatval(isset($item['ppiSalePrice']) ? $item['ppiSalePrice'] : (isset($item['ppiPrice']) ? $item['ppiPrice'] : 0.0));
-                $cost = floatval(isset($item['ppiCost']) ? $item['ppiCost'] : 0.0);
-                $item['category'] = ['name' => $cat];
-                $item['categoryName'] = $cat;
-                $item['strain'] = isset($item['strain']) ? $item['strain'] : '';
-                $item['species'] = ucfirst(strtolower(strval($item['strain'])));
-                $item['productPricing'] = [
-                    'sale_price' => $price,
-                    'cost' => $cost,
-                    'stock' => intval($stock)
-                ];
-                $items[] = $item;
+            foreach ($records as $raw_item) {
+                $candidates = [$raw_item];
+                if (isset($raw_item['variants']) && is_array($raw_item['variants'])) {
+                    foreach ($raw_item['variants'] as $var) {
+                        if (is_array($var)) {
+                            if (!isset($var['brand']) && isset($raw_item['brand'])) $var['brand'] = $raw_item['brand'];
+                            if (!isset($var['categoryName']) && isset($raw_item['categoryName'])) $var['categoryName'] = $raw_item['categoryName'];
+                            if (!isset($var['strain']) && isset($raw_item['strain'])) $var['strain'] = $raw_item['strain'];
+                            if (!isset($var['image']) && isset($raw_item['image'])) $var['image'] = $raw_item['image'];
+                            $candidates[] = $var;
+                        }
+                    }
+                }
+
+                foreach ($candidates as $item) {
+                    $item_id = isset($item['id']) ? $item['id'] : null;
+                    if ($item_id && in_array($item_id, $seen_ids)) continue;
+                    $cat = isset($item['categoryName']) ? trim(strval($item['categoryName'])) : '';
+                    if (in_array($cat, $acc_cats)) continue;
+                    $stock = floatval(isset($item['ppiStock']) ? $item['ppiStock'] : (isset($item['ppiActiveStock']) ? $item['ppiActiveStock'] : 0));
+                    if ($stock <= 0) continue;
+                    if ($item_id) $seen_ids[] = $item_id;
+                    $price = floatval(isset($item['ppiSalePrice']) ? $item['ppiSalePrice'] : (isset($item['ppiPrice']) ? $item['ppiPrice'] : 0.0));
+                    $cost = floatval(isset($item['ppiCost']) ? $item['ppiCost'] : 0.0);
+                    $item['category'] = ['name' => $cat];
+                    $item['categoryName'] = $cat;
+                    $item['strain'] = isset($item['strain']) ? $item['strain'] : '';
+                    $item['species'] = ucfirst(strtolower(strval($item['strain'])));
+                    $item['productPricing'] = [
+                        'sale_price' => $price,
+                        'cost' => $cost,
+                        'stock' => intval($stock)
+                    ];
+                    $items[] = $item;
+                }
             }
             if (count($items) > 0) {
                 file_put_contents($cache_file, json_encode($items));

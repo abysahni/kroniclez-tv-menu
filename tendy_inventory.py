@@ -477,6 +477,8 @@ PRODUCT_POTENCY_DATABASE = {
     "roll up sativa": {"thc": "21.5%", "cbd": "0.5%"},
     "rooster call": {"thc": "30.0%", "cbd": "1.0%"},
     "sour chem": {"thc": "31.0%", "cbd": "<0.5%"},
+    "sour diesel": {"thc": "29.0%", "cbd": "<1.0%"},
+    "common ground sour diesel": {"thc": "29.0%", "cbd": "<1.0%"},
     "tropical pocket puffs": {"thc": "29.5%", "cbd": "1.0%"},
     "zsweet": {"thc": "29.5%", "cbd": "1.0%"},
 
@@ -856,32 +858,52 @@ class TendyInventoryService:
                 inv_data = json.loads(resp.read().decode("utf-8"))
                 records = inv_data.get("payload") or []
                 in_stock_items = []
-                for item in records:
-                    if is_accessory(item):
-                        continue
-                    stock = float(item.get("ppiStock") or item.get("ppiActiveStock") or 0)
-                    if stock <= 0:
-                        continue
-                    sale_p = float(item.get("ppiSalePrice") or item.get("ppiPrice") or 0.0)
-                    cost_p = float(item.get("ppiCost") or 0.0)
-                    cat_name = str(item.get("categoryName") or "").strip()
-                    strain_val = str(item.get("strain") or "").strip()
+                seen_ids = set()
+                for raw_item in records:
+                    candidates = [raw_item]
+                    for var in (raw_item.get("variants") or []):
+                        if isinstance(var, dict):
+                            if not var.get("brand") and raw_item.get("brand"):
+                                var["brand"] = raw_item["brand"]
+                            if not var.get("categoryName") and raw_item.get("categoryName"):
+                                var["categoryName"] = raw_item["categoryName"]
+                            if not var.get("strain") and raw_item.get("strain"):
+                                var["strain"] = raw_item["strain"]
+                            if not var.get("image") and raw_item.get("image"):
+                                var["image"] = raw_item["image"]
+                            candidates.append(var)
 
-                    item["category"] = {"name": cat_name}
-                    item["categoryName"] = cat_name
-                    item["strain"] = strain_val
-                    item["species"] = strain_val.title()
-                    if not item.get("productPricing"):
-                        item["productPricing"] = {
-                            "sale_price": sale_p,
-                            "cost": cost_p,
-                            "stock": int(stock)
-                        }
-                    else:
-                        item["productPricing"]["sale_price"] = sale_p
-                        item["productPricing"]["cost"] = cost_p
-                        item["productPricing"]["stock"] = int(stock)
-                    in_stock_items.append(item)
+                    for item in candidates:
+                        item_id = item.get("id")
+                        if item_id and item_id in seen_ids:
+                            continue
+                        if is_accessory(item):
+                            continue
+                        stock = float(item.get("ppiStock") or item.get("ppiActiveStock") or 0)
+                        if stock <= 0:
+                            continue
+                        if item_id:
+                            seen_ids.add(item_id)
+                        sale_p = float(item.get("ppiSalePrice") or item.get("ppiPrice") or 0.0)
+                        cost_p = float(item.get("ppiCost") or 0.0)
+                        cat_name = str(item.get("categoryName") or "").strip()
+                        strain_val = str(item.get("strain") or "").strip()
+
+                        item["category"] = {"name": cat_name}
+                        item["categoryName"] = cat_name
+                        item["strain"] = strain_val
+                        item["species"] = strain_val.title()
+                        if not item.get("productPricing"):
+                            item["productPricing"] = {
+                                "sale_price": sale_p,
+                                "cost": cost_p,
+                                "stock": int(stock)
+                            }
+                        else:
+                            item["productPricing"]["sale_price"] = sale_p
+                            item["productPricing"]["cost"] = cost_p
+                            item["productPricing"]["stock"] = int(stock)
+                        in_stock_items.append(item)
                 
                 if in_stock_items:
                     self._raw_inventory_cache = in_stock_items
