@@ -140,8 +140,7 @@ if ($rel_path === '/admin' || $rel_path === '/portal' || $rel_path === '/overrid
 if (strpos($rel_path, '/api/admin/') === 0) {
     header("Content-Type: application/json; charset=utf-8");
     
-    $forward_path = ($rel_path === '/api/admin/overrides') ? '/api/admin/override' : $rel_path;
-    $backend_admin_url = "https://kroniclez-tv-menu-2cmv.onrender.com" . $forward_path;
+    $backend_admin_url = "https://kroniclez-tv-menu-2cmv.onrender.com" . $rel_path;
     if (!empty($_SERVER['QUERY_STRING'])) {
         $backend_admin_url .= '?' . $_SERVER['QUERY_STRING'];
     }
@@ -191,25 +190,6 @@ if (strpos($rel_path, '/api/admin/') === 0) {
                             }
                         }
                     }
-                }
-            } elseif ($action === 'set_display_scale') {
-                $scale = intval($payload['scale'] ?? 88);
-                $scale = max(70, min(125, $scale));
-                $target = strtolower(trim($payload['target'] ?? 'all'));
-                if (!isset($local_ov['display_settings']) || !is_array($local_ov['display_settings'])) {
-                    $local_ov['display_settings'] = [];
-                }
-                if (in_array($target, ['1', 'screen1', 'tv1'])) {
-                    $local_ov['display_settings']['screen_1_scale'] = $scale;
-                } elseif (in_array($target, ['2', 'screen2', 'tv2'])) {
-                    $local_ov['display_settings']['screen_2_scale'] = $scale;
-                } elseif (in_array($target, ['3', 'screen3', 'tv3'])) {
-                    $local_ov['display_settings']['screen_3_scale'] = $scale;
-                } else {
-                    $local_ov['display_settings']['scale'] = $scale;
-                    $local_ov['display_settings']['screen_1_scale'] = $scale;
-                    $local_ov['display_settings']['screen_2_scale'] = $scale;
-                    $local_ov['display_settings']['screen_3_scale'] = $scale;
                 }
             } elseif ($action === 'import_overrides' && !empty($payload['overrides']) && is_array($payload['overrides'])) {
                 foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides'] as $grp) {
@@ -280,7 +260,7 @@ $script_injection .= "</script>\n</head>";
 $html = str_replace('</head>', $script_injection, $html);
 
 // Dynamic asset cache-busting
-$cache_buster = '?v=59_' . time();
+$cache_buster = '?v=61_' . time();
 $html = preg_replace('/tv_menu\.css\?v=[^\s"\'>]+/', 'tv_menu.css' . $cache_buster, $html);
 $html = preg_replace('/tv_menu\.js\?v=[^\s"\'>]+/', 'tv_menu.js' . $cache_buster, $html);
 

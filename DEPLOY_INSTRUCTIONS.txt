@@ -1,0 +1,60 @@
+================================================================================
+  KRONICLEZ DIGITAL TV MENU BOARD — HOSTINGER DEPLOYMENT INSTRUCTIONS
+================================================================================
+
+This package contains the complete, ready-to-run Kroniclez TV Menu Board system
+configured for Hostinger (or any Apache/cPanel PHP hosting provider).
+
+--------------------------------------------------------------------------------
+1. HOW TO UPLOAD & DEPLOY ON HOSTINGER
+--------------------------------------------------------------------------------
+Step 1: Log in to your Hostinger Control Panel (hPanel).
+Step 2: Go to "Websites" -> Select your domain -> Open "File Manager".
+Step 3: Navigate to the `public_html` folder (or a subfolder such as `public_html/menu`).
+Step 4: Click the "Upload" button (top right), choose this zip file (`kroniclez_tv_menu_deploy.zip`).
+Step 5: Right-click the uploaded zip file and select "Extract".
+Step 6: Ensure files like `index.php`, `.htaccess`, `tv_menu.php`, `config.py`, and the `static/`
+        folder are located directly in your target folder.
+
+That's it! No database setup or server compilation is required.
+
+--------------------------------------------------------------------------------
+2. LIVE TV SCREEN URLs
+--------------------------------------------------------------------------------
+Once extracted, your screens are immediately live at:
+
+* Dedicated TV 1 (Pre-Rolls & Infused):
+  https://yourdomain.com/tv1   (or https://yourdomain.com/?screen=1)
+
+* Dedicated TV 2 (Flower & Vapes):
+  https://yourdomain.com/tv2   (or https://yourdomain.com/?screen=2)
+
+* Dedicated TV 3 (Edibles, Drinks & Concentrates):
+  https://yourdomain.com/tv3   (or https://yourdomain.com/?screen=3)
+
+* Main TV Menu (with screen switcher):
+  https://yourdomain.com/
+
+* Staff & Budtender Admin Portal (Staff PIN: 4200):
+  https://yourdomain.com/admin
+
+* Direct Standalone PHP Fallback:
+  https://yourdomain.com/tv_menu.php?screen=1
+  https://yourdomain.com/tv_menu.php?screen=2
+  https://yourdomain.com/tv_menu.php?screen=3
+
+--------------------------------------------------------------------------------
+3. TV SCREEN KEYBOARD SHORTCUTS
+--------------------------------------------------------------------------------
+* Press 'F' on the TV / browser keyboard to toggle Fullscreen Mode.
+* Press '1', '2', or '3' to instantly switch between screens.
+* Press 'R' to force reload live inventory.
+
+--------------------------------------------------------------------------------
+4. BUILT-IN FAILSAFE / ZERO-DOWNTIME PROTECTION
+--------------------------------------------------------------------------------
+* The system connects to Tendy POS location catalog API.
+* In the event that Tendy POS is unreachable, Wi-Fi drops, or the Tendy password
+  changes, the menu automatically serves from `last_known_good_inventory.json`.
+* Your TV screens will NEVER show a blank screen or 500 error.
+================================================================================

@@ -177,43 +177,24 @@ function fetchTendyInventory($config) {
         $records = isset($res['payload']) ? $res['payload'] : [];
         if (is_array($records) && count($records) > 0) {
             $items = [];
-            $seen_ids = [];
             $acc_cats = ['Accessories', '510 Battery', 'Bongs', 'Grinder', 'Lighers', 'Lighters', 'Pre Rolled Cone', 'Rolling Papers', 'Scale', 'Tray', 'Device', 'Glass', 'Pipe', 'Cleaning', 'Apparel'];
-            foreach ($records as $raw_item) {
-                $candidates = [$raw_item];
-                if (isset($raw_item['variants']) && is_array($raw_item['variants'])) {
-                    foreach ($raw_item['variants'] as $var) {
-                        if (is_array($var)) {
-                            if (!isset($var['brand']) && isset($raw_item['brand'])) $var['brand'] = $raw_item['brand'];
-                            if (!isset($var['categoryName']) && isset($raw_item['categoryName'])) $var['categoryName'] = $raw_item['categoryName'];
-                            if (!isset($var['strain']) && isset($raw_item['strain'])) $var['strain'] = $raw_item['strain'];
-                            if (!isset($var['image']) && isset($raw_item['image'])) $var['image'] = $raw_item['image'];
-                            $candidates[] = $var;
-                        }
-                    }
-                }
-
-                foreach ($candidates as $item) {
-                    $item_id = isset($item['id']) ? $item['id'] : null;
-                    if ($item_id && in_array($item_id, $seen_ids)) continue;
-                    $cat = isset($item['categoryName']) ? trim(strval($item['categoryName'])) : '';
-                    if (in_array($cat, $acc_cats)) continue;
-                    $stock = floatval(isset($item['ppiStock']) ? $item['ppiStock'] : (isset($item['ppiActiveStock']) ? $item['ppiActiveStock'] : 0));
-                    if ($stock <= 0) continue;
-                    if ($item_id) $seen_ids[] = $item_id;
-                    $price = floatval(isset($item['ppiSalePrice']) ? $item['ppiSalePrice'] : (isset($item['ppiPrice']) ? $item['ppiPrice'] : 0.0));
-                    $cost = floatval(isset($item['ppiCost']) ? $item['ppiCost'] : 0.0);
-                    $item['category'] = ['name' => $cat];
-                    $item['categoryName'] = $cat;
-                    $item['strain'] = isset($item['strain']) ? $item['strain'] : '';
-                    $item['species'] = ucfirst(strtolower(strval($item['strain'])));
-                    $item['productPricing'] = [
-                        'sale_price' => $price,
-                        'cost' => $cost,
-                        'stock' => intval($stock)
-                    ];
-                    $items[] = $item;
-                }
+            foreach ($records as $item) {
+                $cat = isset($item['categoryName']) ? trim(strval($item['categoryName'])) : '';
+                if (in_array($cat, $acc_cats)) continue;
+                $stock = floatval(isset($item['ppiStock']) ? $item['ppiStock'] : (isset($item['ppiActiveStock']) ? $item['ppiActiveStock'] : 0));
+                if ($stock <= 0) continue;
+                $price = floatval(isset($item['ppiSalePrice']) ? $item['ppiSalePrice'] : (isset($item['ppiPrice']) ? $item['ppiPrice'] : 0.0));
+                $cost = floatval(isset($item['ppiCost']) ? $item['ppiCost'] : 0.0);
+                $item['category'] = ['name' => $cat];
+                $item['categoryName'] = $cat;
+                $item['strain'] = isset($item['strain']) ? $item['strain'] : '';
+                $item['species'] = ucfirst(strtolower(strval($item['strain'])));
+                $item['productPricing'] = [
+                    'sale_price' => $price,
+                    'cost' => $cost,
+                    'stock' => intval($stock)
+                ];
+                $items[] = $item;
             }
             if (count($items) > 0) {
                 file_put_contents($cache_file, json_encode($items));
@@ -225,6 +206,15 @@ function fetchTendyInventory($config) {
     // Fallback to expired cache if API is temporarily unreachable
     if (file_exists($cache_file)) {
         return json_decode(file_get_contents($cache_file), true);
+    }
+
+    // Fallback to disk snapshot (prevents blank screen during Tendy outages or password changes)
+    $disk_snapshot = __DIR__ . '/last_known_good_inventory.json';
+    if (file_exists($disk_snapshot)) {
+        $disk_raw = json_decode(file_get_contents($disk_snapshot), true);
+        if (is_array($disk_raw) && count($disk_raw) > 0) {
+            return $disk_raw;
+        }
     }
 
     return [];
@@ -475,22 +465,10 @@ if ($screen === 1) {
     ];
 }
 
-$ov_file = __DIR__ . '/product_overrides.json';
-$display_settings = ['scale' => 88, 'screen_1_scale' => 86, 'screen_2_scale' => 90, 'screen_3_scale' => 92];
-if (file_exists($ov_file)) {
-    $parsed_ov = json_decode(file_get_contents($ov_file), true);
-    if (!empty($parsed_ov['display_settings']) && is_array($parsed_ov['display_settings'])) {
-        $display_settings = array_merge($display_settings, $parsed_ov['display_settings']);
-    }
-}
-$screen_scale = $display_settings["screen_{$screen}_scale"] ?? $display_settings['scale'] ?? 88;
-
 $response_payload = [
     'success' => true,
     'screen' => $screen,
     'store' => $TENDY_CONFIG['store_name'],
-    'font_scale' => $screen_scale,
-    'display_settings' => $display_settings,
     'updated_at' => date('h:i:s A'),
     'structured' => $structured
 ];
@@ -527,17 +505,10 @@ $json_injected = json_encode($response_payload);
     -webkit-user-select: none;
 }
 
-:root {
-    --tv-scale: <?= $screen_scale / 100 ?>;
-    --tv-text-scale: <?= $screen_scale / 100 ?>;
-}
-
 html {
     background: #000000;
     font-size: 16px;
-    width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 body {
@@ -545,14 +516,10 @@ body {
     color: #ffffff;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     width: 100vw;
-    height: 100vh;
-    min-width: 100vw;
     min-height: 100vh;
-    overflow: hidden;
-    padding: 4px 8px 8px 8px;
+    padding: 6px 8px 10px 8px;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
 }
 
 #menuMount {
@@ -782,130 +749,56 @@ body {
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
     align-items: center;
-    padding: 0.6px 0;
+    padding: 1.2px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 750;
-    line-height: 1.1;
+    line-height: 1.18;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 11.8px;
+    font-size: 15px;
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 12px;
+    font-size: 15.5px;
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 8.8px;
+    font-size: 10px;
     font-weight: 700;
 }
 .container-prerolls .title {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 900;
-    padding-bottom: 2px;
-    margin-bottom: 2px;
-    letter-spacing: 0.4px;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
 }
 .container-prerolls .subhead {
-    font-size: 9.5px;
+    font-size: 12px;
     font-weight: 800;
-    margin: 1.5px 0 1px;
-    padding-bottom: 1px;
+    margin: 3px 0 1.5px;
+    padding-bottom: 1.5px;
 }
 .container-prerolls .table-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 56px 68px;
     column-gap: 4px;
-    font-size: 8.5px;
+    font-size: 10px;
     font-weight: 800;
-    margin: 1px 0;
-    padding-bottom: 1px;
+    margin: 1.5px 0;
+    padding-bottom: 1.5px;
 }
 .container-prerolls .panel {
-    padding: 2px 5px;
-    border-radius: 6px;
-}
-
-/* Column 4 (Infused Pre-Rolls) Ultra-Fit Density: Ensures 34+ items fit 100% on screen */
-.container-prerolls .panel:nth-child(4) .p-row {
-    padding: 0.15px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.container-prerolls .panel:nth-child(4) .p-name {
-    font-size: 10.8px;
-    line-height: 1.05;
-    padding-right: 3px;
-}
-.container-prerolls .panel:nth-child(4) .p-thc {
-    font-size: 10.8px;
-}
-.container-prerolls .panel:nth-child(4) .p-price .regular {
-    font-size: 11.2px;
-}
-.container-prerolls .panel:nth-child(4) .p-price .sale {
-    font-size: 11.5px;
-}
-.container-prerolls .panel:nth-child(4) .subhead {
-    margin: 1px 0 0.5px;
-    padding-bottom: 0.5px;
-    font-size: 9px;
-}
-.container-prerolls .panel:nth-child(4) .table-header {
-    margin: 0.5px 0;
-    padding-bottom: 0.5px;
-    font-size: 8px;
-}
-
-/* Column 3 (Sativa Pre-Rolls) High Density Optimization (31 items) */
-.container-prerolls .panel:nth-child(3) .p-row {
-    padding: 0.35px 0;
-}
-.container-prerolls .panel:nth-child(3) .p-name {
-    line-height: 1.06;
-}
-
-/* Column 1 (Indica Pre-Rolls) High Density Optimization (29 items) */
-.container-prerolls .panel:nth-child(1) .p-row {
-    padding: 0.4px 0;
-}
-.container-prerolls .panel:nth-child(1) .p-name {
-    line-height: 1.06;
-}
-
-/* On-Screen Scale HUD Pill */
-.tv-scale-hud {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: rgba(9, 10, 15, 0.92);
-    border: 1.5px solid #38bdf8;
-    color: #38bdf8;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.3);
-    z-index: 99999;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none;
-    font-family: 'JetBrains Mono', monospace;
-}
-.tv-scale-hud.show {
-    opacity: 1;
-    transform: translateY(0);
+    padding: 4px 7px;
+    border-radius: 7px;
 }
 
 /* Screen 2 Targeted Micro-Adjustment (Indica & Hybrid Flower Column Fit) */
@@ -1476,9 +1369,6 @@ body {
         </div>
     </header>
 
-    <!-- On-Screen Scale HUD Pill -->
-    <div id="tvScaleHud" class="tv-scale-hud"><i class="bi bi-aspect-ratio"></i> TV Scale: <span id="tvScaleHudVal"><?= $screen_scale ?>%</span></div>
-
     <!-- Main TV Screen Mount -->
     <main id="menuMount"></main>
 
@@ -1494,133 +1384,6 @@ body {
     <script>
         const initialData = <?= $json_injected ?>;
         const currentScreen = <?= $screen ?>;
-
-        // Dynamic Display Scale Engine & Remote Hotkeys
-        let currentTvScale = <?= $screen_scale ?>;
-        let serverTvScale = <?= $screen_scale ?>;
-        let lastAppliedBaseScale = null;
-        let lastAutoFitScale = null;
-        let isAutoFitting = false;
-        let hudHideTimer = null;
-
-        function showTvScaleHud(scaleVal) {
-            const hud = document.getElementById('tvScaleHud');
-            const valEl = document.getElementById('tvScaleHudVal');
-            if (valEl) valEl.innerText = `${scaleVal}%`;
-            if (hud) {
-                hud.classList.add('show');
-                if (hudHideTimer) clearTimeout(hudHideTimer);
-                hudHideTimer = setTimeout(() => hud.classList.remove('show'), 2200);
-            }
-        }
-
-        function setTvZoomAndDimensions(scaleVal) {
-            const valid = Math.max(65, Math.min(140, parseInt(scaleVal) || <?= $screen_scale ?>));
-            const factor = valid / 100;
-            document.body.style.zoom = factor;
-            document.body.style.width = (100 / factor) + 'vw';
-            document.body.style.height = (100 / factor) + 'vh';
-            document.documentElement.style.setProperty('--tv-scale', factor.toString());
-            document.documentElement.style.setProperty('--tv-text-scale', factor.toString());
-            return valid;
-        }
-
-        function applyTvDisplayScale(scaleVal, showHud = false) {
-            const valid = setTvZoomAndDimensions(scaleVal);
-            currentTvScale = valid;
-            lastAppliedBaseScale = valid;
-            lastAutoFitScale = null; // explicit change resets auto-fit
-            
-            if (showHud) showTvScaleHud(valid);
-            requestAnimationFrame(() => {
-                checkAndAutoFitScreen();
-            });
-        }
-
-        function checkAndAutoFitScreen() {
-            if (isAutoFitting) return;
-
-            requestAnimationFrame(() => {
-                const mount = document.getElementById('menuMount');
-                if (!mount) return;
-
-                // Collect all column panels / decks across Screens 1, 2, and 3
-                const panels = Array.from(document.querySelectorAll(
-                    '.container-prerolls .panel, .container-vapes-flower .panel, .container-softchews .column-deck, .container-softchews .soft-card, .container-softchews .panel'
-                ));
-                if (panels.length === 0) return;
-
-                // Reserve 18px safety padding at bottom of screen for TV bezel / overscan
-                const bottomSafetyPadding = 18;
-                const allowedMaxBottom = window.innerHeight - bottomSafetyPadding;
-
-                let maxExceededPx = 0;
-                let worstPanel = null;
-                let worstPanelH = 0;
-                let worstPanelTop = 0;
-
-                for (const p of panels) {
-                    const rect = p.getBoundingClientRect();
-                    if (rect.height <= 0) continue;
-                    const diff = rect.bottom - allowedMaxBottom;
-                    if (diff > maxExceededPx) {
-                        maxExceededPx = diff;
-                        worstPanel = p;
-                        worstPanelH = rect.height;
-                        worstPanelTop = rect.top;
-                    }
-                }
-
-                if (maxExceededPx > 4) {
-                    let fitRatio = 1.0;
-                    if (worstPanel && worstPanelH > 50) {
-                        const availableH = allowedMaxBottom - worstPanelTop;
-                        if (availableH > 150) {
-                            fitRatio = availableH / worstPanelH;
-                        }
-                    }
-
-                    if (fitRatio < 0.99) {
-                        const newScale = Math.max(68, Math.floor(currentTvScale * fitRatio) - 1);
-                        if (newScale < currentTvScale) {
-                            isAutoFitting = true;
-                            console.log(`[Kroniclez TV] Screen auto-fit: Content exceeds TV bottom by ${Math.round(maxExceededPx)}px. Micro-scaling from ${currentTvScale}% to ${newScale}%.`);
-                            currentTvScale = newScale;
-                            lastAutoFitScale = newScale;
-                            setTvZoomAndDimensions(newScale);
-
-                            // Follow-up check to guarantee zero remaining overflow
-                            setTimeout(() => {
-                                isAutoFitting = false;
-                                checkAndAutoFitScreen();
-                            }, 120);
-                            return;
-                        }
-                    }
-                }
-                isAutoFitting = false;
-            });
-        }
-        window.addEventListener('resize', () => {
-            isAutoFitting = false;
-            checkAndAutoFitScreen();
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
-            if (e.key === '[' || e.key === '{') {
-                const next = Math.max(60, currentTvScale - 2);
-                applyTvDisplayScale(next, true);
-                try { localStorage.setItem(`kroniclez_tv_scale_${currentScreen}`, next); } catch (err) {}
-            } else if (e.key === ']' || e.key === '}') {
-                const next = Math.min(125, currentTvScale + 2);
-                applyTvDisplayScale(next, true);
-                try { localStorage.setItem(`kroniclez_tv_scale_${currentScreen}`, next); } catch (err) {}
-            } else if (e.key === '0' || e.key === ')') {
-                try { localStorage.removeItem(`kroniclez_tv_scale_${currentScreen}`); } catch (err) {}
-                applyTvDisplayScale(serverTvScale, true);
-            }
-        });
 
         let currentCatNum = 1;
         function resetCatCounter() {
@@ -2095,7 +1858,6 @@ body {
 
             document.getElementById('tv-sync-time').textContent = `TENDY LIVE • ${res.updated_at || ''}`;
             updateHappyHourBanner();
-            checkAndAutoFitScreen();
         }
 
 
@@ -2120,24 +1882,7 @@ body {
         function pollLive() {
             fetch(`tv_menu.php?api=1&screen=${currentScreen}`)
                 .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        if (data.font_scale) {
-                            serverTvScale = data.font_scale;
-                            let activeScale = serverTvScale;
-                            try {
-                                const manual = localStorage.getItem(`kroniclez_tv_scale_${currentScreen}`);
-                                if (manual) activeScale = parseInt(manual);
-                            } catch (err) {}
-                            if (lastAppliedBaseScale !== activeScale) {
-                                applyTvDisplayScale(activeScale, false);
-                            } else if (lastAutoFitScale && lastAutoFitScale < currentTvScale) {
-                                setTvZoomAndDimensions(lastAutoFitScale);
-                            }
-                        }
-                        renderScreen(data);
-                    }
-                })
+                .then(data => { if (data.success) renderScreen(data); })
                 .catch(e => console.error(e));
         }
 
@@ -2158,12 +1903,6 @@ body {
         window.addEventListener('touchstart', showNav);
 
         document.addEventListener('DOMContentLoaded', () => {
-            let activeScale = serverTvScale;
-            try {
-                const manual = localStorage.getItem(`kroniclez_tv_scale_${currentScreen}`);
-                if (manual) activeScale = parseInt(manual);
-            } catch (err) {}
-            applyTvDisplayScale(activeScale, false);
             renderScreen(initialData);
             setInterval(pollLive, 25000);
         });
