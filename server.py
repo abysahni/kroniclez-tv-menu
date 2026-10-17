@@ -108,7 +108,11 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             else:
                 data = inventory_service.get_screen_3_edibles_drinks(location_id=loc_id)
 
-            self._send_json({"success": True, **data})
+            ov = load_product_overrides()
+            text_scales = ov.get("screen_text_scale", {})
+            current_scale = int(text_scales.get(str(screen_id), 100))
+
+            self._send_json({"success": True, "text_scale": current_scale, **data})
 
         elif path == "/api/health" or path == "/healthz":
             self._send_json({"status": "ok", "service": "kroniclez-tv-menu", "store": config.STORE_NAME})
@@ -290,6 +294,21 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                 self._send_json({"success": True, "message": f"Reverted all overrides for '{pattern}'"})
                 return
 
+            elif action == "set_text_scale":
+                screen = str(data.get("screen", "1")).strip()
+                try:
+                    val = int(data.get("value", 100))
+                except (ValueError, TypeError):
+                    val = 100
+                val = max(70, min(130, val))
+                ov = load_product_overrides()
+                ov.setdefault("screen_text_scale", {"1": 100, "2": 100, "3": 100})
+                ov["screen_text_scale"][screen] = val
+                save_product_overrides(ov)
+                inventory_service.clear_cache()
+                self._send_json({"success": True, "message": f"TV {screen} text scale set to {val}%", "screen_text_scale": ov["screen_text_scale"]})
+                return
+
             elif action == "flush_cache":
                 inventory_service.clear_cache()
                 self._send_json({"success": True, "message": "TV Menu Cache Flushed successfully"})
@@ -301,7 +320,7 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
                     self._send_json({"success": False, "message": "Invalid JSON payload for overrides"}, status_code=400)
                     return
                 ov = load_product_overrides()
-                for key in ["species_overrides", "highlight_overrides", "thc_overrides", "category_overrides"]:
+                for key in ["species_overrides", "highlight_overrides", "thc_overrides", "category_overrides", "screen_text_scale"]:
                     if key in raw_ov and isinstance(raw_ov[key], dict):
                         ov[key].update(raw_ov[key])
                 save_product_overrides(ov)
@@ -333,9 +352,13 @@ class KroniclezTVMenuHandler(BaseHTTPRequestHandler):
             else:
                 initial_screen_data = inventory_service.get_screen_3_edibles_drinks()
 
+            ov = load_product_overrides()
+            text_scales = ov.get("screen_text_scale", {})
+            current_scale = int(text_scales.get(str(screen_id), 100))
+
             script_tag = f"""<script id="tv-preloaded-data">
 window.__INITIAL_SCREEN_ID__ = {screen_id};
-window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, **initial_screen_data}, default=str)};
+window.__INITIAL_MENU_DATA__ = {json.dumps({"success": True, "text_scale": current_scale, **initial_screen_data}, default=str)};
 </script>"""
             html_content = html_content.replace("</head>", f"{script_tag}\n</head>")
 

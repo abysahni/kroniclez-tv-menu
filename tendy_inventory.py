@@ -41,7 +41,7 @@ def load_regular_prices_registry() -> Dict[str, Any]:
 
 
 def load_product_overrides() -> Dict[str, Any]:
-    data = {"species_overrides": {}, "highlight_overrides": {}, "thc_overrides": {}, "category_overrides": {}}
+    data = {"species_overrides": {}, "highlight_overrides": {}, "thc_overrides": {}, "category_overrides": {}, "screen_text_scale": {"1": 100, "2": 100, "3": 100}}
     if config.OVERRIDES_FILE.exists():
         try:
             with open(config.OVERRIDES_FILE, "r", encoding="utf-8") as f:
@@ -52,6 +52,7 @@ def load_product_overrides() -> Dict[str, Any]:
                     data.setdefault("species_overrides", {})
                     data.setdefault("highlight_overrides", {})
                     data.setdefault("thc_overrides", {})
+                    data.setdefault("screen_text_scale", {"1": 100, "2": 100, "3": 100})
                     return data
         except Exception:
             pass

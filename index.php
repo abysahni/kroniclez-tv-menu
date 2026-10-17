@@ -167,7 +167,13 @@ if (strpos($rel_path, '/api/admin/') === 0) {
             $pattern = strtolower(trim($payload['pattern'] ?? ''));
             $val = strtoupper(trim($payload['value'] ?? ''));
             
-            if ($action === 'set_species' && $pattern) {
+            if ($action === 'set_text_scale') {
+                $scr = isset($payload['screen']) ? strval($payload['screen']) : '1';
+                $sval = isset($payload['value']) ? intval($payload['value']) : 100;
+                $sval = max(70, min(130, $sval));
+                if (!isset($local_ov['screen_text_scale'])) $local_ov['screen_text_scale'] = ['1' => 100, '2' => 100, '3' => 100];
+                $local_ov['screen_text_scale'][$scr] = $sval;
+            } elseif ($action === 'set_species' && $pattern) {
                 $local_ov['species_overrides'][$pattern] = $val;
             } elseif ($action === 'set_highlight' && $pattern) {
                 if (in_array($val, ['NONE', 'REGULAR', 'STANDARD'])) {
@@ -192,7 +198,7 @@ if (strpos($rel_path, '/api/admin/') === 0) {
                     }
                 }
             } elseif ($action === 'import_overrides' && !empty($payload['overrides']) && is_array($payload['overrides'])) {
-                foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides'] as $grp) {
+                foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides', 'screen_text_scale'] as $grp) {
                     if (isset($payload['overrides'][$grp]) && is_array($payload['overrides'][$grp])) {
                         $local_ov[$grp] = array_merge($local_ov[$grp] ?? [], $payload['overrides'][$grp]);
                     }

@@ -465,9 +465,19 @@ if ($screen === 1) {
     ];
 }
 
+$ov_file = __DIR__ . '/product_overrides.json';
+$text_scale = 100;
+if (file_exists($ov_file)) {
+    $ov_data = json_decode(@file_get_contents($ov_file), true);
+    if (!empty($ov_data['screen_text_scale']) && isset($ov_data['screen_text_scale'][strval($screen)])) {
+        $text_scale = intval($ov_data['screen_text_scale'][strval($screen)]);
+    }
+}
+
 $response_payload = [
     'success' => true,
     'screen' => $screen,
+    'text_scale' => $text_scale,
     'store' => $TENDY_CONFIG['store_name'],
     'updated_at' => date('h:i:s A'),
     'structured' => $structured
@@ -503,6 +513,10 @@ $json_injected = json_encode($response_payload);
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
+}
+
+:root {
+    --product-text-scale: 1;
 }
 
 html {
@@ -753,25 +767,25 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 13.5px;
+    font-size: calc(13.5px * var(--product-text-scale, 1));
     font-weight: 750;
     line-height: 1.15;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 13.5px;
+    font-size: calc(13.5px * var(--product-text-scale, 1));
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--product-text-scale, 1));
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 14.8px;
+    font-size: calc(14.8px * var(--product-text-scale, 1));
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--product-text-scale, 1));
     font-weight: 700;
 }
 .container-prerolls .title {
@@ -801,7 +815,7 @@ body {
     border-radius: 7px;
 }
 .container-prerolls .badge-num {
-    font-size: 10px;
+    font-size: calc(10px * var(--product-text-scale, 1));
     padding: 1px 4.5px;
     margin-right: 4.5px;
 }
@@ -811,11 +825,17 @@ body {
     padding: 0.7px 0;
 }
 .container-vapes-flower .p-name {
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
     line-height: 1.1;
 }
 .container-vapes-flower .p-thc {
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
+}
+.container-vapes-flower .p-price .regular {
+    font-size: calc(11.5px * var(--product-text-scale, 1));
+}
+.container-vapes-flower .p-price .sale {
+    font-size: calc(11.8px * var(--product-text-scale, 1));
 }
 .container-vapes-flower .subhead {
     font-size: 10px;
@@ -835,6 +855,9 @@ body {
 .container-vapes-flower .panel {
     padding: 3px 5px;
 }
+.container-vapes-flower .badge-num {
+    font-size: calc(9.5px * var(--product-text-scale, 1));
+}
 
 /* Soft Chews Product Row (Screen 3) */
 .soft-row {
@@ -844,7 +867,7 @@ body {
     align-items: center;
     padding: 1.4px 1px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 12px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
 }
 
 .soft-row:last-child { border-bottom: none; }
@@ -858,14 +881,14 @@ body {
     overflow-wrap: break-word !important;
     color: #ffffff;
     font-weight: 700;
-    font-size: 12px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
     line-height: 1.15;
     padding-right: 3px;
 }
 
 .soft-meta {
     text-align: center;
-    font-size: 9.5px;
+    font-size: calc(8.5px * var(--product-text-scale, 1));
     font-weight: 800;
     white-space: nowrap;
 }
@@ -877,7 +900,7 @@ body {
     text-align: center;
     color: #4ade80;
     font-weight: 800;
-    font-size: 12px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
 }
@@ -885,10 +908,42 @@ body {
 .soft-cbd {
     text-align: center;
     color: #cbd5e1;
-    font-size: 10.5px;
+    font-size: calc(10px * var(--product-text-scale, 1));
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
+}
+
+.soft-row .badge-num {
+    font-size: calc(10px * var(--product-text-scale, 1));
+}
+
+/* Product Text Scale On-Screen HUD */
+.tv-text-scale-hud {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(9, 10, 15, 0.95);
+    border: 1.5px solid #38bdf8;
+    color: #38bdf8;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.3);
+    z-index: 99999;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+}
+.tv-text-scale-hud.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Price Styling */
@@ -1390,6 +1445,38 @@ body {
         const initialData = <?= $json_injected ?>;
         const currentScreen = <?= $screen ?>;
 
+        // Product Text Scale Management (1% Increments)
+        let activeProductTextScale = 100;
+        let manualScaleLocked = false;
+
+        function setProductTextScale(percent, showHud = false) {
+            const p = Math.max(70, Math.min(130, parseInt(percent, 10) || 100));
+            activeProductTextScale = p;
+            document.documentElement.style.setProperty('--product-text-scale', (p / 100).toString());
+            if (showHud) {
+                showTextScaleHud(p);
+            }
+        }
+
+        let scaleHudTimer = null;
+        function showTextScaleHud(percent) {
+            let hud = document.getElementById('tvTextScaleHud');
+            if (!hud) {
+                hud = document.createElement('div');
+                hud.id = 'tvTextScaleHud';
+                hud.className = 'tv-text-scale-hud';
+                document.body.appendChild(hud);
+            }
+            const diff = percent - 100;
+            const diffStr = diff === 0 ? '(Default)' : (diff > 0 ? `(+${diff}%)` : `(${diff}%)`);
+            hud.innerHTML = `<i class="bi bi-fonts"></i> <span>Product Text: <strong>${percent}%</strong> ${diffStr}</span>`;
+            hud.classList.add('show');
+            clearTimeout(scaleHudTimer);
+            scaleHudTimer = setTimeout(() => {
+                hud.classList.remove('show');
+            }, 2200);
+        }
+
         let currentCatNum = 1;
         function resetCatCounter() {
             currentCatNum = 1;
@@ -1861,6 +1948,10 @@ body {
                 `;
             }
 
+            if (!manualScaleLocked && res.text_scale) {
+                setProductTextScale(res.text_scale);
+            }
+
             document.getElementById('tv-sync-time').textContent = `TENDY LIVE • ${res.updated_at || ''}`;
             updateHappyHourBanner();
         }
@@ -1907,7 +1998,31 @@ body {
         window.addEventListener('mousemove', showNav);
         window.addEventListener('touchstart', showNav);
 
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+            if (e.key === '[') {
+                manualScaleLocked = true;
+                setProductTextScale(activeProductTextScale - 1, true);
+            }
+            if (e.key === ']') {
+                manualScaleLocked = true;
+                setProductTextScale(activeProductTextScale + 1, true);
+            }
+            if (e.key === '0') {
+                manualScaleLocked = false;
+                setProductTextScale(100, true);
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlScale = urlParams.get('text_scale') || urlParams.get('ts');
+            if (urlScale) {
+                manualScaleLocked = true;
+                setProductTextScale(parseInt(urlScale, 10));
+            } else if (initialData && initialData.text_scale) {
+                setProductTextScale(initialData.text_scale);
+            }
             renderScreen(initialData);
             setInterval(pollLive, 25000);
         });

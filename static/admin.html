@@ -206,348 +206,6 @@
             font-weight: 900;
         }
 
-        /* TV Display Scale & Text Size Control Card */
-        .scale-control-panel {
-            background: linear-gradient(135deg, rgba(18, 22, 31, 0.95), rgba(15, 23, 42, 0.95));
-            border: 1px solid rgba(56, 189, 248, 0.28);
-            border-radius: 14px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-
-        .scale-header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-glass);
-            margin-bottom: 14px;
-        }
-
-        .scale-title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .scale-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .scale-title i {
-            color: #38bdf8;
-            font-size: 17px;
-        }
-
-        .scale-subtitle {
-            font-size: 12px;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-
-        .scale-target-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .scale-target-label {
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #cbd5e1;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .scale-target-select {
-            background: rgba(9, 10, 15, 0.85);
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            color: #38bdf8;
-            padding: 7px 12px;
-            border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 750;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .scale-target-select:focus {
-            border-color: #facc15;
-            box-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
-        }
-
-        .scale-body {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        /* Stepper & Action Controls for Text Size */
-        .text-size-stepper-box {
-            background: rgba(9, 10, 15, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 14px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .stepper-label-deck {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .stepper-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stepper-title i {
-            color: #facc15;
-            font-size: 15px;
-        }
-
-        .stepper-buttons-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-step-action {
-            flex: 1;
-            min-width: 170px;
-            padding: 11px 16px;
-            border-radius: 10px;
-            font-size: 13.5px;
-            font-weight: 850;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            user-select: none;
-        }
-
-        .btn-decrease {
-            background: rgba(56, 189, 248, 0.12);
-            border: 1.5px solid rgba(56, 189, 248, 0.45);
-            color: #38bdf8;
-        }
-
-        .btn-decrease:hover {
-            background: rgba(56, 189, 248, 0.25);
-            border-color: #38bdf8;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
-        }
-
-        .btn-increase {
-            background: rgba(74, 222, 128, 0.12);
-            border: 1.5px solid rgba(74, 222, 128, 0.45);
-            color: #4ade80;
-        }
-
-        .btn-increase:hover {
-            background: rgba(74, 222, 128, 0.25);
-            border-color: #4ade80;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 14px rgba(74, 222, 128, 0.3);
-        }
-
-        .fine-steps {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-fine-step {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-glass);
-            color: #cbd5e1;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .btn-fine-step:hover {
-            background: rgba(255, 255, 255, 0.16);
-            border-color: rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-        }
-
-        .slider-track-wrap {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding-top: 4px;
-        }
-
-        .scale-slider-labels {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11.5px;
-            color: var(--text-sub);
-            font-weight: 600;
-        }
-
-        .scale-current-badge {
-            background: rgba(56, 189, 248, 0.15);
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            color: #38bdf8;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12.5px;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .scale-slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.12);
-            outline: none;
-            cursor: pointer;
-            -webkit-appearance: none;
-        }
-
-        .scale-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #38bdf8;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .scale-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-            background: #facc15;
-            box-shadow: 0 0 12px rgba(250, 204, 21, 0.8);
-        }
-
-        .scale-presets-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .scale-presets-label {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .scale-presets-group {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .preset-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-glass);
-            color: #cbd5e1;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .preset-btn:hover {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: rgba(56, 189, 248, 0.4);
-            color: #38bdf8;
-        }
-
-        .preset-btn.active {
-            background: rgba(56, 189, 248, 0.25);
-            border-color: #38bdf8;
-            color: #ffffff;
-            font-weight: 800;
-        }
-
-        .scale-footer-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding-top: 6px;
-            border-top: 1px solid var(--border-glass);
-        }
-
-        .scale-status-hint {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #94a3b8;
-            font-weight: 600;
-        }
-
-        .save-scale-btn {
-            background: linear-gradient(135deg, #facc15, #eab308);
-            border: 1px solid #facc15;
-            color: #000000;
-            padding: 10px 22px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 900;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            box-shadow: 0 4px 14px rgba(250, 204, 21, 0.35);
-            transition: all 0.2s ease;
-        }
-
-        .save-scale-btn:hover {
-            background: linear-gradient(135deg, #fde047, #facc15);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(250, 204, 21, 0.5);
-        }
-
-        .save-scale-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         /* Product Cards Grid */
         .products-grid {
             display: grid;
@@ -1054,6 +712,159 @@
             color: #facc15;
             text-transform: uppercase;
         }
+
+        /* Text Scale Tuning Deck */
+        .text-scale-panel {
+            background: rgba(18, 22, 31, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .text-scale-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .text-scale-title {
+            font-size: 14px;
+            font-weight: 850;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scale-badge {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.18);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+        }
+
+        .text-scale-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+        }
+
+        .scale-screen-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .scale-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .scale-screen-name {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #f1f5f9;
+        }
+
+        .scale-val-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+        }
+
+        .scale-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-scale-step {
+            padding: 5px 12px;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .btn-scale-step:hover {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+
+        .scale-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+        }
+
+        .scale-quick-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-quick-scale {
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 800;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-quick-scale:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .btn-quick-scale.btn-reset-scale {
+            margin-left: auto;
+            color: #facc15;
+            border-color: rgba(250, 204, 21, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -1107,6 +918,9 @@
             <h1 class="brand-title">KRONICLEZ <span>PORTAL</span></h1>
         </div>
         <div class="header-actions">
+            <button type="button" class="btn-action" onclick="scrollToTextScale()" title="Fine-tune Product Text Size (1% increments)">
+                <i class="bi bi-fonts"></i> <span class="hide-mobile">Text Size</span>
+            </button>
             <button type="button" class="btn-action sync-btn" onclick="triggerSync()" title="Force update TVs">
                 <i class="bi bi-arrow-repeat"></i> <span class="hide-mobile">Sync TVs</span>
             </button>
@@ -1137,91 +951,82 @@
             </div>
         </div>
 
-        <!-- TV Display Scale & Text Size Control Card -->
-        <div class="scale-control-panel">
-            <div class="scale-header">
-                <div class="scale-title-group">
-                    <div class="scale-title"><i class="bi bi-type"></i> 📺 TV Display & Text Size Controls</div>
-                    <div class="scale-subtitle">Increase or decrease text size and zoom so all menu categories fit your TV screens perfectly without scrolling.</div>
-                </div>
-                <div class="scale-target-wrap">
-                    <label for="scaleTargetSelect" class="scale-target-label"><i class="bi bi-tv"></i> Target TV:</label>
-                    <select id="scaleTargetSelect" class="scale-target-select" onchange="onScaleTargetChange()">
-                        <option value="all">🌐 All TV Screens (Global)</option>
-                        <option value="1">📺 TV 1: Pre-Rolls & Infused (34+ SKUs)</option>
-                        <option value="2">📺 TV 2: Flower & Vapes</option>
-                        <option value="3">📺 TV 3: Edibles & Drinks</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="scale-body">
-                <!-- Big Stepper: Decrease & Increase Text Size -->
-                <div class="text-size-stepper-box">
-                    <div class="stepper-label-deck">
-                        <span class="stepper-title"><i class="bi bi-fonts"></i> Live Text Size Setting:</span>
-                        <span id="scaleSliderLabel" class="scale-current-badge">86% (Compact — Recommended Fit)</span>
-                    </div>
-
-                    <div class="stepper-buttons-row">
-                        <!-- Big Decrease Button -->
-                        <button type="button" class="btn-step-action btn-decrease" onclick="adjustScaleStep(-3)" title="Make text smaller to fit on screen">
-                            <i class="bi bi-dash-circle-fill"></i> ➖ Decrease Text Size (-3%)
-                        </button>
-
-                        <!-- Fine step buttons -->
-                        <div class="fine-steps">
-                            <button type="button" class="btn-fine-step" onclick="adjustScaleStep(-1)" title="Decrease 1%">-1%</button>
-                            <button type="button" class="btn-fine-step" onclick="adjustScaleStep(+1)" title="Increase 1%">+1%</button>
-                        </div>
-
-                        <!-- Big Increase Button -->
-                        <button type="button" class="btn-step-action btn-increase" onclick="adjustScaleStep(+3)" title="Make text larger">
-                            <i class="bi bi-plus-circle-fill"></i> ➕ Increase Text Size (+3%)
-                        </button>
-                    </div>
-
-                    <!-- Slider for continuous fine tuning -->
-                    <div class="slider-track-wrap">
-                        <input type="range" id="scaleSlider" min="70" max="135" step="1" value="88" class="scale-slider" oninput="onScaleSliderInput(this.value)">
-                        <div class="scale-slider-labels">
-                            <span><i class="bi bi-zoom-out"></i> 70% (Ultra-Dense)</span>
-                            <span style="color:#facc15; font-weight: 800;">● 88% Standard Fit</span>
-                            <span>135% (Huge 4K Display) <i class="bi bi-zoom-in"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Text Size Presets -->
-                <div class="scale-presets-row">
-                    <span class="scale-presets-label">Text Size Presets:</span>
-                    <div class="scale-presets-group">
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(75)">Extra Small (75%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(82)">Small / Dense (82%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(88)">Compact (88%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(100)">Large / 100%</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(110)">65" TV / 4K (110%)</button>
-                        <button type="button" class="preset-btn" onclick="applyScalePreset(120)">Huge 4K (120%)</button>
-                    </div>
-                </div>
-
-                <!-- Save Action Footer Bar -->
-                <div class="scale-footer-bar">
-                    <div class="scale-status-hint">
-                        <i class="bi bi-shield-check" style="color: #4ade80; font-size: 15px;"></i>
-                        <span>TV screens update dynamically with zero screen flicker or flashing.</span>
-                    </div>
-                    <button type="button" id="saveScaleBtn" class="save-scale-btn" onclick="saveDisplayScale()">
-                        <i class="bi bi-broadcast"></i> Save & Apply Text Size to TVs
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- Policy Banner -->
         <div style="margin-bottom: 16px; padding: 10px 16px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; font-size: 12px; color: #cbd5e1; display: flex; align-items: center; gap: 8px;">
             <i class="bi bi-info-circle-fill" style="color: #38bdf8; font-size: 14px;"></i>
             <span><strong>Store Policy:</strong> Happy Hour (1:00 PM – 4:00 PM) is <strong>Upto 10% off Online Only</strong>. In-store TVs display standard POS pricing to maintain cash counter parity.</span>
+        </div>
+
+        <!-- Screen Product Text Size Tuning Card -->
+        <div id="textScaleSection" class="text-scale-panel">
+            <div class="text-scale-header">
+                <div class="text-scale-title">
+                    <i class="bi bi-fonts" style="color: #38bdf8; font-size: 16px;"></i>
+                    <span>Screen Product Text Sizing</span>
+                    <span class="scale-badge">1% Custom Increments</span>
+                </div>
+                <div style="font-size: 11.5px; color: #94a3b8;">
+                    Fine-tune product text size per TV without affecting column structure or header scale.
+                </div>
+            </div>
+            <div class="text-scale-grid">
+                <!-- TV 1 (Pre-Rolls & Infused) -->
+                <div class="scale-screen-card" id="scaleCard1">
+                    <div class="scale-card-top">
+                        <span class="scale-screen-name">📺 TV 1: Pre-Rolls & Infused</span>
+                        <span class="scale-val-pill" id="scaleVal1">100%</span>
+                    </div>
+                    <div class="scale-controls">
+                        <button type="button" class="btn-scale-step" onclick="adjustTextScale(1, -1)">- 1%</button>
+                        <input type="range" min="80" max="120" value="100" id="scaleRange1" class="scale-slider" oninput="onScaleSliderInput(1, this.value)">
+                        <button type="button" class="btn-scale-step" onclick="adjustTextScale(1, 1)">+ 1%</button>
+                    </div>
+                    <div class="scale-quick-row">
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(1, 98)">-2% (98%)</button>
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(1, 97)">-3% (97%)</button>
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(1, 95)">-5% (95%)</button>
+                        <button type="button" class="btn-quick-scale btn-reset-scale" onclick="applyPresetScale(1, 100)">↺ 100%</button>
+                    </div>
+                </div>
+
+                <!-- TV 2 (Flower & Vapes) -->
+                <div class="scale-screen-card" id="scaleCard2">
+                    <div class="scale-card-top">
+                        <span class="scale-screen-name">📺 TV 2: Flower & Vapes</span>
+                        <span class="scale-val-pill" id="scaleVal2">100%</span>
+                    </div>
+                    <div class="scale-controls">
+                        <button type="button" class="btn-scale-step" onclick="adjustTextScale(2, -1)">- 1%</button>
+                        <input type="range" min="80" max="120" value="100" id="scaleRange2" class="scale-slider" oninput="onScaleSliderInput(2, this.value)">
+                        <button type="button" class="btn-scale-step" onclick="adjustTextScale(2, 1)">+ 1%</button>
+                    </div>
+                    <div class="scale-quick-row">
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(2, 98)">-2% (98%)</button>
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(2, 97)">-3% (97%)</button>
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(2, 95)">-5% (95%)</button>
+                        <button type="button" class="btn-quick-scale btn-reset-scale" onclick="applyPresetScale(2, 100)">↺ 100%</button>
+                    </div>
+                </div>
+
+                <!-- TV 3 (Edibles & Drinks) -->
+                <div class="scale-screen-card" id="scaleCard3">
+                    <div class="scale-card-top">
+                        <span class="scale-screen-name">📺 TV 3: Edibles & Drinks</span>
+                        <span class="scale-val-pill" id="scaleVal3">100%</span>
+                    </div>
+                    <div class="scale-controls">
+                        <button type="button" class="btn-scale-step" onclick="adjustTextScale(3, -1)">- 1%</button>
+                        <input type="range" min="80" max="120" value="100" id="scaleRange3" class="scale-slider" oninput="onScaleSliderInput(3, this.value)">
+                        <button type="button" class="btn-scale-step" onclick="adjustTextScale(3, 1)">+ 1%</button>
+                    </div>
+                    <div class="scale-quick-row">
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(3, 98)">-2% (98%)</button>
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(3, 97)">-3% (97%)</button>
+                        <button type="button" class="btn-quick-scale" onclick="applyPresetScale(3, 95)">-5% (95%)</button>
+                        <button type="button" class="btn-quick-scale btn-reset-scale" onclick="applyPresetScale(3, 100)">↺ 100%</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Products List -->
@@ -1307,8 +1112,7 @@
                 }
                 const data = await res.json();
                 allProducts = data.items || [];
-                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {}, display_settings: {} };
-                updateScaleUI();
+                activeOverrides = data.overrides || { species_overrides: {}, highlight_overrides: {}, thc_overrides: {}, category_overrides: {} };
                 const curCount = Object.keys(activeOverrides.species_overrides || {}).length + Object.keys(activeOverrides.highlight_overrides || {}).length + Object.keys(activeOverrides.category_overrides || {}).length;
                 if (curCount > 0) {
                     try {
@@ -1316,10 +1120,95 @@
                     } catch(e) {}
                 }
                 updateOverridesBadge();
+                updateTextScaleUI();
                 renderProducts();
             } catch (e) {
                 console.error("Error loading inventory:", e);
                 showToast("⚠️ Could not load Tendy inventory.", true);
+            }
+        }
+
+        function scrollToTextScale() {
+            const el = document.getElementById('textScaleSection');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function updateTextScaleUI() {
+            const scales = (activeOverrides && activeOverrides.screen_text_scale) ? activeOverrides.screen_text_scale : { "1": 100, "2": 100, "3": 100 };
+            for (let s = 1; s <= 3; s++) {
+                const val = parseInt(scales[String(s)] || 100, 10);
+                const valEl = document.getElementById(`scaleVal${s}`);
+                const rangeEl = document.getElementById(`scaleRange${s}`);
+                if (valEl) {
+                    const diff = val - 100;
+                    const diffStr = diff === 0 ? '' : (diff > 0 ? ` (+${diff}%)` : ` (${diff}%)`);
+                    valEl.innerText = `${val}%${diffStr}`;
+                    if (val !== 100) {
+                        valEl.style.borderColor = '#facc15';
+                        valEl.style.color = '#facc15';
+                        valEl.style.background = 'rgba(250, 204, 21, 0.15)';
+                    } else {
+                        valEl.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+                        valEl.style.color = '#38bdf8';
+                        valEl.style.background = 'rgba(56, 189, 248, 0.15)';
+                    }
+                }
+                if (rangeEl) rangeEl.value = val;
+            }
+        }
+
+        let scaleDebounceTimers = {};
+        function onScaleSliderInput(screen, val) {
+            const numVal = parseInt(val, 10) || 100;
+            const valEl = document.getElementById(`scaleVal${screen}`);
+            if (valEl) {
+                const diff = numVal - 100;
+                const diffStr = diff === 0 ? '' : (diff > 0 ? ` (+${diff}%)` : ` (${diff}%)`);
+                valEl.innerText = `${numVal}%${diffStr}`;
+            }
+            clearTimeout(scaleDebounceTimers[screen]);
+            scaleDebounceTimers[screen] = setTimeout(() => {
+                saveTextScale(screen, numVal);
+            }, 350);
+        }
+
+        function adjustTextScale(screen, delta) {
+            if (!activeOverrides.screen_text_scale) activeOverrides.screen_text_scale = { "1": 100, "2": 100, "3": 100 };
+            const cur = parseInt(activeOverrides.screen_text_scale[String(screen)] || 100, 10);
+            const next = Math.max(70, Math.min(130, cur + delta));
+            saveTextScale(screen, next);
+        }
+
+        function applyPresetScale(screen, targetVal) {
+            saveTextScale(screen, targetVal);
+        }
+
+        async function saveTextScale(screen, val) {
+            const numVal = Math.max(70, Math.min(130, parseInt(val, 10) || 100));
+            try {
+                const base = getApiBasePath();
+                const res = await fetch(`${base}/api/admin/override`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonStringifyWithPin({
+                        action: 'set_text_scale',
+                        screen: String(screen),
+                        value: numVal
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (!activeOverrides.screen_text_scale) activeOverrides.screen_text_scale = {};
+                    activeOverrides.screen_text_scale[String(screen)] = numVal;
+                    updateTextScaleUI();
+                    const diff = numVal - 100;
+                    const diffStr = diff === 0 ? 'Default 100%' : (diff > 0 ? `+${diff}%` : `${diff}%`);
+                    showToast(`✅ TV ${screen} Product Text set to ${numVal}% (${diffStr})!`);
+                } else {
+                    showToast(data.message || 'Error saving text scale', true);
+                }
+            } catch (e) {
+                showToast('⚠️ Network error saving text scale', true);
             }
         }
 
@@ -1572,121 +1461,6 @@
         function jsonStringifyWithPin(obj) {
             obj.pin = authPin;
             return JSON.stringify(obj);
-        }
-
-        // ==========================================================================
-        // TV DISPLAY SCALE & TEXT SIZE CONTROLS
-        // ==========================================================================
-        function getScaleForTarget(target) {
-            const disp = activeOverrides.display_settings || {};
-            if (target === '1') return disp.screen_1_scale || disp.scale || 86;
-            if (target === '2') return disp.screen_2_scale || disp.scale || 90;
-            if (target === '3') return disp.screen_3_scale || disp.scale || 92;
-            return disp.scale || 88;
-        }
-
-        function updateScaleUI() {
-            const select = document.getElementById('scaleTargetSelect');
-            if (!select) return;
-            const target = select.value;
-            const scale = getScaleForTarget(target);
-            const slider = document.getElementById('scaleSlider');
-            if (slider) slider.value = scale;
-            onScaleSliderInput(scale);
-        }
-
-        function onScaleTargetChange() {
-            updateScaleUI();
-        }
-
-        function onScaleSliderInput(val) {
-            const num = parseInt(val);
-            const badge = document.getElementById('scaleSliderLabel');
-            let desc = 'Balanced';
-            if (num <= 75) desc = 'Extra Small — Maximum Screen Fit';
-            else if (num <= 82) desc = 'Small — Dense Catalog';
-            else if (num <= 88) desc = 'Compact — Standard Fit (Recommended)';
-            else if (num <= 95) desc = 'Medium — Balanced';
-            else if (num <= 105) desc = 'Large — 100% 1080p';
-            else if (num <= 118) desc = 'Extra Large — 65"+ TV Fit';
-            else desc = 'Huge — 4K Ultra HD Display';
-
-            if (badge) {
-                badge.innerText = `${num}% (${desc})`;
-            }
-
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                if (btn.innerText.includes(`(${num}%)`)) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        }
-
-        function applyScalePreset(val) {
-            const slider = document.getElementById('scaleSlider');
-            if (slider) slider.value = val;
-            onScaleSliderInput(val);
-        }
-
-        function adjustScaleStep(delta) {
-            const slider = document.getElementById('scaleSlider');
-            if (!slider) return;
-            const current = parseInt(slider.value) || 88;
-            const next = Math.max(70, Math.min(135, current + delta));
-            slider.value = next;
-            onScaleSliderInput(next);
-        }
-
-        async function saveDisplayScale() {
-            const slider = document.getElementById('scaleSlider');
-            const targetSelect = document.getElementById('scaleTargetSelect');
-            if (!slider || !targetSelect) return;
-
-            const scale = parseInt(slider.value);
-            const target = targetSelect.value;
-            const targetText = targetSelect.options[targetSelect.selectedIndex].text;
-            const saveBtn = document.getElementById('saveScaleBtn');
-
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
-
-            try {
-                const base = getApiBasePath();
-                const res = await fetch(`${base}/api/admin/override`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: jsonStringifyWithPin({
-                        action: 'set_display_scale',
-                        scale: scale,
-                        target: target
-                    })
-                });
-
-                if (res.status === 401) {
-                    showToast("❌ Staff PIN invalid or session expired.", true);
-                    lockPortal();
-                    return;
-                }
-
-                const data = await res.json();
-                if (data.success) {
-                    showToast(`✅ TV text scale updated to ${scale}% for ${targetText}! All TVs auto-refreshing...`);
-                    if (data.display_settings) {
-                        activeOverrides.display_settings = data.display_settings;
-                    }
-                    onScaleSliderInput(scale);
-                } else {
-                    showToast(`❌ Error: ${data.message || 'Could not save scale'}`, true);
-                }
-            } catch (err) {
-                console.error("Save scale error:", err);
-                showToast(`⚠️ Failed to save scale: ${err.message}`, true);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="bi bi-broadcast"></i> Save & Apply to TVs';
-            }
         }
 
         function toggleOverridesDrawer(open) {

@@ -18,6 +18,38 @@ function getNextCatNum() {
     return String(currentCatNum++).padStart(2, '0');
 }
 
+// Product Text Scale Management (1% Increments)
+let activeProductTextScale = 100;
+let manualScaleLocked = false;
+
+function setProductTextScale(percent, showHud = false) {
+    const p = Math.max(70, Math.min(130, parseInt(percent, 10) || 100));
+    activeProductTextScale = p;
+    document.documentElement.style.setProperty('--product-text-scale', (p / 100).toString());
+    if (showHud) {
+        showTextScaleHud(p);
+    }
+}
+
+let scaleHudTimer = null;
+function showTextScaleHud(percent) {
+    let hud = document.getElementById('tvTextScaleHud');
+    if (!hud) {
+        hud = document.createElement('div');
+        hud.id = 'tvTextScaleHud';
+        hud.className = 'tv-text-scale-hud';
+        document.body.appendChild(hud);
+    }
+    const diff = percent - 100;
+    const diffStr = diff === 0 ? '(Default)' : (diff > 0 ? `(+${diff}%)` : `(${diff}%)`);
+    hud.innerHTML = `<i class="bi bi-fonts"></i> <span>Product Text: <strong>${percent}%</strong> ${diffStr}</span>`;
+    hud.classList.add('show');
+    clearTimeout(scaleHudTimer);
+    scaleHudTimer = setTimeout(() => {
+        hud.classList.remove('show');
+    }, 2200);
+}
+
 // Parse URL Parameters / Dedicated Screen Routes
 function getUrlParams() {
     const params = new URLSearchParams(window.location.search);
@@ -30,7 +62,8 @@ function getUrlParams() {
     else if (params.has('screen')) screen = parseInt(params.get('screen') || 1);
 
     const store = parseInt(params.get('store') || 1);
-    return { screen, store };
+    const text_scale = params.get('text_scale') || params.get('ts');
+    return { screen, store, text_scale };
 }
 
 // Format Canadian Dollars
@@ -322,6 +355,10 @@ function renderMenuData(res) {
     if (!res || !res.structured) return;
     const mount = document.getElementById('menuMount');
     if (!mount) return;
+
+    if (!manualScaleLocked && res.text_scale) {
+        setProductTextScale(res.text_scale);
+    }
 
     const screen = res.screen || currentScreenId;
 
@@ -730,6 +767,19 @@ window.addEventListener('keydown', (e) => {
         let nextIdx = (themeList.indexOf(currentThemeKey) + 1) % themeList.length;
         setAmbientTheme(themeList[nextIdx], true);
     }
+    // Hotkeys to adjust product text scale by 1%
+    if (e.key === '[') {
+        manualScaleLocked = true;
+        setProductTextScale(activeProductTextScale - 1, true);
+    }
+    if (e.key === ']') {
+        manualScaleLocked = true;
+        setProductTextScale(activeProductTextScale + 1, true);
+    }
+    if (e.key === '0') {
+        manualScaleLocked = false;
+        setProductTextScale(100, true);
+    }
 });
 
 window.addEventListener('mousemove', showNav);
@@ -748,6 +798,14 @@ window.addEventListener('DOMContentLoaded', () => {
     const params = getUrlParams();
     currentScreenId = params.screen;
     currentStoreId = params.store;
+
+    // Apply URL parameter or preloaded text scale immediately
+    if (params.text_scale) {
+        manualScaleLocked = true;
+        setProductTextScale(parseInt(params.text_scale, 10));
+    } else if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.text_scale) {
+        setProductTextScale(window.__INITIAL_MENU_DATA__.text_scale);
+    }
 
     showNav();
     initAmbientParticles(params.theme || 'auto');

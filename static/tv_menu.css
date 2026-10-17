@@ -5,6 +5,9 @@
     user-select: none;
     -webkit-user-select: none;
 }
+:root {
+    --product-text-scale: 1;
+}
 
 html {
     background: #000000;
@@ -425,25 +428,25 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .container-prerolls .p-name {
-    font-size: 13.5px;
+    font-size: calc(13.5px * var(--product-text-scale, 1));
     font-weight: 750;
     line-height: 1.15;
     padding-right: 4px;
 }
 .container-prerolls .p-thc {
-    font-size: 13.5px;
+    font-size: calc(13.5px * var(--product-text-scale, 1));
     font-weight: 800;
 }
 .container-prerolls .p-price .regular {
-    font-size: 14.5px;
+    font-size: calc(14.5px * var(--product-text-scale, 1));
     font-weight: 900;
 }
 .container-prerolls .p-price .sale {
-    font-size: 14.8px;
+    font-size: calc(14.8px * var(--product-text-scale, 1));
     font-weight: 900;
 }
 .container-prerolls .p-price .old {
-    font-size: 9.5px;
+    font-size: calc(9.5px * var(--product-text-scale, 1));
     font-weight: 700;
 }
 .container-prerolls .title {
@@ -473,7 +476,7 @@ body {
     border-radius: 7px;
 }
 .container-prerolls .badge-num {
-    font-size: 10px;
+    font-size: calc(10px * var(--product-text-scale, 1));
     padding: 1px 4.5px;
     margin-right: 4.5px;
 }
@@ -483,11 +486,17 @@ body {
     padding: 0.7px 0;
 }
 .container-vapes-flower .p-name {
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
     line-height: 1.1;
 }
 .container-vapes-flower .p-thc {
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
+}
+.container-vapes-flower .p-price .regular {
+    font-size: calc(11.5px * var(--product-text-scale, 1));
+}
+.container-vapes-flower .p-price .sale {
+    font-size: calc(11.8px * var(--product-text-scale, 1));
 }
 .container-vapes-flower .subhead {
     font-size: 10px;
@@ -507,6 +516,9 @@ body {
 .container-vapes-flower .panel {
     padding: 3px 5px;
 }
+.container-vapes-flower .badge-num {
+    font-size: calc(9.5px * var(--product-text-scale, 1));
+}
 
 /* Soft Chews Product Row (Screen 3) */
 .soft-row {
@@ -516,7 +528,7 @@ body {
     align-items: center;
     padding: 1.2px 1px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
 }
 
 .soft-row:last-child {
@@ -528,14 +540,14 @@ body {
 .soft-name {
     color: #ffffff;
     font-weight: 700;
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
     line-height: 1.12;
     padding-right: 3px;
 }
 
 .soft-meta {
     text-align: center;
-    font-size: 8.5px;
+    font-size: calc(8.5px * var(--product-text-scale, 1));
     font-weight: 800;
     white-space: nowrap;
 }
@@ -547,7 +559,7 @@ body {
     text-align: center;
     color: #4ade80;
     font-weight: 800;
-    font-size: 11.5px;
+    font-size: calc(11.5px * var(--product-text-scale, 1));
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
 }
@@ -555,10 +567,42 @@ body {
 .soft-cbd {
     text-align: center;
     color: #cbd5e1;
-    font-size: 10px;
+    font-size: calc(10px * var(--product-text-scale, 1));
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
+}
+
+.soft-row .badge-num {
+    font-size: calc(10px * var(--product-text-scale, 1));
+}
+
+/* Product Text Scale On-Screen HUD */
+.tv-text-scale-hud {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(9, 10, 15, 0.95);
+    border: 1.5px solid #38bdf8;
+    color: #38bdf8;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.3);
+    z-index: 99999;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+}
+.tv-text-scale-hud.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .badge-cbn {
