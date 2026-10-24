@@ -278,6 +278,11 @@ function getExactStrain($it) {
     return 'HYBRID';
 }
 
+// Allow importing helper functions and configuration without executing
+if (defined('TV_MENU_FUNCS_ONLY')) {
+    return;
+}
+
 // Build structured menus
 $raw = fetchTendyInventory($TENDY_CONFIG);
 
@@ -474,10 +479,22 @@ if (file_exists($ov_file)) {
     }
 }
 
+$total_in_stock = 0;
+if ($screen === 1) {
+    $total_in_stock = count($ind) + count($hyb) + count($sat) + count($inf);
+} elseif ($screen === 2) {
+    $total_in_stock = count($f_ind) + count($f_ind_m) + count($f_hyb) + count($f_hyb_m) + count($f_sat) + count($f_sat_m) + count($v_ind) + count($v_hyb) + count($v_sat) + count($d_ind) + count($d_hyb) + count($d_sat);
+} else {
+    $total_in_stock = count($conc) + count($bev) + count($g_ind_hyb) + count($g_sat) + count($choc) + count($well);
+}
+
 $response_payload = [
     'success' => true,
     'screen' => $screen,
+    'total_in_stock' => $total_in_stock,
+    'total_items' => $total_in_stock,
     'text_scale' => $text_scale,
+    'asset_version' => 60,
     'store' => $TENDY_CONFIG['store_name'],
     'updated_at' => date('h:i:s A'),
     'structured' => $structured

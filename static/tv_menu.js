@@ -1,10 +1,11 @@
 // Kroniclez Dedicated Single-Screen Digital TV Menu Board Client Engine
-let CURRENT_APP_VERSION = 59;
+let CURRENT_APP_VERSION = 60;
 window.__IS_V55_RUNNING__ = true;
 window.__IS_V56_RUNNING__ = true;
 window.__IS_V57_RUNNING__ = true;
 window.__IS_V58_RUNNING__ = true;
 window.__IS_V59_RUNNING__ = true;
+window.__IS_V60_RUNNING__ = true;
 let currentScreenId = 1;
 let currentStoreId = 1;
 let pollTimer = null;
@@ -364,11 +365,11 @@ function renderMenuData(res) {
 
     if (screen === 1) {
         // SCREEN 1: PRE-ROLLS (Indica, Hybrid, Sativa, Infused)
-        const d = res.structured;
+        const d = res.structured || {};
         
-        const indItems = d.indica.items || [];
-        const hybItems = d.hybrid.items || [];
-        const satItems = d.sativa.items || [];
+        const indItems = (d.indica && d.indica.items) || [];
+        const hybItems = (d.hybrid && d.hybrid.items) || [];
+        const satItems = (d.sativa && d.sativa.items) || [];
 
         // 1. Column 1: INDICA PRE-ROLLS (Starts at 01)
         resetCatCounter();
@@ -384,10 +385,20 @@ function renderMenuData(res) {
 
         // 4. Column 4: INFUSED PRE-ROLLS (Starts at 01)
         resetCatCounter();
-        const infIndica = (d.infused && d.infused.indica_items) || [];
-        const infHybrid = (d.infused && d.infused.hybrid_items) || [];
-        const infSativa = (d.infused && d.infused.sativa_items) || [];
-        const infTotal = (d.infused && d.infused.items) ? d.infused.items.length : (infIndica.length + infHybrid.length + infSativa.length);
+        let infIndica = (d.infused && d.infused.indica_items) ? [...d.infused.indica_items] : [];
+        let infHybrid = (d.infused && d.infused.hybrid_items) ? [...d.infused.hybrid_items] : [];
+        let infSativa = (d.infused && d.infused.sativa_items) ? [...d.infused.sativa_items] : [];
+
+        // Fallback: If feed has flat items array but no species breakdown, split dynamically
+        if (!infIndica.length && !infHybrid.length && !infSativa.length && d.infused && Array.isArray(d.infused.items)) {
+            d.infused.items.forEach(it => {
+                const sp = (it.species || '').toUpperCase();
+                if (sp === 'INDICA') infIndica.push(it);
+                else if (sp === 'SATIVA') infSativa.push(it);
+                else infHybrid.push(it);
+            });
+        }
+        const infTotal = (d.infused && d.infused.items && d.infused.items.length) ? d.infused.items.length : (infIndica.length + infHybrid.length + infSativa.length);
 
         let infusedHtml = '';
         if (infIndica.length) {
@@ -437,75 +448,90 @@ function renderMenuData(res) {
 
     } else if (screen === 2) {
         // SCREEN 2: FLOWER & VAPES (Indica, Hybrid, Sativa, 510 & Disposables)
-        const f = res.structured.flower;
-        const v = res.structured.vapes;
+        const f = (res.structured && res.structured.flower) || {};
+        const v = (res.structured && res.structured.vapes) || {};
 
-        const indTotal = (f.indica_dried.items.length + f.indica_milled.items.length);
-        const hybTotal = (f.hybrid_dried.items.length + f.hybrid_milled.items.length);
+        const indDried = (f.indica_dried && f.indica_dried.items) || [];
+        const indMilled = (f.indica_milled && f.indica_milled.items) || [];
+        const hybDried = (f.hybrid_dried && f.hybrid_dried.items) || [];
+        const hybMilled = (f.hybrid_milled && f.hybrid_milled.items) || [];
+        const satDried = (f.sativa_dried && f.sativa_dried.items) || [];
+        const satMilled = (f.sativa_milled && f.sativa_milled.items) || [];
+
+        const vInd = (v.vapes_510_indica && v.vapes_510_indica.items) || [];
+        const vHyb = (v.vapes_510_hybrid && v.vapes_510_hybrid.items) || [];
+        const vSat = (v.vapes_510_sativa && v.vapes_510_sativa.items) || [];
+
+        const dInd = (v.disp_indica && v.disp_indica.items) || [];
+        const dHyb = (v.disp_hybrid && v.disp_hybrid.items) || [];
+        const dSat = (v.disp_sativa && v.disp_sativa.items) || [];
+
+        const indTotal = indDried.length + indMilled.length;
+        const hybTotal = hybDried.length + hybMilled.length;
         const col1Total = indTotal + hybTotal;
 
         // Column 1: Indica & Hybrid Flower
         let col1Html = '';
         if (indTotal > 0) {
             resetCatCounter(); // Indica Flower starts at 01
-            col1Html += `<div class="subhead indica"><span style="color:#4CAF50;">Indica Dried Flower</span> <span style="font-size:11px; color:#888;">${f.indica_dried.items.length} SKUs</span></div>`;
-            col1Html += f.indica_dried.items.map(it => renderRowHtml(it, false)).join('');
-            if (f.indica_milled.items.length) {
-                col1Html += `<div style="font-size:10.5px; font-weight:800; color:#a3e635; margin:6px 0 2px 2px; text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;"><span><i class="bi bi-scissors"></i> Indica Milled</span> <span style="font-size:11px; color:#888;">${f.indica_milled.items.length} SKUs</span></div>`;
-                col1Html += f.indica_milled.items.map(it => renderRowHtml(it, false)).join('');
+            col1Html += `<div class="subhead indica"><span style="color:#4CAF50;">Indica Dried Flower</span> <span style="font-size:11px; color:#888;">${indDried.length} SKUs</span></div>`;
+            col1Html += indDried.map(it => renderRowHtml(it, false)).join('');
+            if (indMilled.length) {
+                col1Html += `<div style="font-size:10.5px; font-weight:800; color:#a3e635; margin:6px 0 2px 2px; text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;"><span><i class="bi bi-scissors"></i> Indica Milled</span> <span style="font-size:11px; color:#888;">${indMilled.length} SKUs</span></div>`;
+                col1Html += indMilled.map(it => renderRowHtml(it, false)).join('');
             }
         }
 
         if (hybTotal > 0) {
             resetCatCounter(); // Hybrid Flower starts at 01
-            col1Html += `<div class="subhead hybrid" style="margin-top:10px;"><span style="color:#FFC107;">Hybrid Dried Flower</span> <span style="font-size:11px; color:#888;">${f.hybrid_dried.items.length} SKUs</span></div>`;
-            col1Html += f.hybrid_dried.items.map(it => renderRowHtml(it, false)).join('');
-            if (f.hybrid_milled.items.length) {
-                col1Html += `<div style="font-size:10.5px; font-weight:800; color:#a3e635; margin:6px 0 2px 2px; text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;"><span><i class="bi bi-scissors"></i> Hybrid Milled</span> <span style="font-size:11px; color:#888;">${f.hybrid_milled.items.length} SKUs</span></div>`;
-                col1Html += f.hybrid_milled.items.map(it => renderRowHtml(it, false)).join('');
+            col1Html += `<div class="subhead hybrid" style="margin-top:10px;"><span style="color:#FFC107;">Hybrid Dried Flower</span> <span style="font-size:11px; color:#888;">${hybDried.length} SKUs</span></div>`;
+            col1Html += hybDried.map(it => renderRowHtml(it, false)).join('');
+            if (hybMilled.length) {
+                col1Html += `<div style="font-size:10.5px; font-weight:800; color:#a3e635; margin:6px 0 2px 2px; text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;"><span><i class="bi bi-scissors"></i> Hybrid Milled</span> <span style="font-size:11px; color:#888;">${hybMilled.length} SKUs</span></div>`;
+                col1Html += hybMilled.map(it => renderRowHtml(it, false)).join('');
             }
         }
 
         // Column 2: Sativa Flower
-        const satTotal = (f.sativa_dried.items.length + f.sativa_milled.items.length);
+        const satTotal = satDried.length + satMilled.length;
         let col2Html = '';
         if (satTotal > 0) {
             resetCatCounter(); // Sativa Flower starts at 01
-            col2Html += `<div class="subhead sativa"><span style="color:#FF6666;">Sativa Dried Flower</span> <span style="font-size:11px; color:#888;">${f.sativa_dried.items.length} SKUs</span></div>`;
-            col2Html += f.sativa_dried.items.map(it => renderRowHtml(it, false)).join('');
-            if (f.sativa_milled.items.length) {
-                col2Html += `<div style="font-size:10.5px; font-weight:800; color:#a3e635; margin:6px 0 2px 2px; text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;"><span><i class="bi bi-scissors"></i> Sativa Milled</span> <span style="font-size:11px; color:#888;">${f.sativa_milled.items.length} SKUs</span></div>`;
-                col2Html += f.sativa_milled.items.map(it => renderRowHtml(it, false)).join('');
+            col2Html += `<div class="subhead sativa"><span style="color:#FF6666;">Sativa Dried Flower</span> <span style="font-size:11px; color:#888;">${satDried.length} SKUs</span></div>`;
+            col2Html += satDried.map(it => renderRowHtml(it, false)).join('');
+            if (satMilled.length) {
+                col2Html += `<div style="font-size:10.5px; font-weight:800; color:#a3e635; margin:6px 0 2px 2px; text-transform:uppercase; letter-spacing:0.5px; display:flex; justify-content:space-between;"><span><i class="bi bi-scissors"></i> Sativa Milled</span> <span style="font-size:11px; color:#888;">${satMilled.length} SKUs</span></div>`;
+                col2Html += satMilled.map(it => renderRowHtml(it, false)).join('');
             }
         }
 
         // Column 3: 510 Carts (Indica & Hybrid)
         resetCatCounter(); // 510 Carts starts at 01
-        const v510Total = (v.vapes_510_indica.items.length + v.vapes_510_hybrid.items.length);
+        const v510Total = vInd.length + vHyb.length;
         let col3Html = '';
-        if (v.vapes_510_indica.items.length) {
-            col3Html += `<div class="subhead indica"><span style="color:#4CAF50;">510 Indica</span> <span style="font-size:11px; color:#888;">${v.vapes_510_indica.items.length} SKUs</span></div>`;
-            col3Html += v.vapes_510_indica.items.map(it => renderRowHtml(it, true)).join('');
+        if (vInd.length) {
+            col3Html += `<div class="subhead indica"><span style="color:#4CAF50;">510 Indica</span> <span style="font-size:11px; color:#888;">${vInd.length} SKUs</span></div>`;
+            col3Html += vInd.map(it => renderRowHtml(it, true)).join('');
         }
-        if (v.vapes_510_hybrid.items.length) {
-            col3Html += `<div class="subhead hybrid" style="margin-top:10px;"><span style="color:#FFC107;">510 Hybrid</span> <span style="font-size:11px; color:#888;">${v.vapes_510_hybrid.items.length} SKUs</span></div>`;
-            col3Html += v.vapes_510_hybrid.items.map(it => renderRowHtml(it, true)).join('');
+        if (vHyb.length) {
+            col3Html += `<div class="subhead hybrid" style="margin-top:10px;"><span style="color:#FFC107;">510 Hybrid</span> <span style="font-size:11px; color:#888;">${vHyb.length} SKUs</span></div>`;
+            col3Html += vHyb.map(it => renderRowHtml(it, true)).join('');
         }
 
         // Column 4: 510 Sativa & All-in-One Disposables
-        const dispTotal = (v.disp_indica.items.length + v.disp_hybrid.items.length + v.disp_sativa.items.length);
-        const col4Total = v.vapes_510_sativa.items.length + dispTotal;
+        const dispTotal = dInd.length + dHyb.length + dSat.length;
+        const col4Total = vSat.length + dispTotal;
         let col4Html = '';
-        if (v.vapes_510_sativa.items.length) {
-            col4Html += `<div class="subhead sativa"><span style="color:#FF6666;">510 Sativa</span> <span style="font-size:11px; color:#888;">${v.vapes_510_sativa.items.length} SKUs</span></div>`;
-            col4Html += v.vapes_510_sativa.items.map(it => renderRowHtml(it, true)).join('');
+        if (vSat.length) {
+            col4Html += `<div class="subhead sativa"><span style="color:#FF6666;">510 Sativa</span> <span style="font-size:11px; color:#888;">${vSat.length} SKUs</span></div>`;
+            col4Html += vSat.map(it => renderRowHtml(it, true)).join('');
         }
         if (dispTotal > 0) {
             resetCatCounter(); // All-in-One Disposables starts at 01
             col4Html += `<div class="subhead disposable" style="margin-top:10px;"><span style="color:#f472b6;">All-in-One Disposables</span> <span style="font-size:11px; color:#888;">${dispTotal} SKUs</span></div>`;
-            col4Html += v.disp_indica.items.map(it => renderRowHtml(it, true)).join('');
-            col4Html += v.disp_hybrid.items.map(it => renderRowHtml(it, true)).join('');
-            col4Html += v.disp_sativa.items.map(it => renderRowHtml(it, true)).join('');
+            col4Html += dInd.map(it => renderRowHtml(it, true)).join('');
+            col4Html += dHyb.map(it => renderRowHtml(it, true)).join('');
+            col4Html += dSat.map(it => renderRowHtml(it, true)).join('');
         }
 
         mount.innerHTML = `
@@ -542,7 +568,32 @@ function renderMenuData(res) {
 
     } else {
         // SCREEN 3: SOFT CHEWS, DRINKS, CONCENTRATES, TOPICALS & OILS/CAPSULES
-        const d = res.structured;
+        const d = res.structured || {};
+
+        // Fallback: If feed has flat 'gummies' instead of 'gummies_ind_hyb' & 'gummies_sativa'
+        if (!d.gummies_ind_hyb && d.gummies && Array.isArray(d.gummies.items)) {
+            const indHyb = [];
+            const sat = [];
+            d.gummies.items.forEach(it => {
+                const sp = (it.species || '').toUpperCase();
+                if (sp === 'SATIVA') sat.push(it);
+                else indHyb.push(it);
+            });
+            d.gummies_ind_hyb = {
+                title: 'SOFT CHEWS & GUMMIES',
+                subtitle: 'INDICA & HYBRID • ALL SIZES',
+                color: 'pink',
+                items: indHyb
+            };
+            if (!d.gummies_sativa) {
+                d.gummies_sativa = {
+                    title: 'SOFT CHEWS & GUMMIES',
+                    subtitle: 'SATIVA • ALL SIZES',
+                    color: 'orange',
+                    items: sat
+                };
+            }
+        }
         
         const gSat = (d.gummies_sativa && d.gummies_sativa.items) || [];
         const chocolates = (d.chocolates && d.chocolates.items) || [];
@@ -671,7 +722,19 @@ function fetchLiveMenu(screenId, storeId) {
                     CURRENT_APP_VERSION = res.asset_version;
                 }
             }
-            const totalCount = res.total_in_stock !== undefined ? res.total_in_stock : (res.total_items || 0);
+            let totalCount = res.total_in_stock !== undefined ? res.total_in_stock : (res.total_items || 0);
+            if (!totalCount && res.structured) {
+                for (const k in res.structured) {
+                    const sec = res.structured[k];
+                    if (sec && Array.isArray(sec.items)) totalCount += sec.items.length;
+                    else if (sec && typeof sec === 'object') {
+                        for (const subk in sec) {
+                            if (sec[subk] && Array.isArray(sec[subk].items)) totalCount += sec[subk].items.length;
+                        }
+                    }
+                }
+            }
+
             if (res.success && totalCount > 0) {
                 renderMenuData(res);
                 try {
@@ -704,8 +767,8 @@ function fetchLiveMenu(screenId, storeId) {
                     renderMenuData(JSON.parse(cached));
                 }
             } catch (e) {}
-            // Retry in 4 seconds if disconnected
-            setTimeout(() => fetchLiveMenu(sId, stId), 4000);
+            // Retry in 15 seconds if disconnected
+            setTimeout(() => fetchLiveMenu(sId, stId), 15000);
         });
 }
 
@@ -789,9 +852,9 @@ window.addEventListener('touchstart', showNav);
 window.addEventListener('DOMContentLoaded', () => {
     // Clear stale local storage cache on version 59
     try {
-        if (localStorage.getItem('kroniclez_app_version') !== '59') {
+        if (localStorage.getItem('kroniclez_app_version') !== '60') {
             localStorage.clear();
-            localStorage.setItem('kroniclez_app_version', '59');
+            localStorage.setItem('kroniclez_app_version', '60');
         }
     } catch (e) {}
 
@@ -803,6 +866,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if (params.text_scale) {
         manualScaleLocked = true;
         setProductTextScale(parseInt(params.text_scale, 10));
+    } else if (window.__INITIAL_TEXT_SCALE__) {
+        setProductTextScale(window.__INITIAL_TEXT_SCALE__);
     } else if (window.__INITIAL_MENU_DATA__ && window.__INITIAL_MENU_DATA__.text_scale) {
         setProductTextScale(window.__INITIAL_MENU_DATA__.text_scale);
     }

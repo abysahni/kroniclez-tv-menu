@@ -48,71 +48,21 @@ if ($screen < 1 || $screen > 3) $screen = 1;
 // --------------------------------------------------------------------------
 // 1. API Endpoint: Live TV Menu Feed (/api/tv-menu)
 // --------------------------------------------------------------------------
-if ($rel_path === '/api/tv-menu' || isset($_GET['api'])) {
-    header("Content-Type: application/json; charset=utf-8");
-    
-    $cache_file = sys_get_temp_dir() . "/kroniclez_tv_feed_s{$screen}.json";
-    
-    // Check in-memory local disk cache (valid for 25 seconds if populated)
-    if (file_exists($cache_file) && (time() - filemtime($cache_file) < 25)) {
-        $cached_raw = @file_get_contents($cache_file);
-        $cached_data = json_decode($cached_raw, true);
-        if ($cached_data && !empty($cached_data['success']) && !empty($cached_data['total_in_stock']) && intval($cached_data['total_in_stock']) > 0) {
-            echo $cached_raw;
-            exit;
-        }
-    }
-    
-    // Fetch from live backend engine
-    $backend_url = "https://kroniclez-tv-menu-2cmv.onrender.com/api/tv-menu?screen={$screen}&store=1&_t=" . time();
-    $ctx = stream_context_create([
-        'http' => [
-            'timeout' => 8,
-            'header' => "User-Agent: Kroniclez-Hostinger-Proxy/1.0\r\n"
-        ]
-    ]);
-    $json = @file_get_contents($backend_url, false, $ctx);
-    
-    if ($json) {
-        $data = json_decode($json, true);
-        if ($data && !empty($data['success']) && !empty($data['total_in_stock']) && intval($data['total_in_stock']) > 0) {
-            @file_put_contents($cache_file, $json);
-            echo $json;
-            exit;
-        }
-    }
-    
-    // Fallback 1: serve cached file if it has valid in-stock items (even if older than 25s)
-    if (file_exists($cache_file)) {
-        $cached_raw = @file_get_contents($cache_file);
-        $cached_data = json_decode($cached_raw, true);
-        if ($cached_data && !empty($cached_data['total_in_stock']) && intval($cached_data['total_in_stock']) > 0) {
-            echo $cached_raw;
-            exit;
-        }
-    }
-    
-    // Fallback 2: fetch from local teamhub feed
-    $th_url = "https://teamhub.kroniclez.com/api/tv_menu_feed.php?store=1&screen={$screen}&hide_soldout=1";
-    $th_json = @file_get_contents($th_url, false, $ctx);
-    if ($th_json) {
-        $th_data = json_decode($th_json, true);
-        if ($th_data && !empty($th_data['success']) && !empty($th_data['total_items']) && intval($th_data['total_items']) > 0) {
-            echo $th_json;
-            exit;
-        }
-    }
-    
-    // Fallback 3: served cached file regardless
-    if (file_exists($cache_file)) {
-        echo @file_get_contents($cache_file);
+// 1. API Endpoint: Live TV Menu Feed (/api/tv-menu or /api/tv_menu_feed.php)
+// --------------------------------------------------------------------------
+if ($rel_path === '/api/tv-menu' || $rel_path === '/api/tv_menu_feed.php' || isset($_GET['api'])) {
+    $_GET['api'] = '1';
+    $_GET['screen'] = $screen;
+    if (file_exists(__DIR__ . '/tv_menu.php')) {
+        require __DIR__ . '/tv_menu.php';
         exit;
     }
     
+    header("Content-Type: application/json; charset=utf-8");
     echo json_encode([
         "success" => false, 
         "total_in_stock" => 0,
-        "message" => "Inventory feed connecting... please wait"
+        "message" => "tv_menu.php engine not found"
     ]);
     exit;
 }
@@ -139,110 +89,180 @@ if ($rel_path === '/admin' || $rel_path === '/portal' || $rel_path === '/overrid
 // --------------------------------------------------------------------------
 if (strpos($rel_path, '/api/admin/') === 0) {
     header("Content-Type: application/json; charset=utf-8");
+    $ov_file = __DIR__ . '/product_overrides.json';
     
-    $backend_admin_url = "https://kroniclez-tv-menu-2cmv.onrender.com" . $rel_path;
-    if (!empty($_SERVER['QUERY_STRING'])) {
-        $backend_admin_url .= '?' . $_SERVER['QUERY_STRING'];
+    // 3a. Admin Inventory Endpoint
+    if ($rel_path === '/api/admin/inventory') {
+        $pin = $_GET['pin'] ?? ($_POST['pin'] ?? '');
+        if ($pin !== '4200') {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Unauthorized: Invalid Staff PIN"]);
+            exit;
+        }
+
+        if (!defined('TV_MENU_FUNCS_ONLY')) define('TV_MENU_FUNCS_ONLY', true);
+        if (file_exists(__DIR__ . '/tv_menu.php')) {
+            require_once __DIR__ . '/tv_menu.php';
+        }
+        
+        global $TENDY_CONFIG, $POTENCY_MAP;
+        $raw_items = function_exists('fetchTendyInventory') && isset($TENDY_CONFIG) ? fetchTendyInventory($TENDY_CONFIG) : [];
+        $local_ov = file_exists($ov_file) ? json_decode(file_get_contents($ov_file), true) : [];
+        if (!is_array($local_ov)) $local_ov = [];
+        
+        $species_ov = $local_ov['species_overrides'] ?? [];
+        $highlight_ov = $local_ov['highlight_overrides'] ?? [];
+        $thc_ov = $local_ov['thc_overrides'] ?? [];
+        $cat_ov = $local_ov['category_overrides'] ?? [];
+
+        $admin_items = [];
+        foreach ($raw_items as $it) {
+            $cat = $it['categoryName'] ?? ($it['category']['name'] ?? '');
+            $name = $it['name'] ?? '';
+            $brand = $it['brand']['name'] ?? (is_string($it['brand'] ?? null) ? $it['brand'] : '');
+            $pricing = $it['productPricing'] ?? [];
+            $price = floatval($pricing['sale_price'] ?? 0.0);
+            $full_name = trim("$brand $name");
+            
+            $cat_l = strtolower($cat);
+            if (strpos($cat_l, 'pre-roll') !== false || strpos($cat_l, 'preroll') !== false || strpos($cat_l, 'blunt') !== false) {
+                $screen_num = 1;
+            } elseif (strpos($cat_l, 'flower') !== false || strpos($cat_l, 'vape') !== false || strpos($cat_l, 'cartridge') !== false) {
+                $screen_num = 2;
+            } else {
+                $screen_num = 3;
+            }
+
+            $spec = function_exists('getExactStrain') ? getExactStrain($it) : 'HYBRID';
+            $full_l = strtolower($full_name);
+            $name_l = strtolower($name);
+            $sp_val = null;
+            $hl_val = null;
+            $cat_val = null;
+            foreach ($species_ov as $k => $v) {
+                if ($k !== '' && (strpos($full_l, $k) !== false || strpos($name_l, $k) !== false)) { $sp_val = $v; break; }
+            }
+            foreach ($highlight_ov as $k => $v) {
+                if ($k !== '' && (strpos($full_l, $k) !== false || strpos($name_l, $k) !== false)) { $hl_val = $v; break; }
+            }
+            foreach ($cat_ov as $k => $v) {
+                if ($k !== '' && (strpos($full_l, $k) !== false || strpos($name_l, $k) !== false)) { $cat_val = $v; break; }
+            }
+
+            $pot = function_exists('lookupPotency') && isset($POTENCY_MAP) ? lookupPotency($name, $brand, $POTENCY_MAP, '28.0%') : ['thc' => '28.0%', 'cbd' => '<1.0%'];
+
+            $admin_items[] = [
+                'id' => strval($it['id'] ?? ($it['barcode'] ?? $name)),
+                'name' => $name,
+                'brand' => $brand,
+                'full_name' => $full_name,
+                'category' => $cat,
+                'screen' => $screen_num,
+                'species' => $sp_val ?: $spec,
+                'thc' => $pot['thc'],
+                'price' => $price,
+                'tag' => $hl_val,
+                'is_sale' => false,
+                'has_override' => boolval($sp_val || $hl_val || $cat_val),
+                'highlight_value' => $hl_val
+            ];
+        }
+
+        echo json_encode([
+            'success' => true,
+            'items' => $admin_items,
+            'overrides' => $local_ov
+        ]);
+        exit;
     }
     
+    // 3b. Admin Override POST Endpoint
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method === 'POST') {
         $post_body = file_get_contents('php://input');
-        
-        // Also save override locally to product_overrides.json
         $payload = json_decode($post_body, true);
-        if ($payload && isset($payload['pin']) && $payload['pin'] === '4200') {
-            $ov_file = __DIR__ . '/product_overrides.json';
-            $local_ov = file_exists($ov_file) ? json_decode(file_get_contents($ov_file), true) : [
-                'species_overrides' => [],
-                'highlight_overrides' => [],
-                'thc_overrides' => [],
-                'category_overrides' => []
-            ];
-            if (!is_array($local_ov)) {
-                $local_ov = ['species_overrides' => [], 'highlight_overrides' => [], 'thc_overrides' => [], 'category_overrides' => []];
+        
+        if (!$payload || !isset($payload['pin']) || $payload['pin'] !== '4200') {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Unauthorized: Invalid Staff PIN"]);
+            exit;
+        }
+
+        $local_ov = file_exists($ov_file) ? json_decode(file_get_contents($ov_file), true) : [
+            'species_overrides' => [],
+            'highlight_overrides' => [],
+            'thc_overrides' => [],
+            'category_overrides' => [],
+            'screen_text_scale' => ['1' => 98, '2' => 100, '3' => 100]
+        ];
+        if (!is_array($local_ov)) {
+            $local_ov = ['species_overrides' => [], 'highlight_overrides' => [], 'thc_overrides' => [], 'category_overrides' => [], 'screen_text_scale' => ['1' => 98, '2' => 100, '3' => 100]];
+        }
+        
+        $action = $payload['action'] ?? '';
+        $pattern = strtolower(trim($payload['pattern'] ?? ''));
+        $val = strtoupper(trim($payload['value'] ?? ''));
+        
+        if ($action === 'set_text_scale') {
+            $scr = isset($payload['screen']) ? strval($payload['screen']) : '1';
+            $sval = isset($payload['value']) ? intval($payload['value']) : 100;
+            $sval = max(70, min(130, $sval));
+            if (!isset($local_ov['screen_text_scale'])) $local_ov['screen_text_scale'] = ['1' => 98, '2' => 100, '3' => 100];
+            $local_ov['screen_text_scale'][$scr] = $sval;
+        } elseif ($action === 'set_species' && $pattern) {
+            $local_ov['species_overrides'][$pattern] = $val;
+        } elseif ($action === 'set_highlight' && $pattern) {
+            if (in_array($val, ['NONE', 'REGULAR', 'STANDARD'])) {
+                unset($local_ov['highlight_overrides'][$pattern]);
+            } else {
+                $local_ov['highlight_overrides'][$pattern] = $val;
             }
-            
-            $action = $payload['action'] ?? '';
-            $pattern = strtolower(trim($payload['pattern'] ?? ''));
-            $val = strtoupper(trim($payload['value'] ?? ''));
-            
-            if ($action === 'set_text_scale') {
-                $scr = isset($payload['screen']) ? strval($payload['screen']) : '1';
-                $sval = isset($payload['value']) ? intval($payload['value']) : 100;
-                $sval = max(70, min(130, $sval));
-                if (!isset($local_ov['screen_text_scale'])) $local_ov['screen_text_scale'] = ['1' => 100, '2' => 100, '3' => 100];
-                $local_ov['screen_text_scale'][$scr] = $sval;
-            } elseif ($action === 'set_species' && $pattern) {
-                $local_ov['species_overrides'][$pattern] = $val;
-            } elseif ($action === 'set_highlight' && $pattern) {
-                if (in_array($val, ['NONE', 'REGULAR', 'STANDARD'])) {
-                    unset($local_ov['highlight_overrides'][$pattern]);
-                } else {
-                    $local_ov['highlight_overrides'][$pattern] = $val;
-                }
-            } elseif ($action === 'set_category' && $pattern) {
-                if (in_array($val, ['DEFAULT', 'RESET', 'NONE'])) {
-                    unset($local_ov['category_overrides'][$pattern]);
-                } else {
-                    $local_ov['category_overrides'][$pattern] = $val;
-                }
-            } elseif ($action === 'delete_all_for_pattern' && $pattern) {
-                foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides'] as $grp) {
-                    if (isset($local_ov[$grp]) && is_array($local_ov[$grp])) {
-                        foreach (array_keys($local_ov[$grp]) as $k) {
-                            if ($k === $pattern || strpos($k, $pattern) !== false || strpos($pattern, $k) !== false) {
-                                unset($local_ov[$grp][$k]);
-                            }
+        } elseif ($action === 'set_category' && $pattern) {
+            if (in_array($val, ['DEFAULT', 'RESET', 'NONE'])) {
+                unset($local_ov['category_overrides'][$pattern]);
+            } else {
+                $local_ov['category_overrides'][$pattern] = $val;
+            }
+        } elseif ($action === 'delete_all_for_pattern' && $pattern) {
+            foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides'] as $grp) {
+                if (isset($local_ov[$grp]) && is_array($local_ov[$grp])) {
+                    foreach (array_keys($local_ov[$grp]) as $k) {
+                        if ($k === $pattern || strpos($k, $pattern) !== false || strpos($pattern, $k) !== false) {
+                            unset($local_ov[$grp][$k]);
                         }
                     }
                 }
-            } elseif ($action === 'import_overrides' && !empty($payload['overrides']) && is_array($payload['overrides'])) {
-                foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides', 'screen_text_scale'] as $grp) {
-                    if (isset($payload['overrides'][$grp]) && is_array($payload['overrides'][$grp])) {
-                        $local_ov[$grp] = array_merge($local_ov[$grp] ?? [], $payload['overrides'][$grp]);
-                    }
+            }
+        } elseif ($action === 'import_overrides' && !empty($payload['overrides']) && is_array($payload['overrides'])) {
+            foreach (['species_overrides', 'highlight_overrides', 'thc_overrides', 'category_overrides', 'screen_text_scale'] as $grp) {
+                if (isset($payload['overrides'][$grp]) && is_array($payload['overrides'][$grp])) {
+                    $local_ov[$grp] = array_merge($local_ov[$grp] ?? [], $payload['overrides'][$grp]);
                 }
             }
-            $local_ov['last_updated'] = date('c');
-            @file_put_contents($ov_file, json_encode($local_ov, JSON_PRETTY_PRINT));
         }
+        $local_ov['last_updated'] = date('c');
+        @file_put_contents($ov_file, json_encode($local_ov, JSON_PRETTY_PRINT));
 
-        $opts = [
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
-                'content' => $post_body,
-                'timeout' => 9
-            ]
-        ];
-        $resp = @file_get_contents($backend_admin_url, false, stream_context_create($opts));
-        
-        // Invalidate local disk caches immediately when an override is saved
+        // Invalidate temporary inventory cache files
+        $tmp_files = glob(sys_get_temp_dir() . '/tendy_tv_cache_*');
+        if (is_array($tmp_files)) {
+            foreach ($tmp_files as $f) { @unlink($f); }
+        }
         for ($s = 1; $s <= 3; $s++) {
             $cf = sys_get_temp_dir() . "/kroniclez_tv_feed_s{$s}.json";
             if (file_exists($cf)) @unlink($cf);
         }
-        
-        if ($resp) {
-            echo $resp;
-        } else {
-            echo json_encode(["success" => true, "message" => "Override saved to Hostinger local storage!"]);
-        }
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Override saved successfully!",
+            "screen_text_scale" => $local_ov['screen_text_scale'] ?? null
+        ]);
         exit;
     } else {
-        $resp = @file_get_contents($backend_admin_url);
-        if ($resp) {
-            echo $resp;
-        } else {
-            $ov_file = __DIR__ . '/product_overrides.json';
-            if (file_exists($ov_file)) {
-                $local_ov = json_decode(file_get_contents($ov_file), true);
-                echo json_encode(["success" => true, "overrides" => $local_ov]);
-            } else {
-                echo json_encode(["success" => false, "message" => "Sync server connecting..."]);
-            }
-        }
+        // GET /api/admin/overrides
+        $local_ov = file_exists($ov_file) ? json_decode(file_get_contents($ov_file), true) : [];
+        echo json_encode(["success" => true, "overrides" => $local_ov]);
         exit;
     }
 }
@@ -257,16 +277,24 @@ if (!file_exists($index_file)) {
     exit;
 }
 
-$html = file_get_contents($index_file);
+$ov_file = __DIR__ . '/product_overrides.json';
+$screen_text_scale = ($screen === 1) ? 98 : 100;
+if (file_exists($ov_file)) {
+    $ov_data = json_decode(@file_get_contents($ov_file), true);
+    if (!empty($ov_data['screen_text_scale']) && isset($ov_data['screen_text_scale'][strval($screen)])) {
+        $screen_text_scale = intval($ov_data['screen_text_scale'][strval($screen)]);
+    }
+}
 
-// Inject initial screen configuration
+// Inject initial screen configuration & text scale
 $script_injection = "<script id='tv-preloaded-data'>\n";
 $script_injection .= "window.__INITIAL_SCREEN_ID__ = {$screen};\n";
+$script_injection .= "window.__INITIAL_TEXT_SCALE__ = {$screen_text_scale};\n";
 $script_injection .= "</script>\n</head>";
 $html = str_replace('</head>', $script_injection, $html);
 
 // Dynamic asset cache-busting
-$cache_buster = '?v=59_' . time();
+$cache_buster = '?v=60_' . time();
 $html = preg_replace('/tv_menu\.css\?v=[^\s"\'>]+/', 'tv_menu.css' . $cache_buster, $html);
 $html = preg_replace('/tv_menu\.js\?v=[^\s"\'>]+/', 'tv_menu.js' . $cache_buster, $html);
 
