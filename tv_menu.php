@@ -1774,10 +1774,19 @@ body {
 
                 // 4. Column 4: INFUSED PRE-ROLLS (Starts at 01)
                 resetCatCounter();
-                const infInd = (d.infused && d.infused.indica_items) || [];
-                const infHyb = (d.infused && d.infused.hybrid_items) || [];
-                const infSat = (d.infused && d.infused.sativa_items) || [];
-                const infTotal = (d.infused && d.infused.items) ? d.infused.items.length : (infInd.length + infHyb.length + infSat.length);
+                let infInd = (d.infused && d.infused.indica_items) ? [...d.infused.indica_items] : [];
+                let infHyb = (d.infused && d.infused.hybrid_items) ? [...d.infused.hybrid_items] : [];
+                let infSat = (d.infused && d.infused.sativa_items) ? [...d.infused.sativa_items] : [];
+
+                if ((!infInd.length && !infHyb.length && !infSat.length) && d.infused && Array.isArray(d.infused.items) && d.infused.items.length > 0) {
+                    d.infused.items.forEach(it => {
+                        const sp = (it.species || it.strain || it.Species || it.Strain || '').toUpperCase();
+                        if (sp.includes('INDICA')) infInd.push(it);
+                        else if (sp.includes('SATIVA')) infSat.push(it);
+                        else infHyb.push(it);
+                    });
+                }
+                const infTotal = (d.infused && d.infused.items && d.infused.items.length) ? d.infused.items.length : (infInd.length + infHyb.length + infSat.length);
 
                 let infHtml = '';
                 if (infInd.length) {
@@ -1791,6 +1800,9 @@ body {
                 if (infSat.length) {
                     infHtml += `<div class="subhead sativa"><span style="color:#FF6666;">Sativa Infused</span> <span style="font-size:11px; color:#888;">${infSat.length} SKUs</span></div>`;
                     infHtml += infSat.map(it => renderRowHtml(it, false)).join('');
+                }
+                if (!infHtml && d.infused && Array.isArray(d.infused.items) && d.infused.items.length > 0) {
+                    infHtml += d.infused.items.map(it => renderRowHtml(it, false)).join('');
                 }
 
                 mount.innerHTML = `
@@ -1813,7 +1825,7 @@ body {
                         <div class="panel">
                             <div class="title infused">INFUSED PRE-ROLLS <span class="title-count">(${infTotal})</span></div>
                             <div class="table-header"><div class="h-name">Strain / Product</div><div class="h-thc">THC</div><div class="h-price">Price</div></div>
-                            ${infHtml}
+                            ${infHtml || '<div style="color:#666; font-size:12px; padding:15px; text-align:center;">No Infused Pre-Rolls</div>'}
                         </div>
                     </div>
                 `;

@@ -390,11 +390,11 @@ function renderMenuData(res) {
         let infSativa = (d.infused && d.infused.sativa_items) ? [...d.infused.sativa_items] : [];
 
         // Fallback: If feed has flat items array but no species breakdown, split dynamically
-        if (!infIndica.length && !infHybrid.length && !infSativa.length && d.infused && Array.isArray(d.infused.items)) {
+        if ((!infIndica.length && !infHybrid.length && !infSativa.length) && d.infused && Array.isArray(d.infused.items) && d.infused.items.length > 0) {
             d.infused.items.forEach(it => {
-                const sp = (it.species || '').toUpperCase();
-                if (sp === 'INDICA') infIndica.push(it);
-                else if (sp === 'SATIVA') infSativa.push(it);
+                const sp = (it.species || it.strain || it.Species || it.Strain || '').toUpperCase();
+                if (sp.includes('INDICA')) infIndica.push(it);
+                else if (sp.includes('SATIVA')) infSativa.push(it);
                 else infHybrid.push(it);
             });
         }
@@ -412,6 +412,9 @@ function renderMenuData(res) {
         if (infSativa.length) {
             infusedHtml += `<div class="subhead sativa"><span style="color:#FF6666;">Sativa Infused</span> <span style="font-size:11px; color:#888;">${infSativa.length} SKUs</span></div>`;
             infusedHtml += infSativa.map(it => renderRowHtml(it, false)).join('');
+        }
+        if (!infusedHtml && d.infused && Array.isArray(d.infused.items) && d.infused.items.length > 0) {
+            infusedHtml += d.infused.items.map(it => renderRowHtml(it, false)).join('');
         }
 
         mount.innerHTML = `
